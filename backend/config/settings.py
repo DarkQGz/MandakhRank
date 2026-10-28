@@ -41,17 +41,10 @@ if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
 STATIC_ROOT = BASE_DIR/'staticfiles'
 MIDDLEWARE.insert(MIDDLEWARE.index('django.middleware.security.SecurityMiddleware')+1,'whitenoise.middleware.WhiteNoiseMiddleware')
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS','http://localhost:5173,http://127.0.0.1:5173').split(',')
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND','django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = os.environ.get('EMAIL_HOST','')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT','587'))
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER','')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD','')
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS','1') == '1'
-EMAIL_TIMEOUT = 15
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL','noreply@example.com')
-RESEND_API_KEY = os.environ.get('RESEND_API_KEY','')
-if RESEND_API_KEY:
-    EMAIL_BACKEND = 'catalog.email_backend.ResendBackend'
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'catalog.email_backend.GmailScriptBackend')
+DEFAULT_FROM_EMAIL = 'MandakhRank'
+GMAIL_SCRIPT_URL = os.environ.get('GMAIL_SCRIPT_URL', '')
+GMAIL_SCRIPT_SECRET = os.environ.get('GMAIL_SCRIPT_SECRET', '')
 
 JUDGE0_RAPIDAPI_KEY = os.environ.get('JUDGE0_RAPIDAPI_KEY', '')
 JUDGE0_RAPIDAPI_HOST = os.environ.get('JUDGE0_RAPIDAPI_HOST', 'judge0-ce.p.rapidapi.com')

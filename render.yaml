@@ -18,9 +18,9 @@ services:
         generateValue: true
       - key: DJANGO_DEBUG
         value: '0'
-      - key: RESEND_API_KEY
+      - key: GMAIL_SCRIPT_URL
         sync: false
-      - key: DEFAULT_FROM_EMAIL
+      - key: GMAIL_SCRIPT_SECRET
         sync: false
       - key: JUDGE0_URL
         sync: false

@@ -1,3 +1,1 @@
-# Authentication and Render
-
-The current setup is documented in [UPGRADE.md](UPGRADE.md). Use the existing Render service and database; do not create a duplicate Blueprint.
+See [GMAIL_SETUP.md](GMAIL_SETUP.md) for the current Gmail setup. Do not create another database or Blueprint.

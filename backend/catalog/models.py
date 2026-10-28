@@ -117,3 +117,9 @@ class AuthThrottle(models.Model):
     key=models.CharField(max_length=64,primary_key=True)
     started_at=models.DateTimeField(default=timezone.now)
     count=models.PositiveIntegerField(default=0)
+
+# Kept for migration compatibility with the optional Firebase release.
+class FirebaseIdentity(models.Model):
+    uid=models.CharField(max_length=128,unique=True)
+    user=models.OneToOneField('auth.User',on_delete=models.CASCADE,related_name='firebase_identity')
+    def __str__(self):return self.user.username

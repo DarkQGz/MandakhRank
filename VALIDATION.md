@@ -1,12 +1,9 @@
-# Validation — 2026-10-28
+# Gmail release validation
 
-- `python manage.py test catalog`: **32 tests passed** (SQLite).
-- Coverage: four-digit leading zeros, auto-login, expired/replayed/wrong codes, five-guess limit, resend cooldown/password, email failure rollback, case-insensitive duplicate email, login throttling, hidden-test privacy, per-user submission privacy, Judge0 verdicts, queued worker execution, stalled-work recovery, unique accepted-problem scoring, equal-point distinct problems, inactive/staff exclusions, web index serving, and startup seed preservation.
-- `python manage.py makemigrations --check --dry-run`: no missing migrations.
-- Python compile check passed.
-- `render.yaml` validated against Render JSON Schema. This does not apply or deploy infrastructure.
-- Dart formatter parsed all six Dart source/test files successfully; final format check passed.
-- Flutter widget tests were added for automatic fourth-digit verification and invalid-code handling, plus updated navigation tests. **Not executed here.**
-- Flutter SDK bootstrap/build verification was blocked by automatic approval review because setup attempted to access the cloud instance metadata endpoint. No retry of that route was made. A release web build is **not included**; run `scripts/build-web.ps1` with your own Flutter installation before deploying.
-- Live email delivery, live Judge0 execution, PostgreSQL concurrency, mobile packaging, and browser visual rendering have not been tested. Email/Judge0 tests use mocks, not provider credentials.
-- This ZIP does not change the live Render service or GitHub repository. Follow UPGRADE.md using the existing service/database.
+- 38 Django tests passed on SQLite, including verification expiry/replay/guess limits/resend, auto-login, submission privacy, judging, real rankings, and Gmail sender success/failure handling.
+- Gmail backend tests verify leading-zero preservation, single-recipient payload, HTTPS URL restrictions, missing-secret rejection, sanitized errors and network failures. HTTP provider calls are mocked.
+- Offline JavaScript tests passed for the Google script: wrong-secret rejection, malformed code/multiple-recipient rejection, quota exhaustion, 10/minute throughput limit and POST-only handling. MailApp is mocked; no emails sent.
+- `makemigrations --check --dry-run`: no missing migrations. FirebaseIdentity and migration 0005 are retained for upgrade compatibility; Firebase authentication is not used.
+- Flutter restores the earlier four-digit UI. Flutter build/widget tests were not executed in this environment; run scripts/build-web.ps1 locally. No compiled web build included.
+- Gmail account, Apps Script deployment/authorization, Google execution behavior, real delivery, live Render deployment and browser/device end-to-end flow have not been tested or configured. These require account-owner setup described in GMAIL_SETUP.md.
+- Uses Google Apps Script HTTPS because Render Free blocks common SMTP ports. Personal Google account email quota currently 100 recipients/day, subject to Google's changes. This is a small-project sender, not a high-volume production mail service.

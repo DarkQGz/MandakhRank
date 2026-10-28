@@ -874,13 +874,18 @@ class _HomeState extends State<Home> {
                           child: Row(
                             children: [
                               Icon(Icons.data_object, size: 44, color: color),
-                              const Spacer(),
-                              Text(
-                                course['tag'],
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: color,
-                                  fontWeight: FontWeight.bold,
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  course['tag'],
+                                  textAlign: TextAlign.right,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: color,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],

@@ -10,6 +10,14 @@ import 'package:mandakhrank/main.dart';
 
 void main() {
   testWidgets('Navigation, problem search and details', (tester) async {
+    PracticeApi.token = null;
+    PracticeApi.username = null;
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox());
+      PracticeApi.client.close();
+      PracticeApi.token = null;
+      PracticeApi.username = null;
+    });
     final demo = jsonDecode(await rootBundle.loadString('assets/demo.json'));
     PracticeApi.client = MockClient(
       (r) async => http.Response(
@@ -25,9 +33,13 @@ void main() {
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Хоёр тооны нийлбэр');
     await tester.pumpAndSettle();
-    expect(find.text('Хоёр тооны нийлбэр'), findsOneWidget);
-    await tester.ensureVisible(find.text('Хоёр тооны нийлбэр'));
-    await tester.tap(find.text('Хоёр тооны нийлбэр'));
+    // Exclude EditableText: the search input contains this same string.
+    final problemTitle = find.byWidgetPredicate(
+      (widget) => widget is Text && widget.data == 'Хоёр тооны нийлбэр',
+    );
+    expect(problemTitle, findsOneWidget);
+    await tester.ensureVisible(problemTitle);
+    await tester.tap(problemTitle);
     await tester.pumpAndSettle();
     expect(find.text('Жишээ оролт'), findsOneWidget);
     await tester.tap(find.byType(BackButton));

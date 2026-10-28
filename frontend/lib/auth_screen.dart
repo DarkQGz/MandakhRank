@@ -43,6 +43,7 @@ class _AuthState extends State<AuthScreen> {
   }
 
   void finish(Map<String, dynamic> data) {
+    if (!mounted) return;
     PracticeApi.token = data['token'] as String;
     PracticeApi.username = data['username'] as String;
     if (mounted) Navigator.pop(context, true);
@@ -162,6 +163,7 @@ class _AuthState extends State<AuthScreen> {
                 const SizedBox(height: 24),
                 if (verify) ...[
                   TextField(
+                    key: const Key('verification-email'),
                     controller: email,
                     enabled: !busy,
                     keyboardType: TextInputType.emailAddress,

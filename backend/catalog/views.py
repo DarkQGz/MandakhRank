@@ -3,7 +3,8 @@ from pathlib import Path
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_GET
 DATA = json.loads(Path(__file__).with_name('demo.json').read_text(encoding='utf-8'))
-from .models import Course, Contest, Problem
+from .models import Course, Contest, Problem, Submission
+from django.contrib.auth import get_user_model
 
 def course_data(c):
     lessons=list(c.lessons.filter(published=True))
@@ -36,11 +37,27 @@ def rows(kind):
     if kind == 'courses': return [course_data(c) for c in Course.objects.filter(published=True).prefetch_related('lessons')]
     if kind == 'contests': return [contest_data(c) for c in Contest.objects.filter(published=True).prefetch_related('problems__results')]
 
-    if kind not in DATA: raise Http404('Not found')
-    result = DATA[kind]
     if kind == 'rankings':
-        result = [dict(p, rank=i+1) for i,p in enumerate(sorted(result, key=lambda p: (-p['score'], p['id'])))]
-    return result
+        # Each published problem counts once per person, regardless of retries.
+        totals = {}
+        for uid, pid, points in Submission.objects.filter(status='Accepted', problem__published=True, user__is_active=True).order_by().values_list('user_id','problem_id','problem__points').distinct():
+            row = totals.setdefault(uid, {'score': 0, 'solved': 0})
+            row['score'] += points
+            row['solved'] += 1
+        result = [dict(id=u.id, name=u.username, handle=u.username, school='',
+                       **totals.get(u.id, {'score': 0, 'solved': 0}))
+                  for u in get_user_model().objects.filter(is_active=True, is_staff=False)]
+        result.sort(key=lambda r: (-r['score'], -r['solved'], r['handle'].lower(), r['id']))
+        previous = None
+        rank = 0
+        for i, row in enumerate(result):
+            key = (row['score'], row['solved'])
+            if key != previous: rank = i + 1
+            row['rank'] = rank
+            previous = key
+        return result
+    raise Http404('Not found')
+
 @require_GET
 def collection(request, kind):
     result = rows(kind)
@@ -49,7 +66,7 @@ def collection(request, kind):
     for field in ('difficulty', 'topic', 'level'):
         value = request.GET.get(field)
         if value: result = [r for r in result if r.get(field) == value]
-    return JsonResponse({'results': result, 'demo': kind in ('rankings','problems')}, json_dumps_params={'ensure_ascii': False})
+    return JsonResponse({'results': result, 'demo': False}, json_dumps_params={'ensure_ascii': False})
 @require_GET
 def detail(request, kind, pk):
     item = next((r for r in rows(kind) if r['id'] == pk), None)

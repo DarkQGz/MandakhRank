@@ -1,20 +1,14 @@
-databases:
-  - name: mandakhrank-db
-    plan: free
-    region: singapore
-    postgresMajorVersion: "17"
-    databaseName: mandakhrank_db
-    user: mandakhrank_db_user
-    ipAllowList: []
+# Sync your EXISTING Blueprint/service. Do not create another free database.
+# The existing mandakhrank-db is in Oregon; no new database is declared here.
 services:
   - type: web
     name: mandakhrank-api
     runtime: python
-    region: singapore
+    region: oregon
     plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
-    startCommand: python manage.py migrate --noinput && python manage.py seed_problems && python manage.py seed_courses && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: python manage.py migrate --noinput && python manage.py seed_problems --if-empty && python manage.py seed_courses --if-empty && python manage.py serve
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -27,4 +21,8 @@ services:
       - key: RESEND_API_KEY
         sync: false
       - key: DEFAULT_FROM_EMAIL
+        sync: false
+      - key: JUDGE0_URL
+        sync: false
+      - key: JUDGE0_RAPIDAPI_KEY
         sync: false

@@ -52,3 +52,9 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL','noreply@example.com')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY','')
 if RESEND_API_KEY:
     EMAIL_BACKEND = 'catalog.email_backend.ResendBackend'
+
+JUDGE0_RAPIDAPI_KEY = os.environ.get('JUDGE0_RAPIDAPI_KEY', '')
+JUDGE0_RAPIDAPI_HOST = os.environ.get('JUDGE0_RAPIDAPI_HOST', 'judge0-ce.p.rapidapi.com')
+
+# Prebuilt Flutter web files are served from this same origin.
+WHITENOISE_ROOT = BASE_DIR / 'webapp'

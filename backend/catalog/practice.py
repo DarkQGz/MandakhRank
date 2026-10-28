@@ -11,7 +11,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .models import Problem,Submission,AccessToken
 
-def response(data,status=200):return JsonResponse(data,status=status,json_dumps_params={'ensure_ascii':False})
+def response(data,status=200):
+    result=JsonResponse(data,status=status,json_dumps_params={'ensure_ascii':False})
+    result['Cache-Control']='no-store'
+    return result
 def current_user(request):
     header=request.headers.get('Authorization','')
     if not header.startswith('Bearer '):return None
@@ -78,6 +81,12 @@ def submissions(request):
     if not p:return response({'error':'Бодлого олдсонгүй.'},404)
     tests=list(p.tests.values('stdin','expected'))
     if not tests:return response({'error':'Бодлогын тестүүд бэлэн болоогүй.'},409)
-    if Submission.objects.filter(user=user,status__in=['Queued','Running']).count()>=3:return response({'error':'Өмнөх илгээлтээ шалгуулж дуустал хүлээнэ үү.'},429)
-    s=Submission.objects.create(user=user,problem=p,code=code,test_snapshot=tests,total=len(tests))
+    # Serialize per-user queue admission to prevent parallel request bypass.
+    with transaction.atomic():
+        get_user_model().objects.select_for_update().get(pk=user.pk)
+        if Submission.objects.filter(user=user,status__in=['Queued','Running']).count()>=3:
+            return response({'error':'Өмнөх илгээлтээ шалгуулж дуустал хүлээнэ үү.'},429)
+        if Submission.objects.filter(user=user,created_at__gt=timezone.now()-timedelta(hours=1)).count()>=30:
+            return response({'error':'Нэг цагт 30 удаа илгээх боломжтой. Түр хүлээнэ үү.'},429)
+        s=Submission.objects.create(user=user,problem=p,code=code,test_snapshot=tests,total=len(tests))
     return response({'id':s.id,'status':s.status},201)

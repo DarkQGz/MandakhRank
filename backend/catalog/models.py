@@ -111,3 +111,9 @@ class EmailVerification(models.Model):
     token_hash=models.CharField(max_length=64)
     created_at=models.DateTimeField(auto_now_add=True)
     verified=models.BooleanField(default=False)
+    attempts=models.PositiveSmallIntegerField(default=0)
+
+class AuthThrottle(models.Model):
+    key=models.CharField(max_length=64,primary_key=True)
+    started_at=models.DateTimeField(default=timezone.now)
+    count=models.PositiveIntegerField(default=0)

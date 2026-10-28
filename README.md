@@ -1,3 +1,7 @@
+# Latest release
+
+Read **UPGRADE.md** first for the current four-digit verification, real leaderboard, web hosting and automatic judging setup. The notes below describe the original template; older auth/deployment instructions are superseded by UPGRADE.md.
+
 # v0.3 — Автомат шалгалттай дасгал бодлогууд
 
 Шинэ боломжууд: 8 Монгол бодлого / 28 тест, account бүртгэл ба нэвтрэлт, Python 3 код илгээх, автомат verdict, өөрийн submission history, database-д хадгалагдсан completion. Django Admin нь бодлого болон нууц тестийн CMS. Тусдаа cms-dev judging platform суулгаагүй; Judge0 API ашиглана.

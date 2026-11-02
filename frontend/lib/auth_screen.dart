@@ -29,8 +29,8 @@ class _AuthState extends State<AuthScreen> {
     super.dispose();
   }
 
-  void startCooldown() {
-    cooldown = 60;
+  void startCooldown([int seconds = 60]) {
+    cooldown = seconds;
     timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) {
@@ -42,10 +42,8 @@ class _AuthState extends State<AuthScreen> {
     });
   }
 
-  void finish(Map<String, dynamic> data) {
-    if (!mounted) return;
-    PracticeApi.token = data['token'] as String;
-    PracticeApi.username = data['username'] as String;
+  Future<void> finish(Map<String, dynamic> data) async {
+    await PracticeApi.signIn(data);
     if (mounted) Navigator.pop(context, true);
   }
 
@@ -66,9 +64,9 @@ class _AuthState extends State<AuthScreen> {
           'auth/verify/',
           body: {'email': email.text.trim(), 'code': code.text},
         );
-        finish(r);
+        await finish(r);
       } else if (register) {
-        await PracticeApi.request(
+        final result = await PracticeApi.request(
           'auth/register/',
           body: {
             'username': name.text.trim(),
@@ -80,11 +78,13 @@ class _AuthState extends State<AuthScreen> {
           setState(() {
             verify = true;
             code.clear();
-            startCooldown();
-            message = 'Код илгээгдлээ. Spam хавтсаа мөн шалгаарай.';
+            startCooldown((result['retry_after'] as num?)?.toInt() ?? 60);
+            message = result['sent'] == false
+                ? 'Өмнө илгээсэн кодоо оруулна уу. Эсвэл хугацаа дууссаны дараа шинэ код авна уу.'
+                : 'Код илгээгдлээ. Spam хавтсаа мөн шалгаарай.';
           });
       } else {
-        finish(
+        await finish(
           await PracticeApi.request(
             'auth/login/',
             body: {'username': name.text.trim(), 'password': password.text},
@@ -92,11 +92,16 @@ class _AuthState extends State<AuthScreen> {
         );
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
+          if (e is ApiException && e.data['verification_required'] == true) {
+            email.text = (e.data['email'] ?? '').toString();
+            verify = true;
+          }
           message = e.toString();
           if (verify) code.clear();
         });
+      }
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -217,7 +222,7 @@ class _AuthState extends State<AuthScreen> {
                     controller: name,
                     enabled: !busy,
                     autofillHints: const [AutofillHints.username],
-                    decoration: const InputDecoration(labelText: 'Username'),
+                    decoration: const InputDecoration(labelText: 'Username эсвэл имэйл'),
                   ),
                   const SizedBox(height: 14),
                   if (register) ...[

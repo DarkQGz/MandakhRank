@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:mandakhrank/auth_screen.dart';
 import 'package:mandakhrank/data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> openVerification(WidgetTester tester) async {
   await tester.pumpWidget(MaterialApp(home: Builder(builder: (context) => Scaffold(
@@ -30,10 +31,28 @@ Future<void> pumpUntil(WidgetTester tester, bool Function() ready) async {
 }
 
 void main() {
-  setUp(() { PracticeApi.token = null; PracticeApi.username = null; });
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+    PracticeApi.token = null; PracticeApi.username = null;
+  });
   tearDown(() {
     PracticeApi.client.close();
     PracticeApi.token = null; PracticeApi.username = null;
+  });
+
+
+  test('Session survives app restart and logout clears saved token', () async {
+    SharedPreferences.setMockInitialValues({});
+    await PracticeApi.signIn({'token':'a' * 64, 'username':'student'});
+    PracticeApi.token = null;
+    PracticeApi.username = null;
+    await PracticeApi.restoreSession();
+    expect(PracticeApi.token, 'a' * 64);
+    expect(PracticeApi.username, 'student');
+    await PracticeApi.signOut();
+    expect(PracticeApi.token, isNull);
+    await PracticeApi.restoreSession();
+    expect(PracticeApi.token, isNull);
   });
 
   testWidgets('Fourth digit verifies once and signs in automatically', (tester) async {
@@ -77,7 +96,7 @@ void main() {
     await openVerification(tester);
     final code = find.byKey(const Key('verification-code'));
     await tester.enterText(code,'1234');
-    await pumpUntil(tester, () => find.text('Exception: Invalid code').evaluate().isNotEmpty);
+    await pumpUntil(tester, () => find.text('Invalid code').evaluate().isNotEmpty);
     expect(PracticeApi.token,isNull);
     expect(find.byType(AuthScreen),findsOneWidget);
     expect(tester.widget<TextField>(code).controller!.text,isEmpty);

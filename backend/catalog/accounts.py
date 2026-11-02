@@ -2,19 +2,21 @@
 import re
 import secrets
 from datetime import timedelta
+
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
-from django.db import transaction, IntegrityError
+from django.core.validators import validate_email
+from django.db import IntegrityError, transaction
 from django.utils import timezone
-from django.utils.crypto import salted_hmac, constant_time_compare
+from django.utils.crypto import constant_time_compare, salted_hmac
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .models import EmailVerification, AccessToken, AuthThrottle
-from .practice import payload, response, account as old_account
+
+from .models import AccessToken, AuthThrottle, EmailVerification
+from .practice import account as old_account, payload, response
 
 
 def limited(scope, identity, maximum, seconds):
@@ -42,6 +44,8 @@ def issue(row):
     row.attempts = 0
     row.token_hash = digest(row, code)
     row.save()
+    # An exception rolls back the registration/resend transaction: we do not
+    # strand a user with a code that was never accepted by the sender.
     send_mail('MandakhRank — Баталгаажуулах код',
               f'Таны баталгаажуулах код:\n\n{code}\n\n10 минутын дотор апп дээр оруулна уу. Кодыг бусдад бүү дамжуулаарай.',
               settings.DEFAULT_FROM_EMAIL, [row.email], fail_silently=False)
@@ -53,12 +57,64 @@ def signed_in(user):
     return response({'token': key, 'username': user.username, 'verified': True})
 
 
+def pending_login(user, password):
+    """Return a useful recovery response only after checking the password."""
+    if user and user.check_password(password) and not user.is_active:
+        if EmailVerification.objects.filter(user=user, verified=False).exists():
+            return response({
+                'error': 'Имэйл баталгаажаагүй байна. Кодоо оруулах эсвэл шинэ код авна уу.',
+                'verification_required': True, 'email': user.email,
+            }, 403)
+    return response({'error': 'Нэр/имэйл эсвэл нууц үг буруу.'}, 401)
+
+
+def login(request, identifier, password):
+    User = get_user_model()
+    # Allow either username (case-insensitive) or registered email address.
+    # authenticate() still verifies the actual stored password / active status.
+    field = 'email__iexact' if '@' in identifier else 'username__iexact'
+    matches = list(User.objects.filter(**{field: identifier})[:3])
+    for user in matches:
+        authenticated = authenticate(request, username=user.username, password=password)
+        if authenticated and authenticated.pk == user.pk:
+            return signed_in(authenticated)
+    for user in matches:
+        if not user.is_active and user.check_password(password):
+            return pending_login(user, password)
+    return response({'error': 'Нэр/имэйл эсвэл нууц үг буруу.'}, 401)
+
+
+def resume_registration(name, email, password):
+    """Allow an unfinished signup to obtain a new code, without creating a new user."""
+    User = get_user_model()
+    with transaction.atomic():
+        user = User.objects.select_for_update().filter(email__iexact=email).first()
+        if not user:
+            return None
+        row = EmailVerification.objects.select_for_update().filter(user=user, verified=False).first()
+        if (not row or user.is_active or user.username.casefold() != name.casefold()
+                or not user.check_password(password)):
+            return response({'error': 'Энэ имэйл бүртгэлтэй байна. Нэвтрэх эсвэл код сэргээх хэсгийг ашиглана уу.'}, 400)
+        seconds = max(0, 60 - int((timezone.now() - row.created_at).total_seconds()))
+        if seconds:
+            return response({'verification_required': True, 'email': email,
+                             'expires_in': max(0, 600 - int((timezone.now() - row.created_at).total_seconds())),
+                             'sent': False, 'retry_after': seconds})
+        issue(row)
+        return response({'verification_required': True, 'email': email,
+                         'expires_in': 600, 'sent': True, 'retry_after': 60})
+
+
 @csrf_exempt
 @require_POST
 def account(request, action):
     data = payload(request)
     if data is None:
         return response({'error': 'JSON буруу.'}, 400)
+    if action == 'logout':
+        return old_account(request, action)
+    if action not in ('register', 'verify', 'resend', 'login'):
+        return response({'error': 'Not found'}, 404)
     email = data.get('email', '')
     name = data.get('username', '')
     password = data.get('password', '')
@@ -66,20 +122,18 @@ def account(request, action):
         return response({'error': 'Оруулсан мэдээлэл буруу.'}, 400)
     email = email.strip().lower()
     name = name.strip()
-    if len(email) > 254 or len(name) > 150 or len(password) > 200:
+    if len(email) > 254 or len(name) > 254 or len(password) > 200:
         return response({'error': 'Оруулсан мэдээлэл хэт урт байна.'}, 400)
-    if action == 'logout':
-        return old_account(request, action)
-    if action not in ('register', 'verify', 'resend', 'login'):
-        return response({'error': 'Not found'}, 404)
-    # REMOTE_ADDR is server-provided; do not trust a client-supplied Forwarded header.
     if limited('ip', request.META.get('REMOTE_ADDR', ''), 200, 3600):
         return response({'error': 'Хэт олон хүсэлт. Дараа дахин оролдоно уу.'}, 429)
     identity = name.lower() if action == 'login' else email
-    if limited(action, identity, 20 if action in ('verify', 'login') else 5, 900 if action in ('verify', 'login') else 3600):
+    if limited(action, identity, 20 if action in ('verify', 'login') else 5,
+               900 if action in ('verify', 'login') else 3600):
         return response({'error': 'Хэт олон оролдлого. Түр хүлээнэ үү.'}, 429)
     if action == 'login':
-        return old_account(request, action)
+        if not 3 <= len(name) <= 254 or not password:
+            return response({'error': 'Нэр/имэйл болон нууц үгээ оруулна уу.'}, 400)
+        return login(request, name, password)
     if action == 'verify':
         code = data.get('code', '')
         if not isinstance(code, str) or not re.fullmatch(r'[0-9]{4}', code):
@@ -105,14 +159,13 @@ def account(request, action):
         try:
             with transaction.atomic():
                 row = EmailVerification.objects.select_for_update().select_related('user').filter(email=email, verified=False).first()
-                # Require the registration password so strangers cannot reset attempts.
                 if not row or not row.user.check_password(password):
                     return response({'error': 'Имэйл эсвэл нууц үг буруу.'}, 400)
                 if row.created_at > timezone.now() - timedelta(seconds=60):
                     return response({'error': 'Шинэ код авахын өмнө 60 секунд хүлээнэ үү.'}, 429)
                 issue(row)
         except Exception:
-            return response({'error': 'Имэйл илгээж чадсангүй. Дараа дахин оролдоно уу.'}, 503)
+            return response({'error': 'Имэйл илгээж чадсангүй. Серверийн mailer тохиргоог шалгана уу.'}, 503)
         return response({'verification_required': True, 'email': email, 'expires_in': 600})
     if not 3 <= len(name) <= 40:
         return response({'error': 'Username 3–40 тэмдэгт байна.'}, 400)
@@ -121,11 +174,17 @@ def account(request, action):
     try:
         validate_email(email)
         validate_password(password, candidate)
+        # Previously registered but not yet verified? Keep the original account.
+        recovered = resume_registration(name, email, password)
+        if recovered is not None:
+            return recovered
+        if User.objects.filter(username__iexact=name).exists():
+            return response({'error': 'Энэ username бүртгэлтэй байна.'}, 400)
         candidate.full_clean(exclude=['password', 'last_login', 'date_joined'])
-        if User.objects.filter(email__iexact=email).exists():
-            return response({'error': 'Имэйл бүртгэлтэй байна. Нэвтрэх эсвэл шинэ код авах хэсгийг ашиглана уу.'}, 400)
     except ValidationError:
         return response({'error': 'Нэр/имэйл буруу эсвэл нууц үг сул байна.'}, 400)
+    except Exception:
+        return response({'error': 'Имэйл илгээх тохиргоог шалгана уу.'}, 503)
     try:
         with transaction.atomic():
             user = User.objects.create_user(username=name, email=email, password=password, is_active=False)
@@ -134,5 +193,6 @@ def account(request, action):
     except IntegrityError:
         return response({'error': 'Нэр эсвэл имэйл бүртгэлтэй байна.'}, 400)
     except Exception:
-        return response({'error': 'Баталгаажуулах имэйл илгээж чадсангүй. Дараа дахин оролдоно уу.'}, 503)
-    return response({'verification_required': True, 'email': email, 'expires_in': 600}, 201)
+        return response({'error': 'Баталгаажуулах имэйл илгээж чадсангүй. Серверийн mailer тохиргоог шалгана уу.'}, 503)
+    return response({'verification_required': True, 'email': email,
+                     'expires_in': 600, 'sent': True, 'retry_after': 60}, 201)

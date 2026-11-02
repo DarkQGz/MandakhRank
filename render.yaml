@@ -18,6 +18,8 @@ services:
         generateValue: true
       - key: DJANGO_DEBUG
         value: '0'
+      - key: EMAIL_BACKEND
+        value: catalog.email_backend.GmailScriptBackend
       - key: GMAIL_SCRIPT_URL
         sync: false
       - key: GMAIL_SCRIPT_SECRET

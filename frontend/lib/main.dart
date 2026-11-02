@@ -10,7 +10,11 @@ const bg = Color(0xFF080E1C);
 const panel = Color(0xFF111C30);
 const blue = Color(0xFF4C86FF);
 const muted = Color(0xFF96A8C5);
-void main() => runApp(const MandakhApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await PracticeApi.restoreSession();
+  runApp(const MandakhApp());
+}
 
 class MandakhApp extends StatelessWidget {
   const MandakhApp({super.key});
@@ -255,8 +259,7 @@ class _HomeState extends State<Home> {
                                         'auth/logout/',
                                         body: {},
                                       );
-                                      PracticeApi.token = null;
-                                      PracticeApi.username = null;
+                                      await PracticeApi.signOut();
                                     } else {
                                       if (!context.mounted) return;
                                       await Navigator.push(
@@ -874,18 +877,13 @@ class _HomeState extends State<Home> {
                           child: Row(
                             children: [
                               Icon(Icons.data_object, size: 44, color: color),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  course['tag'],
-                                  textAlign: TextAlign.right,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: color,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              const Spacer(),
+                              Text(
+                                course['tag'],
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: color,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],

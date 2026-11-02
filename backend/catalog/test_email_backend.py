@@ -1,11 +1,33 @@
 import json
 from unittest.mock import patch, MagicMock
+from io import StringIO
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.core.mail import EmailMessage
 from django.test import SimpleTestCase, override_settings
 from .email_backend import GmailScriptBackend
 
 @override_settings(GMAIL_SCRIPT_URL='https://script.google.com/macros/s/test-id/exec',GMAIL_SCRIPT_SECRET='a'*64)
 class GmailBackendTests(SimpleTestCase):
+    def test_check_mailer_configuration_no_emails(self):
+        out = StringIO()
+        call_command('check_mailer', stdout=out)
+        self.assertIn('configuration is valid', out.getvalue())
+
+    @patch('catalog.email_backend.urllib.request.urlopen')
+    def test_check_mailer_sends_one_real_test_when_requested(self, mock):
+        self.mock_reply(mock, {'ok': True})
+        out = StringIO()
+        call_command('check_mailer', recipient='student@example.com', stdout=out)
+        self.assertIn('accepted the test email', out.getvalue())
+        self.assertNotIn('secret', out.getvalue())
+        self.assertEqual(mock.call_count, 1)
+
+    @override_settings(GMAIL_SCRIPT_URL='')
+    def test_check_mailer_missing_configuration_is_actionable(self):
+        with self.assertRaisesRegex(CommandError, 'GMAIL_SCRIPT_URL'):
+            call_command('check_mailer')
+
     def message(self):return EmailMessage('Verification','Таны код:\n\n0007\n\n10 минут.',to=['test@example.com'])
     def mock_reply(self, mock, payload):
         result=MagicMock();result.read.return_value=json.dumps(payload).encode()

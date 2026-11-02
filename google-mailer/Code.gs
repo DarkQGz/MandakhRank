@@ -22,15 +22,16 @@ function doPost(e) {
     if (!sameSecret(data.secret, properties.getProperty('MAILER_SECRET'))) return reply({ok:false});
     if (typeof data.code !== 'string' || !/^[0-9]{4}$/.test(data.code) ||
         typeof data.to !== 'string' || data.to.length > 254 ||
-        !/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(data.to)) return reply({ok:false});
+        !/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(data.to)) return reply({ok:false, reason:'invalid_request'});
     lock = LockService.getScriptLock();
-    if (!lock.tryLock(5000)) return reply({ok:false});
+    if (!lock.tryLock(5000)) return reply({ok:false, reason:'busy'});
     // Hard global throughput limit backed by properties, not evictable cache.
     var now = Date.now();
     var windowStart = Number(properties.getProperty('WINDOW_START') || 0);
     var count = Number(properties.getProperty('WINDOW_COUNT') || 0);
     if (now - windowStart >= 60000) { windowStart = now; count = 0; }
-    if (count >= 10 || MailApp.getRemainingDailyQuota() < 1) return reply({ok:false});
+    if (count >= 10) return reply({ok:false, reason:'rate_limited'});
+    if (MailApp.getRemainingDailyQuota() < 1) return reply({ok:false, reason:'quota_exceeded'});
     properties.setProperties({WINDOW_START:String(windowStart), WINDOW_COUNT:String(count+1)});
     // Fixed template only: this endpoint cannot send arbitrary HTML/subjects.
     MailApp.sendEmail({
@@ -43,7 +44,7 @@ function doPost(e) {
     });
     return reply({ok:true});
   } catch (error) {
-    return reply({ok:false});
+    return reply({ok:false, reason:'delivery_error'});
   } finally {
     if (lock && lock.hasLock()) lock.releaseLock();
   }

@@ -1,9 +1,9 @@
-# MandakhRank — Gmail verification
+# MandakhRank — registration, Gmail verification & login repair
 
-Start with **[GMAIL_SETUP.md](GMAIL_SETUP.md)**.
+Start with **[DEPLOY_AUTH_FIX.md](DEPLOY_AUTH_FIX.md)** for the setup and deployment steps.
 
-This release uses dedicated Gmail through Google Apps Script, four-digit verification and automatic login. No Firebase, Resend, custom domain, Gmail password in Flutter, or OAuth client setup required.
+This package contains updated Django + Flutter source. It supports registration with a four-digit Gmail verification code (Google Apps Script over HTTPS), verification recovery, login with username or email, and persistent browser sessions. Google account authorization and Render environment configuration are still required; no Gmail password is placed in source or the app.
 
-Django handles accounts, verified codes, CMS, submissions, solved status and the real leaderboard. Judge0 still executes code externally. A small HTTPS Google sender must be deployed and authorized once by the Gmail account owner.
+To deploy: configure Apps Script, set the Render environment variables, run `scripts/build-web.ps1`, commit the generated `backend/webapp`, and redeploy your *existing* Render service. Preserve your current database and `DJANGO_SECRET_KEY`. `GMAIL_SETUP.md` contains additional Mongolian setup instructions.
 
-Run `scripts/build-web.ps1`, commit source and backend/webapp, and deploy your existing Render service. Keep existing migrations and database. See VALIDATION.md for test coverage and limitations.
+**Not a prebuilt app:** no Flutter compiled web assets or live Gmail credentials are contained in this archive.

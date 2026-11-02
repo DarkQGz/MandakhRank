@@ -1,9 +1,8 @@
-# Gmail release validation
+# Validation status for the auth repair
 
-- 38 Django tests passed on SQLite, including verification expiry/replay/guess limits/resend, auto-login, submission privacy, judging, real rankings, and Gmail sender success/failure handling.
-- Gmail backend tests verify leading-zero preservation, single-recipient payload, HTTPS URL restrictions, missing-secret rejection, sanitized errors and network failures. HTTP provider calls are mocked.
-- Offline JavaScript tests passed for the Google script: wrong-secret rejection, malformed code/multiple-recipient rejection, quota exhaustion, 10/minute throughput limit and POST-only handling. MailApp is mocked; no emails sent.
-- `makemigrations --check --dry-run`: no missing migrations. FirebaseIdentity and migration 0005 are retained for upgrade compatibility; Firebase authentication is not used.
-- Flutter restores the earlier four-digit UI. Flutter build/widget tests were not executed in this environment; run scripts/build-web.ps1 locally. No compiled web build included.
-- Gmail account, Apps Script deployment/authorization, Google execution behavior, real delivery, live Render deployment and browser/device end-to-end flow have not been tested or configured. These require account-owner setup described in GMAIL_SETUP.md.
-- Uses Google Apps Script HTTPS because Render Free blocks common SMTP ports. Personal Google account email quota currently 100 recipients/day, subject to Google's changes. This is a small-project sender, not a high-volume production mail service.
+- Python files: `python -m compileall -q backend` completed successfully.
+- Google Apps Script (offline mocked `MailApp`): `node google-mailer/test-mailer.cjs` passed.
+- Added new Django tests for email/username login, inactive account recovery, account resumption and `check_mailer`; added Flutter session persistence test.
+- **Not yet executed:** Django tests (Django not installed and cannot be downloaded in this environment), Flutter analyzer/widget tests (Flutter SDK unavailable), real Gmail delivery, and the live Render deployment.
+- Run `python manage.py test catalog`, `flutter pub get`, `flutter analyze`, `flutter test`, then verify a real test email using `python manage.py check_mailer --to your-inbox@example.com` in your own trusted local environment.
+- Baseline ZIP had earlier test results, which do not constitute verification of this modified build.

@@ -20,7 +20,7 @@ class VerificationTests(TestCase):
         code=self.register()
         self.assertRegex(code,r'^[0-9]{4}$')
         self.assertNotEqual(EmailVerification.objects.get().token_hash,code)
-        self.assertEqual(self.post('login',self.data).status_code,401)
+        self.assertEqual(self.post('login',self.data).status_code,403)
         r=self.verify(code)
         self.assertEqual(r.status_code,200)
         self.assertTrue(AccessToken.objects.filter(key=r.json()['token']).exists())
@@ -69,6 +69,47 @@ class VerificationTests(TestCase):
     def test_invalid_body_and_numeric_code(self):
         self.assertEqual(self.post('verify',{'email':[], 'code':'1234'}).status_code,400)
         self.assertEqual(self.verify(1234).status_code,400)
+    def test_login_with_email_or_case_insensitive_username(self):
+        code = self.register()
+        self.assertEqual(self.verify(code).status_code, 200)
+        for identifier in ('newstudent', 'NEWSTUDENT', 'STUDENT@example.com'):
+            result = self.post('login', {'username':identifier, 'password':self.data['password']})
+            self.assertEqual(result.status_code, 200)
+            self.assertEqual(result.json()['username'], 'newstudent')
+
+    def test_unverified_login_prompts_verification_after_password_check(self):
+        code = self.register()
+        result = self.post('login', {'username':self.data['email'], 'password':self.data['password']})
+        self.assertEqual(result.status_code, 403)
+        self.assertEqual(result.json()['email'], self.data['email'])
+        self.assertTrue(result.json()['verification_required'])
+        bad = self.post('login', {'username':self.data['email'], 'password':'invalid'})
+        self.assertEqual(bad.status_code, 401)
+        self.assertNotIn('email', bad.json())
+        self.assertEqual(self.verify(code).status_code, 200)
+
+    def test_retry_unverified_registration_sends_at_most_once_per_minute(self):
+        with patch('catalog.accounts.secrets.randbelow', side_effect=[1234, 5678]):
+            first = self.register()
+            resumed = self.post('register', self.data)
+            self.assertEqual(resumed.status_code, 200)
+            self.assertFalse(resumed.json()['sent'])
+            self.assertEqual(len(mail.outbox), 1)
+            EmailVerification.objects.update(created_at=timezone.now()-timedelta(minutes=2))
+            retried = self.post('register', self.data)
+            self.assertEqual(retried.status_code, 200)
+            self.assertTrue(retried.json()['sent'])
+            self.assertEqual(len(mail.outbox), 2)
+            self.assertEqual(get_user_model().objects.count(), 1)
+            self.assertEqual(self.verify(first).status_code, 400)
+            self.assertEqual(self.verify('5678').status_code, 200)
+
+    def test_unverified_registration_cannot_be_restarted_without_password(self):
+        self.register()
+        result = self.post('register', {**self.data, 'password':'strong-Wrong-pass-8492'})
+        self.assertEqual(result.status_code, 400)
+        self.assertEqual(len(mail.outbox), 1)
+
     def test_login_throttled(self):
         for _ in range(20): self.post('login',self.data)
         self.assertEqual(self.post('login',self.data).status_code,429)

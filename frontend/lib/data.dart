@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Repository {
   static const base = String.fromEnvironment(
@@ -34,7 +35,59 @@ class Repository {
   }
 }
 
+class ApiException implements Exception {
+  final int statusCode;
+  final Map<String, dynamic> data;
+  ApiException(this.statusCode, this.data);
+
+  @override
+  String toString() => data['error']?.toString() ?? 'API алдаа $statusCode';
+}
+
 class PracticeApi {
+  static const _tokenKey = 'mandakhrank.session.token';
+  static const _usernameKey = 'mandakhrank.session.username';
+
+  static Future<void> restoreSession() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedToken = prefs.getString(_tokenKey);
+      final savedName = prefs.getString(_usernameKey);
+      if (savedToken != null && savedToken.length == 64 && savedName != null) {
+        token = savedToken;
+        username = savedName;
+      }
+    } catch (_) {
+      // Storage might be blocked in private browsing. Login still works in memory.
+    }
+  }
+
+  static Future<void> signIn(Map<String, dynamic> data) async {
+    final newToken = data['token'] as String;
+    final newUsername = data['username'] as String;
+    token = newToken;
+    username = newUsername;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_tokenKey, newToken);
+      await prefs.setString(_usernameKey, newUsername);
+    } catch (_) {
+      // A storage failure must not block a valid sign-in.
+    }
+  }
+
+  static Future<void> signOut() async {
+    token = null;
+    username = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_tokenKey);
+      await prefs.remove(_usernameKey);
+    } catch (_) {
+      // The in-memory session has been cleared regardless.
+    }
+  }
+
   static http.Client client = http.Client();
   static String? token;
   static String? username;
@@ -57,8 +110,9 @@ class PracticeApi {
             .timeout(const Duration(seconds: 90));
     final data =
         jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
-    if (response.statusCode >= 400)
-      throw Exception(data['error'] ?? 'Алдаа ${response.statusCode}');
+    if (response.statusCode >= 400) {
+      throw ApiException(response.statusCode, data);
+    }
     return data;
   }
 }

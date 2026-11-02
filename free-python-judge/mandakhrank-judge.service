@@ -1,0 +1,18 @@
+[Unit]
+Description=MandakhRank containerized Python judge
+After=docker.service network-online.target
+Requires=docker.service
+[Service]
+User=mandakhjudge
+Group=docker
+WorkingDirectory=/opt/mandakhrank/free-python-judge
+EnvironmentFile=/etc/mandakhrank-judge.env
+ExecStart=/usr/bin/python3 /opt/mandakhrank/free-python-judge/server.py
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target

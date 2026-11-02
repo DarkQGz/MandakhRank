@@ -33,7 +33,7 @@ class TestInline(admin.StackedInline):
     extra=0
 @admin.register(Problem)
 class PracticeAdmin(admin.ModelAdmin):
-    list_display=['title','difficulty','points','published']
+    list_display=['title','difficulty','points','published','cms_task_name']
     list_filter=['published','difficulty']
     search_fields=['title']
     inlines=[TestInline]

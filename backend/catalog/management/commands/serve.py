@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Start Gunicorn and the automatic Judge0 queue worker (Linux hosting).'
@@ -21,7 +22,8 @@ class Command(BaseCommand):
             children.append(subprocess.Popen([sys.executable, '-m', 'gunicorn',
                 'config.wsgi:application', '--bind', '0.0.0.0:' + os.environ.get('PORT', '8000'),
                 '--workers', '2', '--timeout', '60']))
-            children.append(subprocess.Popen([sys.executable, 'manage.py', 'judge_worker']))
+            if settings.JUDGE_ENGINE != 'cms_pull':
+                children.append(subprocess.Popen([sys.executable, 'manage.py', 'judge_worker']))
             while not stopping:
                 if any(child.poll() is not None for child in children):
                     raise CommandError('A server process stopped. Restart the service.')

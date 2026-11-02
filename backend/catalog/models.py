@@ -76,6 +76,7 @@ class Problem(models.Model):
     sample_input=models.TextField('Жишээ оролт')
     sample_output=models.TextField('Жишээ гаралт')
     published=models.BooleanField('Нийтлэх',default=False)
+    cms_task_name=models.CharField('CMS task name',max_length=100,blank=True,default='')
     class Meta:
         ordering=['id'];verbose_name='Дасгал бодлого';verbose_name_plural='Дасгал бодлогууд'
     def __str__(self):return self.title
@@ -98,6 +99,9 @@ class Submission(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
     # Snapshot ensures later CMS edits cannot change an already queued submission.
     test_snapshot=models.JSONField(default=list)
+    cms_claim_key=models.CharField(max_length=64,blank=True,default='')
+    cms_submission_id=models.CharField(max_length=128,blank=True,default='')
+    cms_attempts=models.PositiveSmallIntegerField(default=0)
     class Meta: ordering=['-id']
 
 class AccessToken(models.Model):

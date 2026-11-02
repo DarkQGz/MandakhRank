@@ -71,7 +71,11 @@ def submissions(request):
     if request.method=='GET':
         rows=Submission.objects.filter(user=user).select_related('problem')[:100]
         return response({'results':[dict(id=s.id,problem_id=s.problem_id,title=s.problem.title,status=s.status,passed=s.passed,total=s.total,created_at=s.created_at.isoformat()) for s in rows]})
-    if not settings.JUDGE0_URL:return response({'error':'Judge0 тохируулагдаагүй байна.'},503)
+    if settings.JUDGE_ENGINE == 'cms_pull':
+        if not settings.JUDGE_WORKER_TOKEN:
+            return response({'error':'CMS worker тохируулагдаагүй байна.'},503)
+    elif not settings.JUDGE0_URL:
+        return response({'error':'Judge0 тохируулагдаагүй байна.'},503)
     data=payload(request)
     if data is None:return response({'error':'JSON өгөгдөл буруу.'},400)
     code=data.get('code','');pid=data.get('problem_id')
@@ -79,6 +83,8 @@ def submissions(request):
     if not isinstance(pid,int):return response({'error':'Бодлогын дугаар буруу.'},400)
     p=Problem.objects.filter(pk=pid,published=True).first()
     if not p:return response({'error':'Бодлого олдсонгүй.'},404)
+    if settings.JUDGE_ENGINE == 'cms_pull' and not p.cms_task_name:
+        return response({'error':'Энэ бодлого CMS дээр хараахан тохируулагдаагүй байна.'},409)
     tests=list(p.tests.values('stdin','expected'))
     if not tests:return response({'error':'Бодлогын тестүүд бэлэн болоогүй.'},409)
     # Serialize per-user queue admission to prevent parallel request bypass.

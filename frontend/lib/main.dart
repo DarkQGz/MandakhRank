@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'auth_screen.dart';
 import 'practice_screen.dart';
+import 'dashboard_screen.dart';
 
 const bg = Color(0xFF080E1C);
 const panel = Color(0xFF111C30);
@@ -74,15 +75,16 @@ class _HomeState extends State<Home> {
     }
   }
 
-  int page = 0;
+  int page = PracticeApi.token != null ? 4 : 0;
   String query = '', difficulty = 'Бүгд', topic = 'Бүгд', level = 'Бүгд';
   final search = TextEditingController();
-  final labels = ['Эрэмбэ', 'Бодлогууд', 'Сургалтууд', 'Тэмцээнүүд'];
+  final labels = ['Эрэмбэ', 'Бодлогууд', 'Сургалтууд', 'Тэмцээнүүд', 'Миний самбар'];
   final icons = [
     Icons.emoji_events_outlined,
     Icons.code_rounded,
     Icons.school_outlined,
     Icons.flag_outlined,
+    Icons.space_dashboard_outlined,
   ];
   @override
   void initState() {
@@ -106,6 +108,25 @@ class _HomeState extends State<Home> {
     query = '';
     search.clear();
   });
+  Future<void> authAction() async {
+    try {
+      if (PracticeApi.token != null) {
+        await PracticeApi.request('auth/logout/', body: {});
+        await PracticeApi.signOut();
+      } else {
+        await Navigator.push(context, MaterialPageRoute<bool>(builder: (_) => const AuthScreen()));
+      }
+    } catch (_) {
+      // Temporary network failures must not leave the user stranded on logout.
+      if (PracticeApi.token != null) await PracticeApi.signOut();
+    }
+    if (mounted) setState(() {
+      liveData = null;
+      future = Repository().load();
+      if (PracticeApi.token != null) page = 4;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final wide = MediaQuery.sizeOf(context).width >= 950;
@@ -113,10 +134,13 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: wide
           ? null
           : NavigationBar(
+              labelBehavior: MediaQuery.sizeOf(context).width < 600
+                  ? NavigationDestinationLabelBehavior.onlyShowSelected
+                  : NavigationDestinationLabelBehavior.alwaysShow,
               selectedIndex: page,
               onDestinationSelected: navigate,
               destinations: List.generate(
-                4,
+                5,
                 (i) => NavigationDestination(
                   icon: Icon(icons[i]),
                   label: labels[i],
@@ -149,7 +173,7 @@ class _HomeState extends State<Home> {
                     ),
                     const SizedBox(height: 20),
                     ...List.generate(
-                      4,
+                      5,
                       (i) => Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: ListTile(
@@ -253,28 +277,7 @@ class _HomeState extends State<Home> {
                                   ),
                                 const Spacer(),
                                 TextButton(
-                                  onPressed: () async {
-                                    if (PracticeApi.token != null) {
-                                      await PracticeApi.request(
-                                        'auth/logout/',
-                                        body: {},
-                                      );
-                                      await PracticeApi.signOut();
-                                    } else {
-                                      if (!context.mounted) return;
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute<bool>(
-                                          builder: (_) => const AuthScreen(),
-                                        ),
-                                      );
-                                    }
-                                    if (mounted)
-                                      setState(() {
-                                        liveData = null;
-                                        future = Repository().load();
-                                      });
-                                  },
+                                  onPressed: authAction,
                                   child: Text(
                                     PracticeApi.token == null
                                         ? 'Нэвтрэх'
@@ -289,12 +292,14 @@ class _HomeState extends State<Home> {
                                   }),
                                   icon: const Icon(Icons.refresh),
                                 ),
-                                const Tooltip(
-                                  message: 'Хэрэглэгч',
-                                  child: CircleAvatar(
+                                IconButton(
+                                  tooltip: 'Миний самбар / Зураг солих',
+                                  onPressed: () => navigate(4),
+                                  icon: CircleAvatar(
                                     radius: 18,
                                     backgroundColor: panel,
-                                    child: Icon(Icons.person_outline, size: 20),
+                                    backgroundImage: PracticeApi.avatarUrl == null ? null : NetworkImage(PracticeApi.avatarUrl!),
+                                    child: PracticeApi.avatarUrl == null ? const Icon(Icons.person_outline, size: 20) : null,
                                   ),
                                 ),
                               ],
@@ -321,8 +326,15 @@ class _HomeState extends State<Home> {
                               problems(data)
                             else if (page == 2)
                               courses(data)
+                            else if (page == 3)
+                              contests(data)
                             else
-                              contests(data),
+                              StudentDashboard(
+                                catalog: data,
+                                onNavigate: navigate,
+                                onLogin: authAction,
+                                onAvatarChanged: () { if (mounted) setState(() {}); },
+                              ),
                             const SizedBox(height: 32),
                             const Text(
                               'Mandakhrank • Монгол хэлээр кодлож суръя.',
@@ -509,11 +521,14 @@ class _HomeState extends State<Home> {
                         ),
                         const SizedBox(height: 20),
                         CircleAvatar(
+                          radius: 23,
                           backgroundColor: color.withOpacity(.13),
-                          child: Text(
-                            (p['name'] as String).substring(0, 1),
-                            style: TextStyle(color: color),
-                          ),
+                          backgroundImage: ProfileApi.imageUrl(p['avatar_url'] as String?) == null
+                              ? null
+                              : NetworkImage(ProfileApi.imageUrl(p['avatar_url'] as String?)!),
+                          child: p['avatar_url'] == null
+                              ? Text((p['name'] as String).substring(0, 1), style: TextStyle(color: color))
+                              : null,
                         ),
                         const SizedBox(height: 14),
                         Text(
@@ -581,7 +596,8 @@ class _HomeState extends State<Home> {
                           CircleAvatar(
                             radius: 18,
                             backgroundColor: blue.withOpacity(.14),
-                            child: Text((p['name'] as String).substring(0, 1)),
+                            backgroundImage: ProfileApi.imageUrl(p['avatar_url'] as String?) == null ? null : NetworkImage(ProfileApi.imageUrl(p['avatar_url'] as String?)!),
+                            child: p['avatar_url'] == null ? Text((p['name'] as String).substring(0, 1)) : null,
                           ),
                           const SizedBox(width: 12),
                           Expanded(

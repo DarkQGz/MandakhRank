@@ -1,0 +1,50 @@
+{% extends 'admin/base_site.html' %}
+{% block title %}MandakhRank · Удирдлагын самбар{% endblock %}
+{% block content %}
+<style>
+.md-shell{max-width:1120px;margin:0 auto;color:#e9f2ff}.md-head{padding:30px;border-radius:18px;background:linear-gradient(120deg,#152f59,#18233c);margin:18px 0 24px;border:1px solid #294b79}.md-head h1{color:#fff;font-size:29px;margin:0 0 6px}.md-head p{color:#c3d5ed;margin:0}
+.md-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:13px}.md-stat{background:#15223a;border:1px solid #31435c;border-radius:14px;padding:19px}.md-stat strong{display:block;font-size:30px;color:#fff}.md-stat span{color:#a9bdd8;font-size:13px}
+.md-panels{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin-top:26px}.md-panel{background:#15223a;border:1px solid #31435c;border-radius:14px;padding:20px;overflow:auto}.md-panel h2{color:#fff;font-size:18px;margin:0 0 14px}.md-panel a{color:#95baff}.md-panel table{width:100%;border-collapse:collapse}.md-panel td,.md-panel th{padding:10px 7px;text-align:left;border-bottom:1px solid #2d405d;color:#e0e9f9}.md-panel th{color:#aac0da;font-size:12px}
+.md-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.md-actions a{background:#427bdf;color:#fff!important;border-radius:9px;padding:10px 14px;text-decoration:none;font-weight:600}.md-actions a.secondary{background:#203651}.md-badge{font-size:12px;color:#a1e2cc}
+@media(max-width:800px){.md-panels{grid-template-columns:1fr}}
+</style>
+<div class="md-shell">
+  <div class="md-head">
+    <h1>MandakhRank · Удирдлагын самбар</h1>
+    <p>Хэрэглэгчид, сургалтууд, бодлогууд болон илгээлтийн тойм</p>
+    <nav class="md-actions">
+      <a href="{% url 'admin:auth_user_changelist' %}">Бүх хэрэглэгч</a>
+      <a href="{% url 'admin:catalog_course_add' %}">+ Сургалт нэмэх</a>
+      <a class="secondary" href="{% url 'admin:catalog_lesson_changelist' %}">Хичээлүүд</a>
+      <a class="secondary" href="{% url 'admin:index' %}">Django Admin</a>
+    </nav>
+  </div>
+  <div class="md-stats">
+    <div class="md-stat"><strong>{{ registered }}</strong><span>Бүртгэлтэй суралцагч</span></div>
+    <div class="md-stat"><strong>{{ verified }}</strong><span>Имэйл баталгаажсан</span></div>
+    <div class="md-stat"><strong>{{ unverified }}</strong><span>Идэвхгүй бүртгэл</span></div>
+    <div class="md-stat"><strong>{{ submissions }}</strong><span>Нийт илгээлт</span></div>
+    <div class="md-stat"><strong>{{ accepted }}</strong><span>Амжилттай илгээлт</span></div>
+    <div class="md-stat"><strong>{{ published_courses }}/{{ courses }}</strong><span>Нийтлэгдсэн сургалт</span></div>
+    <div class="md-stat"><strong>{{ lessons }}</strong><span>Хичээл</span></div>
+    <div class="md-stat"><strong>{{ problems }}</strong><span>Нийтлэгдсэн бодлого</span></div>
+  </div>
+  <div class="md-panels">
+    <section class="md-panel">
+      <h2>Сүүлд бүртгүүлсэн суралцагчид</h2>
+      <table><thead><tr><th>Username</th><th>Имэйл</th><th>Бүртгэл</th><th>Төлөв</th></tr></thead><tbody>
+        {% for user in new_students %}
+          <tr><td><a href="{% url 'admin:auth_user_change' user.pk %}">{{ user.username }}</a></td><td>{{ user.email }}</td><td>{{ user.date_joined|date:"Y-m-d" }}</td><td><span class="md-badge">{% if user.is_active %}Идэвхтэй{% else %}Баталгаажаагүй{% endif %}</span></td></tr>
+        {% empty %}<tr><td colspan="4">Одоогоор хэрэглэгч алга</td></tr>{% endfor %}
+      </tbody></table>
+    </section>
+    <section class="md-panel">
+      <h2>Сүүлд нэмэгдсэн сургалтууд</h2>
+      <table><thead><tr><th>Сургалт</th><th>Түвшин</th><th>Төлөв</th></tr></thead><tbody>
+        {% for c in recent_courses %}<tr><td><a href="{% url 'admin:catalog_course_change' c.pk %}">{{ c.title }}</a></td><td>{{ c.level }}</td><td>{% if c.published %}Нийтлэгдсэн{% else %}Ноорог{% endif %}</td></tr>
+        {% empty %}<tr><td colspan="3">Одоогоор сургалт алга</td></tr>{% endfor %}
+      </tbody></table>
+    </section>
+  </div>
+</div>
+{% endblock %}

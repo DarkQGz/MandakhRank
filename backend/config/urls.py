@@ -12,5 +12,5 @@ def app_home(request):
     return response
 
 from catalog.views import collection, detail
-from catalog import practice, accounts, cms_bridge
-urlpatterns = [path('api/judge/<str:action>/', cms_bridge.endpoint),path('',app_home),path('api/problems/',practice.problems),path('api/submissions/',practice.submissions),path('api/auth/<str:action>/',accounts.account),path('admin/', admin.site.urls), path('api/<str:kind>/', collection), path('api/<str:kind>/<int:pk>/', detail)]
+from catalog import practice, accounts, cms_bridge, profile, admin_overview
+urlpatterns = [path('api/profile/me/', profile.me),path('api/profile/avatar/', profile.avatar),path('api/profile/avatar/<int:user_id>/', profile.public_avatar),path('api/judge/<str:action>/', cms_bridge.endpoint),path('',app_home),path('api/problems/',practice.problems),path('api/submissions/',practice.submissions),path('api/auth/<str:action>/',accounts.account),path('admin/overview/', admin_overview.overview), path('admin/', admin.site.urls), path('api/<str:kind>/', collection), path('api/<str:kind>/<int:pk>/', detail)]

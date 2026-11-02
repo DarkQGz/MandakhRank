@@ -127,3 +127,15 @@ class FirebaseIdentity(models.Model):
     uid=models.CharField(max_length=128,unique=True)
     user=models.OneToOneField('auth.User',on_delete=models.CASCADE,related_name='firebase_identity')
     def __str__(self):return self.user.username
+
+
+class ProfileAvatar(models.Model):
+    """A small, persistent avatar JPEG stored in PostgreSQL."""
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='profile_avatar')
+    data = models.BinaryField()
+    content_type = models.CharField(max_length=40, default='image/jpeg')
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Хэрэглэгчийн зураг'
+        verbose_name_plural = 'Хэрэглэгчийн зургууд'

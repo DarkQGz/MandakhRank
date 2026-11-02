@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -67,6 +68,7 @@ class PracticeApi {
     final newUsername = data['username'] as String;
     token = newToken;
     username = newUsername;
+    avatarUrl = null;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_tokenKey, newToken);
@@ -79,6 +81,7 @@ class PracticeApi {
   static Future<void> signOut() async {
     token = null;
     username = null;
+    avatarUrl = null;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_tokenKey);
@@ -91,6 +94,7 @@ class PracticeApi {
   static http.Client client = http.Client();
   static String? token;
   static String? username;
+  static String? avatarUrl;
   static Future<Map<String, dynamic>> request(
     String path, {
     Map<String, dynamic>? body,
@@ -114,5 +118,41 @@ class PracticeApi {
       throw ApiException(response.statusCode, data);
     }
     return data;
+  }
+}
+
+
+extension ProfileApi on PracticeApi {
+  static Uri endpoint(String route) => Uri.parse(
+    '${Repository.base.replaceFirst(RegExp(r'/+$'), '')}/$route',
+  );
+
+  static String? imageUrl(String? relative) {
+    if (relative == null || relative.isEmpty) return null;
+    return Uri.parse(Repository.base).resolve(relative).toString();
+  }
+
+  static Future<Map<String, dynamic>> uploadAvatar(Uint8List bytes, String filename) async {
+    if (bytes.length > 2 * 1024 * 1024) {
+      throw Exception('Зураг 2 MB-аас их байж болохгүй.');
+    }
+    final request = http.MultipartRequest('POST', endpoint('profile/avatar/'));
+    if (PracticeApi.token != null) request.headers['Authorization'] = 'Bearer ${PracticeApi.token}';
+    request.files.add(http.MultipartFile.fromBytes('avatar', bytes, filename: filename));
+    final reply = await http.Response.fromStream(await PracticeApi.client.send(request).timeout(const Duration(seconds: 45)));
+    final data = jsonDecode(utf8.decode(reply.bodyBytes)) as Map<String, dynamic>;
+    if (reply.statusCode >= 400) throw ApiException(reply.statusCode, data);
+    PracticeApi.avatarUrl = imageUrl(data['avatar_url'] as String?);
+    return data;
+  }
+
+  static Future<void> deleteAvatar() async {
+    final req = http.Request('DELETE', endpoint('profile/avatar/'));
+    if (PracticeApi.token != null) req.headers['Authorization'] = 'Bearer ${PracticeApi.token}';
+    final reply = await http.Response.fromStream(await PracticeApi.client.send(req));
+    if (reply.statusCode >= 400) {
+      throw ApiException(reply.statusCode, jsonDecode(reply.body) as Map<String, dynamic>);
+    }
+    PracticeApi.avatarUrl = null;
   }
 }

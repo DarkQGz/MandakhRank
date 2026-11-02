@@ -44,3 +44,42 @@ class SubmissionAdmin(admin.ModelAdmin):
     readonly_fields=['user','problem','code','status','passed','total','created_at','updated_at','test_snapshot']
     def has_add_permission(self,request):return False
     def has_change_permission(self,request,obj=None):return False
+
+# Make the existing Django Users page useful for MandakhRank administrators.
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
+from django.db.models import Exists, OuterRef
+from .models import EmailVerification, ProfileAvatar
+
+User = get_user_model()
+admin.site.unregister(User)
+
+@admin.register(User)
+class StudentAdmin(UserAdmin):
+    list_display = ('username', 'email', 'is_active', 'email_confirmed', 'has_avatar', 'is_staff', 'date_joined')
+    list_filter = ('is_active', 'is_staff', 'date_joined')
+    search_fields = ('username', 'email', 'first_name', 'last_name')
+    ordering = ('-date_joined',)
+    list_per_page = 40
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.annotate(
+            _email_confirmed=Exists(EmailVerification.objects.filter(user_id=OuterRef('pk'), verified=True)),
+            _has_avatar=Exists(ProfileAvatar.objects.filter(user_id=OuterRef('pk'))),
+        )
+
+    @admin.display(boolean=True, description='Имэйл баталгаажсан')
+    def email_confirmed(self, obj):
+        return obj._email_confirmed
+
+    @admin.display(boolean=True, description='Профайл зураг')
+    def has_avatar(self, obj):
+        return obj._has_avatar
+
+@admin.register(Lesson)
+class LessonAdmin(admin.ModelAdmin):
+    list_display = ('title', 'course', 'position', 'published')
+    list_filter = ('published', 'course')
+    search_fields = ('title', 'content', 'course__title')
+    ordering = ('course_id', 'position')

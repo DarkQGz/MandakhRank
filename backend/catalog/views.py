@@ -3,7 +3,7 @@ from pathlib import Path
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_GET
 DATA = json.loads(Path(__file__).with_name('demo.json').read_text(encoding='utf-8'))
-from .models import Course, Contest, Problem, Submission
+from .models import Course, Contest, Problem, Submission, ProfileAvatar
 from django.contrib.auth import get_user_model
 
 def course_data(c):
@@ -44,9 +44,16 @@ def rows(kind):
             row = totals.setdefault(uid, {'score': 0, 'solved': 0})
             row['score'] += points
             row['solved'] += 1
+        students = list(get_user_model().objects.filter(is_active=True, is_staff=False))
+        avatars = {
+            a.user_id: a.updated_at
+            for a in ProfileAvatar.objects.filter(user_id__in=[u.pk for u in students])
+        }
+        from .profile import avatar_url
         result = [dict(id=u.id, name=u.username, handle=u.username, school='',
+                       avatar_url=avatar_url(u.id, avatars.get(u.id)),
                        **totals.get(u.id, {'score': 0, 'solved': 0}))
-                  for u in get_user_model().objects.filter(is_active=True, is_staff=False)]
+                  for u in students]
         result.sort(key=lambda r: (-r['score'], -r['solved'], r['handle'].lower(), r['id']))
         previous = None
         rank = 0

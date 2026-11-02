@@ -228,6 +228,11 @@ class _StudentDashboardState extends State<StudentDashboard> {
     return LayoutBuilder(builder: (context, constraints) {
       final wide = constraints.maxWidth >= 740;
       final cell = wide ? (constraints.maxWidth - 14 * 3) / 4 : (constraints.maxWidth - 14) / 2;
+      // The profile header has 24px padding on each side, an 80px avatar,
+      // and an 18px gap. Keep the name/email inside the available width.
+      final identityWidth = (constraints.maxWidth - 146.0)
+          .clamp(0.0, 320.0)
+          .toDouble();
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         sectionTitle('Миний самбар', 'Тавтай морил! Өнөөдөр бас нэг бодлого бодоцгооё.'),
         const SizedBox(height: 22),

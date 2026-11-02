@@ -1,7 +1,7 @@
-"""Private HTTPS pull queue for an isolated CMS worker on the owner's machine.
+"""Private HTTPS pull queue for a PC judge worker (CMS or local Docker).
 
-Only the local worker learns user source code. Render never contacts the home PC.
-This endpoint deliberately does not expose problem test snapshots.
+Only holders of JUDGE_WORKER_TOKEN can retrieve student source and secret tests.
+No student-facing endpoints expose those tests.
 """
 import hmac
 import json
@@ -19,7 +19,7 @@ from .models import Submission
 
 FINAL_STATUSES = {
     'Accepted', 'Wrong Answer', 'Compilation Error', 'Runtime Error',
-    'Time Limit Exceeded', 'Memory Limit Exceeded', 'Judge Error',
+    'Time Limit Exceeded', 'Memory Limit Exceeded', 'Output Limit Exceeded', 'Judge Error',
 }
 
 
@@ -40,7 +40,7 @@ def get_body(request):
 @csrf_exempt
 @require_POST
 def endpoint(request, action):
-    if settings.JUDGE_ENGINE != 'cms_pull' or not settings.JUDGE_WORKER_TOKEN:
+    if settings.JUDGE_ENGINE not in ('cms_pull', 'docker_pull') or not settings.JUDGE_WORKER_TOKEN:
         return reply({'error': 'Worker unavailable'}, 503)
     supplied = request.headers.get('Authorization', '')
     wanted = 'Bearer ' + settings.JUDGE_WORKER_TOKEN
@@ -49,6 +49,10 @@ def endpoint(request, action):
     data = get_body(request)
     if data is None:
         return reply({'error': 'Expected JSON object'}, 400)
+
+    if action == 'status':
+        return reply({'engine': settings.JUDGE_ENGINE,
+                      'protocol': 'docker-tests-v1' if settings.JUDGE_ENGINE == 'docker_pull' else 'cms-v1'})
 
     if action == 'claim':
         # A single worker is the intended initial deployment. Row locking also
@@ -67,7 +71,7 @@ def endpoint(request, action):
             s = qs.first()
             if s is None:
                 return reply({'job': None})
-            if not s.problem.cms_task_name:
+            if settings.JUDGE_ENGINE == 'cms_pull' and not s.problem.cms_task_name:
                 # Badly configured queued jobs must not silently consume an
                 # unrelated CMS problem, nor block the worker indefinitely.
                 s.status = 'Judge Error'
@@ -85,12 +89,17 @@ def endpoint(request, action):
             s.cms_attempts += 1
             s.updated_at = timezone.now()
             s.save(update_fields=['status', 'cms_claim_key', 'cms_attempts', 'updated_at'])
-            return reply({'job': {
+            job = {
                 'id': s.id, 'claim_key': s.cms_claim_key,
                 'task_name': s.problem.cms_task_name,
                 'code': s.code, 'cms_submission_id': s.cms_submission_id,
                 'attempt': s.cms_attempts, 'expected_tests': s.total,
-            }})
+            }
+            if settings.JUDGE_ENGINE == 'docker_pull':
+                # Tests are only sent to the authenticated private worker.
+                # Never include them in the browser's /api/submissions/ response.
+                job['tests'] = s.test_snapshot
+            return reply({'job': job})
 
     if action not in ('heartbeat', 'complete', 'release'):
         return reply({'error': 'Not found'}, 404)

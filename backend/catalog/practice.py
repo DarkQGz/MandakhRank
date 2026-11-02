@@ -71,9 +71,9 @@ def submissions(request):
     if request.method=='GET':
         rows=Submission.objects.filter(user=user).select_related('problem')[:100]
         return response({'results':[dict(id=s.id,problem_id=s.problem_id,title=s.problem.title,status=s.status,passed=s.passed,total=s.total,created_at=s.created_at.isoformat()) for s in rows]})
-    if settings.JUDGE_ENGINE == 'cms_pull':
+    if settings.JUDGE_ENGINE in ('cms_pull', 'docker_pull'):
         if not settings.JUDGE_WORKER_TOKEN:
-            return response({'error':'CMS worker тохируулагдаагүй байна.'},503)
+            return response({'error':'Шалгах worker тохируулагдаагүй байна.'},503)
     elif not settings.JUDGE0_URL:
         return response({'error':'Judge0 тохируулагдаагүй байна.'},503)
     data=payload(request)

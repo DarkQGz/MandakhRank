@@ -83,3 +83,28 @@ class LessonAdmin(admin.ModelAdmin):
     list_filter = ('published', 'course')
     search_fields = ('title', 'content', 'course__title')
     ordering = ('course_id', 'position')
+
+
+from .models import MiniGameRoom, MiniGamePlayer, MiniGameAnswer
+
+class MiniGamePlayerInline(admin.TabularInline):
+    model = MiniGamePlayer
+    extra = 0
+    readonly_fields = ('user', 'side', 'answered', 'correct')
+    can_delete = False
+
+@admin.register(MiniGameRoom)
+class MiniGameRoomAdmin(admin.ModelAdmin):
+    list_display = ('code', 'mode', 'format', 'host', 'status', 'score_a', 'score_b', 'created_at')
+    list_filter = ('mode', 'format', 'status')
+    search_fields = ('code', 'host__username')
+    readonly_fields = ('code', 'mode', 'format', 'host', 'status', 'score_a', 'score_b', 'winner', 'created_at', 'started_at', 'ends_at')
+    inlines = [MiniGamePlayerInline]
+    def has_add_permission(self, request): return False
+
+@admin.register(MiniGameAnswer)
+class MiniGameAnswerAdmin(admin.ModelAdmin):
+    list_display = ('player', 'question_index', 'selected', 'correct', 'created_at')
+    readonly_fields = ('player', 'question_index', 'selected', 'correct', 'created_at')
+    def has_add_permission(self, request): return False
+    def has_change_permission(self, request, obj=None): return False

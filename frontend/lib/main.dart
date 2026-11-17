@@ -6,6 +6,7 @@ import 'data.dart';
 import 'auth_screen.dart';
 import 'practice_screen.dart';
 import 'dashboard_screen.dart';
+import 'minigames_screen.dart';
 
 const bg = Color(0xFF080E1C);
 const panel = Color(0xFF111C30);
@@ -992,6 +993,12 @@ class _HomeState extends State<Home> {
     return '${d.year}-${two(d.month)}-${two(d.day)} ${two(d.hour)}:${two(d.minute)}';
   }
 
+  Future<void> openMiniGames() async {
+    if (PracticeApi.token == null) await authAction();
+    if (!mounted || PracticeApi.token == null) return;
+    await Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const MiniGamesLobby()));
+  }
+
   Widget contests(Map<String, dynamic> data) {
     final found = items(data, 'contests')
         .where(
@@ -1004,10 +1011,11 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         title(
-          'CONTESTS',
+          'ТЭМЦЭЭНҮҮД',
           'Ур чадвараа сориорой.',
           'Тэмцээний хуваарь, бодлогууд болон дүнгийн хүснэгт.',
         ),
+        MiniGamesPreview(onPlay: openMiniGames),
         searchField('Тэмцээний нэрээр хайх'),
         const SizedBox(height: 16),
         filters(

@@ -139,3 +139,46 @@ class ProfileAvatar(models.Model):
     class Meta:
         verbose_name = 'Хэрэглэгчийн зураг'
         verbose_name_plural = 'Хэрэглэгчийн зургууд'
+
+
+class MiniGameRoom(models.Model):
+    """Short-lived 1v1 or two-team casual programming match."""
+    code = models.CharField(max_length=7, unique=True)
+    mode = models.CharField(max_length=12, choices=[('tug', 'Олс таталт'), ('frog', 'Мэлхийн үсрэлт'), ('rocket', 'Кодын пуужин')])
+    format = models.CharField(max_length=8, choices=[('solo', 'Ганцаарчилсан'), ('team', 'Багийн')])
+    host = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='hosted_minigames')
+    status = models.CharField(max_length=12, default='waiting')
+    score_a = models.PositiveSmallIntegerField(default=0)
+    score_b = models.PositiveSmallIntegerField(default=0)
+    winner = models.PositiveSmallIntegerField(default=0)  # 0 is a draw/not decided.
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    ends_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Бяцхан тоглоомын өрөө'
+        verbose_name_plural = 'Бяцхан тоглоомын өрөөнүүд'
+
+
+class MiniGamePlayer(models.Model):
+    room = models.ForeignKey(MiniGameRoom, on_delete=models.CASCADE, related_name='players')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    side = models.PositiveSmallIntegerField()  # 1 = blue, 2 = orange.
+    answered = models.PositiveSmallIntegerField(default=0)
+    correct = models.PositiveSmallIntegerField(default=0)
+    last_answer_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['room', 'user'], name='unique_minigame_player')]
+
+
+class MiniGameAnswer(models.Model):
+    player = models.ForeignKey(MiniGamePlayer, on_delete=models.CASCADE, related_name='answers')
+    question_index = models.PositiveSmallIntegerField()
+    selected = models.PositiveSmallIntegerField()
+    correct = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['player', 'question_index'], name='unique_minigame_answer')]

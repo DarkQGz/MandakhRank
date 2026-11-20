@@ -1,10 +1,11 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'data.dart';
+import 'tv_castle_game.dart';
 
 const _background = Color(0xFF091121);
 const _surface = Color(0xFF14223A);
@@ -23,9 +24,9 @@ class _GameInfo {
 }
 
 const _games = [
-  _GameInfo('tug', 'Олс таталт', 'Кодын хоосон хэсгийг нөхөж, олсыг өөр лүүгээ тат!', Icons.sports_handball, Color(0xFFFFC829)),
-  _GameInfo('frog', 'Мэлхийн үсрэлт', 'Кодын үр дүнг зөв тааж, мэлхийгээ түрүүлүүл!', Icons.water, Color(0xFF42DBB6)),
-  _GameInfo('rocket', 'Кодын пуужин', 'Алгоритмын асуултад хариулж, сансарт уралд!', Icons.rocket_launch_rounded, Color(0xFFA98BFF)),
+  _GameInfo('tug', 'ÐžÐ»Ñ Ñ‚Ð°Ñ‚Ð°Ð»Ñ‚', 'ÐšÐ¾Ð´Ñ‹Ð½ Ñ…Ð¾Ð¾ÑÐ¾Ð½ Ñ…ÑÑÐ³Ð¸Ð¹Ð³ Ð½Ó©Ñ…Ó©Ð¶, Ð¾Ð»ÑÑ‹Ð³ Ó©Ó©Ñ€ Ð»Ò¯Ò¯Ð³ÑÑ Ñ‚Ð°Ñ‚!', Icons.sports_handball, Color(0xFFFFC829)),
+  _GameInfo('frog', 'ÐœÑÐ»Ñ…Ð¸Ð¹Ð½ Ò¯ÑÑ€ÑÐ»Ñ‚', 'ÐšÐ¾Ð´Ñ‹Ð½ Ò¯Ñ€ Ð´Ò¯Ð½Ð³ Ð·Ó©Ð² Ñ‚Ð°Ð°Ð¶, Ð¼ÑÐ»Ñ…Ð¸Ð¹Ð³ÑÑ Ñ‚Ò¯Ñ€Ò¯Ò¯Ð»Ò¯Ò¯Ð»!', Icons.water, Color(0xFF42DBB6)),
+  _GameInfo('rocket', 'ÐšÐ¾Ð´Ñ‹Ð½ Ð¿ÑƒÑƒÐ¶Ð¸Ð½', 'ÐÐ»Ð³Ð¾Ñ€Ð¸Ñ‚Ð¼Ñ‹Ð½ Ð°ÑÑƒÑƒÐ»Ñ‚Ð°Ð´ Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ð¶, ÑÐ°Ð½ÑÐ°Ñ€Ñ‚ ÑƒÑ€Ð°Ð»Ð´!', Icons.rocket_launch_rounded, Color(0xFFA98BFF)),
 ];
 
 class MiniGamesPreview extends StatelessWidget {
@@ -42,19 +43,20 @@ class MiniGamesPreview extends StatelessWidget {
       border: Border.all(color: const Color(0xFF4164B4)),
     ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Text('ШИНЭ • БЯЦХАН ТОГЛООМУУД', style: TextStyle(color: Color(0xFF8FBDFF), fontWeight: FontWeight.w800, fontSize: 12)),
+      const Text('Ð¨Ð˜ÐÐ­ â€¢ Ð‘Ð¯Ð¦Ð¥ÐÐ Ð¢ÐžÐ“Ð›ÐžÐžÐœÐ£Ð£Ð”', style: TextStyle(color: Color(0xFF8FBDFF), fontWeight: FontWeight.w800, fontSize: 12)),
       const SizedBox(height: 8),
-      const Text('Хамтдаа кодлож, өрсөлдөцгөөе!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+      const Text('Ð¥Ð°Ð¼Ñ‚Ð´Ð°Ð° ÐºÐ¾Ð´Ð»Ð¾Ð¶, Ó©Ñ€ÑÓ©Ð»Ð´Ó©Ñ†Ð³Ó©Ó©Ðµ!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
       const SizedBox(height: 8),
-      const Text('Гар утас, таблет, компьютер дээр 1-ийн эсрэг 1 эсвэл багийн тоглолт. Өрөөний кодоо найздаа илгээгээрэй.', style: TextStyle(color: _dim, height: 1.5)),
+      const Text('Ð“Ð°Ñ€ ÑƒÑ‚Ð°Ñ, Ñ‚Ð°Ð±Ð»ÐµÑ‚, ÐºÐ¾Ð¼Ð¿ÑŒÑŽÑ‚ÐµÑ€ Ð´ÑÑÑ€ Ó©Ñ€Ó©Ó©Ð½Ð¸Ð¹ ÐºÐ¾Ð´Ð¾Ð¾Ñ€ Ó©Ñ€ÑÓ©Ð»Ð´Ó©Ó©Ñ€ÑÐ¹. ÐœÓ©Ð½ Ð½ÑÐ³ Ð¼ÑÐ´Ñ€ÑÐ³Ñ‡ Ð´ÑÐ»Ð³ÑÑ† Ð´ÑÑÑ€ Ñ…Ð¾Ñ‘Ñ€ Ð±Ð°Ð³ Ð·ÑÑ€ÑÐ³ Ñ‚Ð¾Ð³Ð»Ð¾Ñ… Ñ‚ÑƒÑÐ³Ð°Ð¹ Ð³Ð¾Ñ€Ð¸Ð¼Ñ‚Ð¾Ð¹.', style: TextStyle(color: _dim, height: 1.5)),
       const SizedBox(height: 18),
       Wrap(spacing: 14, runSpacing: 8, children: const [
-        _PreviewTag(icon: Icons.sports_handball, label: 'Олс таталт'),
-        _PreviewTag(icon: Icons.water, label: 'Мэлхийн үсрэлт'),
-        _PreviewTag(icon: Icons.rocket_launch, label: 'Кодын пуужин'),
+        _PreviewTag(icon: Icons.sports_handball, label: 'ÐžÐ»Ñ Ñ‚Ð°Ñ‚Ð°Ð»Ñ‚'),
+        _PreviewTag(icon: Icons.water, label: 'ÐœÑÐ»Ñ…Ð¸Ð¹Ð½ Ò¯ÑÑ€ÑÐ»Ñ‚'),
+        _PreviewTag(icon: Icons.rocket_launch, label: 'ÐšÐ¾Ð´Ñ‹Ð½ Ð¿ÑƒÑƒÐ¶Ð¸Ð½'),
+        _PreviewTag(icon: Icons.shield, label: 'Ð¦Ð°Ð¹Ð·Ñ‹Ð½ Ñ‚ÑƒÐ»Ð°Ð°Ð½'),
       ]),
       const SizedBox(height: 16),
-      FilledButton.icon(onPressed: onPlay, icon: const Icon(Icons.sports_esports), label: const Text('Тоглож эхлэх')),
+      FilledButton.icon(onPressed: onPlay, icon: const Icon(Icons.sports_esports), label: const Text('Ð¢Ð¾Ð³Ð»Ð¾Ð¶ ÑÑ…Ð»ÑÑ…')),
     ]),
   );
 }
@@ -111,63 +113,96 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
     final width = MediaQuery.sizeOf(context).width;
     return Scaffold(
       backgroundColor: _background,
-      appBar: AppBar(backgroundColor: _background, title: const Text('Тоглоомын талбар'), centerTitle: false),
+      appBar: AppBar(backgroundColor: _background, title: const Text('Ð¢Ð¾Ð³Ð»Ð¾Ð¾Ð¼Ñ‹Ð½ Ñ‚Ð°Ð»Ð±Ð°Ñ€'), centerTitle: false),
       body: SafeArea(child: ListView(padding: EdgeInsets.symmetric(horizontal: width < 600 ? 16 : 30, vertical: 18), children: [
         Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 940), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('КОДООР ӨРСӨЛДӨЕ', style: TextStyle(color: Color(0xFF7CB0FF), fontSize: 12, letterSpacing: 2, fontWeight: FontWeight.w900)),
+          const Text('ÐšÐžÐ”ÐžÐžÐ  Ó¨Ð Ð¡Ó¨Ð›Ð”Ó¨Ð•', style: TextStyle(color: Color(0xFF7CB0FF), fontSize: 12, letterSpacing: 2, fontWeight: FontWeight.w900)),
           const SizedBox(height: 8),
-          const Text('3 тоглоом. 2 тал. 1 ялагч.', style: TextStyle(fontSize: 30, height: 1.1, fontWeight: FontWeight.w900)),
+          const Text('3 Ð¾Ð½Ð»Ð°Ð¹Ð½ + 1 Ð´ÑÐ»Ð³ÑÑ†Ð¸Ð¹Ð½ Ñ‚Ð¾Ð³Ð»Ð¾Ð¾Ð¼', style: TextStyle(fontSize: 30, height: 1.1, fontWeight: FontWeight.w900)),
           const SizedBox(height: 10),
-          const Text('Асуултад хурдан, зөв хариулж багтаа давуу тал ав. Найзтайгаа нэг өрөөнд орж тоглоно.', style: TextStyle(color: _dim, height: 1.6)),
+          const Text('ÐÑÑƒÑƒÐ»Ñ‚Ð°Ð´ Ñ…ÑƒÑ€Ð´Ð°Ð½, Ð·Ó©Ð² Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ð¶ Ð±Ð°Ð³Ñ‚Ð°Ð° Ð´Ð°Ð²ÑƒÑƒ Ñ‚Ð°Ð» Ð°Ð². ÐÐ°Ð¹Ð·Ñ‚Ð°Ð¹Ð³Ð°Ð° Ð½ÑÐ³ Ó©Ñ€Ó©Ó©Ð½Ð´ Ð¾Ñ€Ð¶ Ñ‚Ð¾Ð³Ð»Ð¾Ð½Ð¾.', style: TextStyle(color: _dim, height: 1.6)),
           const SizedBox(height: 22),
           LayoutBuilder(builder: (context, constraints) {
             final cardWidth = constraints.maxWidth >= 770 ? (constraints.maxWidth - 26) / 3 : constraints.maxWidth;
             return Wrap(spacing: 13, runSpacing: 13, children: _games.map((game) => SizedBox(width: cardWidth, child: _gameCard(game))).toList());
           }),
+          const SizedBox(height: 17),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [Color(0xFF1B355E), Color(0xFF302342)]),
+              border: Border.all(color: const Color(0xFF6887CF)),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 15,
+              runSpacing: 14,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 560),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                    Text('Ð¨Ð˜ÐÐ­ â€¢ ÐÐ­Ð“ Ð”Ð­Ð›Ð“Ð­Ð¦Ð˜Ð™Ð Ð¢ÐžÐ“Ð›ÐžÐžÐœ', style: TextStyle(color: Color(0xFFB4D4FF), fontSize: 12, fontWeight: FontWeight.w900)),
+                    SizedBox(height: 7),
+                    Text('Ð¦Ð°Ð¹Ð·Ñ‹Ð½ Ñ‚ÑƒÐ»Ð°Ð°Ð½', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
+                    SizedBox(height: 7),
+                    Text('ÐœÑÐ´Ñ€ÑÐ³Ñ‡ Ð·ÑƒÑ€Ð°Ð³Ñ‚ Ð´ÑÑÑ€ Ñ…Ð¾Ñ‘Ñ€ Ð±Ð°Ð³ Ð½ÑÐ³ Ð´ÑÐ»Ð³ÑÑ†ÑÑÑ Ó©Ñ€ÑÓ©Ð»Ð´Ó©Ð½Ó©. ÐœÐ°Ñ‚ÐµÐ¼Ð°Ñ‚Ð¸Ðº, Ð°Ð»Ð³Ð¾Ñ€Ð¸Ñ‚Ð¼, Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ñ‡Ð»Ð°Ð», ÐµÑ€Ó©Ð½Ñ…Ð¸Ð¹ Ð¼ÑÐ´Ð»ÑÐ³Ð¸Ð¹Ð½ Ð°ÑÑƒÑƒÐ»Ñ‚Ð°Ð´ Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ð°Ð°Ð´ Ð½Ó©Ð³Ó©Ó© Ð±Ð°Ð³Ð¸Ð¹Ð½ Ñ†Ð°Ð¹Ð· Ñ€ÑƒÑƒ Ð³ÑÑ€ÑÐ»Ñ‚ ÑÑƒÐ¼ Ñ…Ð°Ñ€Ð²Ð°Ð°Ñ€Ð°Ð¹!', style: TextStyle(color: _dim, height: 1.45)),
+                  ]),
+                ),
+                FilledButton.icon(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const TvCastleBattleScreen())),
+                  icon: const Icon(Icons.castle_rounded),
+                  label: const Padding(padding: EdgeInsets.symmetric(vertical: 13), child: Text('ÐÑÐ³ Ð´ÑÐ»Ð³ÑÑ†ÑÑÑ€ Ñ‚Ð¾Ð³Ð»Ð¾Ñ…', style: TextStyle(fontWeight: FontWeight.w800))),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 28),
-          const Text('Хэрхэн тоглох вэ?', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+          const Text('Ð¥ÑÑ€Ñ…ÑÐ½ Ñ‚Ð¾Ð³Ð»Ð¾Ñ… Ð²Ñ?', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(spacing: 10, runSpacing: 10, children: [
-            ChoiceChip(label: const Text('1-ийн эсрэг 1'), selected: format == 'solo', onSelected: (_) => setState(() => format = 'solo')),
-            ChoiceChip(label: const Text('Багийн тоглолт (3 хүртэл)'), selected: format == 'team', onSelected: (_) => setState(() => format = 'team')),
+            ChoiceChip(label: const Text('1-Ð¸Ð¹Ð½ ÑÑÑ€ÑÐ³ 1'), selected: format == 'solo', onSelected: (_) => setState(() => format = 'solo')),
+            ChoiceChip(label: const Text('Ð‘Ð°Ð³Ð¸Ð¹Ð½ Ñ‚Ð¾Ð³Ð»Ð¾Ð»Ñ‚ (3 Ñ…Ò¯Ñ€Ñ‚ÑÐ»)'), selected: format == 'team', onSelected: (_) => setState(() => format = 'team')),
           ]),
           const SizedBox(height: 12),
           SizedBox(width: double.infinity, child: FilledButton.icon(
             onPressed: loading ? null : () => _run(() => PracticeApi.request('games/create/', body: {'mode': selectedMode, 'format': format})),
             icon: const Icon(Icons.add_circle_outline),
-            label: const Padding(padding: EdgeInsets.all(12), child: Text('Шинэ өрөө нээх', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
+            label: const Padding(padding: EdgeInsets.all(12), child: Text('Ð¨Ð¸Ð½Ñ Ó©Ñ€Ó©Ó© Ð½ÑÑÑ…', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
           )),
           const SizedBox(height: 24),
           _panel(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Найзынхаа өрөөнд нэгдэх', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+            const Text('ÐÐ°Ð¹Ð·Ñ‹Ð½Ñ…Ð°Ð° Ó©Ñ€Ó©Ó©Ð½Ð´ Ð½ÑÐ³Ð´ÑÑ…', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
             const SizedBox(height: 7),
-            const Text('Найзаасаа 6 тэмдэгттэй өрөөний кодыг аваарай.', style: TextStyle(color: _dim)),
+            const Text('ÐÐ°Ð¹Ð·Ð°Ð°ÑÐ°Ð° 6 Ñ‚ÑÐ¼Ð´ÑÐ³Ñ‚Ñ‚ÑÐ¹ Ó©Ñ€Ó©Ó©Ð½Ð¸Ð¹ ÐºÐ¾Ð´Ñ‹Ð³ Ð°Ð²Ð°Ð°Ñ€Ð°Ð¹.', style: TextStyle(color: _dim)),
             const SizedBox(height: 15),
             TextField(
               controller: inviteController,
               maxLength: 6,
               textCapitalization: TextCapitalization.characters,
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]'))],
-              decoration: const InputDecoration(prefixIcon: Icon(Icons.key), hintText: 'Өрөөний код', counterText: ''),
+              decoration: const InputDecoration(prefixIcon: Icon(Icons.key), hintText: 'Ó¨Ñ€Ó©Ó©Ð½Ð¸Ð¹ ÐºÐ¾Ð´', counterText: ''),
               onChanged: (value) => setState(() => invite = value.toUpperCase()),
             ),
             const SizedBox(height: 8),
-            const Text('Нэгдэх тал', style: TextStyle(color: _dim)),
+            const Text('ÐÑÐ³Ð´ÑÑ… Ñ‚Ð°Ð»', style: TextStyle(color: _dim)),
             Wrap(spacing: 8, children: [
-              ChoiceChip(label: const Text('Автоматаар'), selected: side == null, onSelected: (_) => setState(() => side = null)),
-              ChoiceChip(label: const Text('Цэнхэр'), selected: side == 1, onSelected: (_) => setState(() => side = 1)),
-              ChoiceChip(label: const Text('Улбар шар'), selected: side == 2, onSelected: (_) => setState(() => side = 2)),
+              ChoiceChip(label: const Text('ÐÐ²Ñ‚Ð¾Ð¼Ð°Ñ‚Ð°Ð°Ñ€'), selected: side == null, onSelected: (_) => setState(() => side = null)),
+              ChoiceChip(label: const Text('Ð¦ÑÐ½Ñ…ÑÑ€'), selected: side == 1, onSelected: (_) => setState(() => side = 1)),
+              ChoiceChip(label: const Text('Ð£Ð»Ð±Ð°Ñ€ ÑˆÐ°Ñ€'), selected: side == 2, onSelected: (_) => setState(() => side = 2)),
             ]),
             const SizedBox(height: 12),
             SizedBox(width: double.infinity, child: OutlinedButton.icon(
               onPressed: loading || invite.length != 6 ? null : () => _run(() => PracticeApi.request('games/$invite/join/', body: {if (side != null) 'side': side})),
-              icon: const Icon(Icons.login), label: const Text('Кодоор нэгдэх'),
+              icon: const Icon(Icons.login), label: const Text('ÐšÐ¾Ð´Ð¾Ð¾Ñ€ Ð½ÑÐ³Ð´ÑÑ…'),
             )),
           ])),
           if (loading) const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator())),
           if (error != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(error!, style: const TextStyle(color: Color(0xFFFF9D98)))),
           const SizedBox(height: 18),
-          const Text('Эдгээр тоглоомын оноо нь албан ёсны бодлого бодолтын эрэмбэд нөлөөлөхгүй.', style: TextStyle(color: _dim, fontSize: 12)),
+          const Text('Ð­Ð´Ð³ÑÑÑ€ Ñ‚Ð¾Ð³Ð»Ð¾Ð¾Ð¼Ñ‹Ð½ Ð¾Ð½Ð¾Ð¾ Ð½ÑŒ Ð°Ð»Ð±Ð°Ð½ Ñ‘ÑÐ½Ñ‹ Ð±Ð¾Ð´Ð»Ð¾Ð³Ð¾ Ð±Ð¾Ð´Ð¾Ð»Ñ‚Ñ‹Ð½ ÑÑ€ÑÐ¼Ð±ÑÐ´ Ð½Ó©Ð»Ó©Ó©Ð»Ó©Ñ…Ð³Ò¯Ð¹.', style: TextStyle(color: _dim, fontSize: 12)),
         ]))),
       ])),
     );
@@ -252,7 +287,7 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
       final latest = await PracticeApi.request('games/${room['code']}/');
       if (mounted) setState(() { room = latest; networkError = null; });
     } catch (_) {
-      if (mounted) setState(() => networkError = 'Холболт түр тасарлаа. Дахин холбогдож байна…');
+      if (mounted) setState(() => networkError = 'Ð¥Ð¾Ð»Ð±Ð¾Ð»Ñ‚ Ñ‚Ò¯Ñ€ Ñ‚Ð°ÑÐ°Ñ€Ð»Ð°Ð°. Ð”Ð°Ñ…Ð¸Ð½ Ñ…Ð¾Ð»Ð±Ð¾Ð³Ð´Ð¾Ð¶ Ð±Ð°Ð¹Ð½Ð°â€¦');
     } finally {
       polling = false;
     }
@@ -267,7 +302,7 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
       setState(() {
         room = action == 'answer' ? Map<String, dynamic>.from(result['room'] as Map) : result;
         networkError = null;
-        if (action == 'answer') feedback = result['correct'] == true ? 'Зөв хариуллаа! +1 оноо' : 'Буруу хариуллаа. Дараагийнхыг оролдоорой!';
+        if (action == 'answer') feedback = result['correct'] == true ? 'Ð—Ó©Ð² Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ð»Ð°Ð°! +1 Ð¾Ð½Ð¾Ð¾' : 'Ð‘ÑƒÑ€ÑƒÑƒ Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ð»Ð°Ð°. Ð”Ð°Ñ€Ð°Ð°Ð³Ð¸Ð¹Ð½Ñ…Ñ‹Ð³ Ð¾Ñ€Ð¾Ð»Ð´Ð¾Ð¾Ñ€Ð¾Ð¹!';
       });
       if (action == 'answer') {
         feedbackTimer?.cancel();
@@ -299,15 +334,15 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
         backgroundColor: _background,
         title: Text(room['name'] as String),
         actions: [
-          IconButton(tooltip: 'Шинэчлэх', onPressed: _poll, icon: const Icon(Icons.refresh)),
+          IconButton(tooltip: 'Ð¨Ð¸Ð½ÑÑ‡Ð»ÑÑ…', onPressed: _poll, icon: const Icon(Icons.refresh)),
         ],
       ),
       body: SafeArea(child: ListView(padding: const EdgeInsets.fromLTRB(14, 8, 14, 28), children: [
         Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Өрөөний код', style: TextStyle(color: _dim, fontWeight: FontWeight.bold)),
+            const Text('Ó¨Ñ€Ó©Ó©Ð½Ð¸Ð¹ ÐºÐ¾Ð´', style: TextStyle(color: _dim, fontWeight: FontWeight.bold)),
             OutlinedButton.icon(
-              onPressed: () { Clipboard.setData(ClipboardData(text: room['code'] as String)); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Өрөөний кодыг хууллаа.'))); },
+              onPressed: () { Clipboard.setData(ClipboardData(text: room['code'] as String)); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ó¨Ñ€Ó©Ó©Ð½Ð¸Ð¹ ÐºÐ¾Ð´Ñ‹Ð³ Ñ…ÑƒÑƒÐ»Ð»Ð°Ð°.'))); },
               icon: const Icon(Icons.copy, size: 15),
               label: Text(room['code'] as String, style: const TextStyle(letterSpacing: 3, fontWeight: FontWeight.w800)),
             ),
@@ -315,15 +350,15 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
           const SizedBox(height: 10),
           _panel(Column(children: [
             Row(children: [
-              Expanded(child: _sideInfo('ЦЭНХЭР', teamOne, scores[0], _left)),
-              const Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Text('ЭСРЭГ', style: TextStyle(color: _dim, fontSize: 11, fontWeight: FontWeight.bold))),
-              Expanded(child: _sideInfo('УЛБАР ШАР', teamTwo, scores[1], _right)),
+              Expanded(child: _sideInfo('Ð¦Ð­ÐÐ¥Ð­Ð ', teamOne, scores[0], _left)),
+              const Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Text('Ð­Ð¡Ð Ð­Ð“', style: TextStyle(color: _dim, fontSize: 11, fontWeight: FontWeight.bold))),
+              Expanded(child: _sideInfo('Ð£Ð›Ð‘ÐÐ  Ð¨ÐÐ ', teamTwo, scores[1], _right)),
             ]),
             const SizedBox(height: 16),
             Row(children: [
               Expanded(child: TweenAnimationBuilder<double>(tween: Tween<double>(end: scores[0] / 8.0), duration: const Duration(milliseconds: 650), curve: Curves.easeOutCubic, builder: (context, value, _) => LinearProgressIndicator(value: value.clamp(0.0, 1.0).toDouble(), minHeight: 10, backgroundColor: const Color(0xFF24344A), valueColor: const AlwaysStoppedAnimation(_left), borderRadius: BorderRadius.circular(8)))),
               const SizedBox(width: 10),
-              Text('$remaining с', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text('$remaining Ñ', style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(width: 10),
               Expanded(child: TweenAnimationBuilder<double>(tween: Tween<double>(end: scores[1] / 8.0), duration: const Duration(milliseconds: 650), curve: Curves.easeOutCubic, builder: (context, value, _) => LinearProgressIndicator(value: value.clamp(0.0, 1.0).toDouble(), minHeight: 10, backgroundColor: const Color(0xFF24344A), valueColor: const AlwaysStoppedAnimation(_right), borderRadius: BorderRadius.circular(8)))),
             ]),
@@ -336,21 +371,21 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
             if (question != null) _questionCard(question) else _panel(const Column(children: [
               Icon(Icons.hourglass_top, color: Color(0xFFFFC829), size: 32),
               SizedBox(height: 12),
-              Text('Асуултуудаа дуусгалаа!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text('ÐÑÑƒÑƒÐ»Ñ‚ÑƒÑƒÐ´Ð°Ð° Ð´ÑƒÑƒÑÐ³Ð°Ð»Ð°Ð°!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              Text('Нөгөө талын хариулт эсвэл хугацаа дуусахыг хүлээнэ үү.', textAlign: TextAlign.center, style: TextStyle(color: _dim)),
+              Text('ÐÓ©Ð³Ó©Ó© Ñ‚Ð°Ð»Ñ‹Ð½ Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚ ÑÑÐ²ÑÐ» Ñ…ÑƒÐ³Ð°Ñ†Ð°Ð° Ð´ÑƒÑƒÑÐ°Ñ…Ñ‹Ð³ Ñ…Ò¯Ð»ÑÑÐ½Ñ Ò¯Ò¯.', textAlign: TextAlign.center, style: TextStyle(color: _dim)),
             ])),
           ],
           if (status == 'finished') _panel(Column(children: [
             Icon(draw ? Icons.handshake_rounded : leftWins ? Icons.emoji_events_rounded : Icons.flag_outlined, color: draw ? Colors.white : leftWins ? const Color(0xFFFFCB3D) : _dim, size: 58),
             const SizedBox(height: 12),
-            Text(draw ? 'Тэнцлээ!' : leftWins ? 'Ялалт байгууллаа!' : 'Энэ удаа нөгөө тал яллаа', textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
+            Text(draw ? 'Ð¢ÑÐ½Ñ†Ð»ÑÑ!' : leftWins ? 'Ð¯Ð»Ð°Ð»Ñ‚ Ð±Ð°Ð¹Ð³ÑƒÑƒÐ»Ð»Ð°Ð°!' : 'Ð­Ð½Ñ ÑƒÐ´Ð°Ð° Ð½Ó©Ð³Ó©Ó© Ñ‚Ð°Ð» ÑÐ»Ð»Ð°Ð°', textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
             const SizedBox(height: 10),
-            Text('Эцсийн оноо: ${scores[0]} – ${scores[1]}', style: const TextStyle(color: _dim, fontSize: 17)),
+            Text('Ð­Ñ†ÑÐ¸Ð¹Ð½ Ð¾Ð½Ð¾Ð¾: ${scores[0]} â€“ ${scores[1]}', style: const TextStyle(color: _dim, fontSize: 17)),
             const SizedBox(height: 14),
-            FilledButton.icon(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.replay), label: const Text('Дахин тоглох өрөө нээх')),
+            FilledButton.icon(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.replay), label: const Text('Ð”Ð°Ñ…Ð¸Ð½ Ñ‚Ð¾Ð³Ð»Ð¾Ñ… Ó©Ñ€Ó©Ó© Ð½ÑÑÑ…')),
           ])),
-          if (feedback != null) Padding(padding: const EdgeInsets.only(top: 12), child: AnimatedSwitcher(duration: const Duration(milliseconds: 250), child: Text(feedback!, key: ValueKey(feedback), textAlign: TextAlign.center, style: TextStyle(color: feedback!.startsWith('Зөв') ? const Color(0xFF63E5B1) : const Color(0xFFFFC176), fontWeight: FontWeight.w800)))),
+          if (feedback != null) Padding(padding: const EdgeInsets.only(top: 12), child: AnimatedSwitcher(duration: const Duration(milliseconds: 250), child: Text(feedback!, key: ValueKey(feedback), textAlign: TextAlign.center, style: TextStyle(color: feedback!.startsWith('Ð—Ó©Ð²') ? const Color(0xFF63E5B1) : const Color(0xFFFFC176), fontWeight: FontWeight.w800)))),
           if (networkError != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(networkError!, style: const TextStyle(color: Color(0xFFFF9999)), textAlign: TextAlign.center)),
         ]))),
       ])),
@@ -361,9 +396,9 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1)),
       const SizedBox(height: 5),
-      Text('$score оноо', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 23)),
+      Text('$score Ð¾Ð½Ð¾Ð¾', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 23)),
       const SizedBox(height: 4),
-      Text(members.isEmpty ? 'Хүлээж байна…' : members.map((p) => p['name']).join(', '), style: const TextStyle(color: _dim, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
+      Text(members.isEmpty ? 'Ð¥Ò¯Ð»ÑÑÐ¶ Ð±Ð°Ð¹Ð½Ð°â€¦' : members.map((p) => p['name']).join(', '), style: const TextStyle(color: _dim, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
     ]);
   }
 
@@ -373,15 +408,15 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
     return _panel(Column(children: [
       const Icon(Icons.groups, color: Color(0xFFFFC829), size: 40),
       const SizedBox(height: 12),
-      const Text('Тоглогчдоо хүлээж байна', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+      const Text('Ð¢Ð¾Ð³Ð»Ð¾Ð³Ñ‡Ð´Ð¾Ð¾ Ñ…Ò¯Ð»ÑÑÐ¶ Ð±Ð°Ð¹Ð½Ð°', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
       const SizedBox(height: 9),
-      const Text('Өрөөний кодоо найздаа илгээнэ үү. Хоёр талд тоглогч орсны дараа тоглоом эхэлнэ.', textAlign: TextAlign.center, style: TextStyle(color: _dim, height: 1.5)),
+      const Text('Ó¨Ñ€Ó©Ó©Ð½Ð¸Ð¹ ÐºÐ¾Ð´Ð¾Ð¾ Ð½Ð°Ð¹Ð·Ð´Ð°Ð° Ð¸Ð»Ð³ÑÑÐ½Ñ Ò¯Ò¯. Ð¥Ð¾Ñ‘Ñ€ Ñ‚Ð°Ð»Ð´ Ñ‚Ð¾Ð³Ð»Ð¾Ð³Ñ‡ Ð¾Ñ€ÑÐ½Ñ‹ Ð´Ð°Ñ€Ð°Ð° Ñ‚Ð¾Ð³Ð»Ð¾Ð¾Ð¼ ÑÑ…ÑÐ»Ð½Ñ.', textAlign: TextAlign.center, style: TextStyle(color: _dim, height: 1.5)),
       const SizedBox(height: 18),
       if (host) SizedBox(width: double.infinity, child: FilledButton.icon(
         onPressed: ready && !answering ? () => _action('start') : null,
         icon: const Icon(Icons.play_arrow_rounded),
-        label: const Padding(padding: EdgeInsets.all(11), child: Text('Тоглоом эхлүүлэх')),
-      )) else const Text('Өрөө нээсэн хүн тоглоом эхлүүлнэ.', style: TextStyle(color: _dim)),
+        label: const Padding(padding: EdgeInsets.all(11), child: Text('Ð¢Ð¾Ð³Ð»Ð¾Ð¾Ð¼ ÑÑ…Ð»Ò¯Ò¯Ð»ÑÑ…')),
+      )) else const Text('Ó¨Ñ€Ó©Ó© Ð½ÑÑÑÑÐ½ Ñ…Ò¯Ð½ Ñ‚Ð¾Ð³Ð»Ð¾Ð¾Ð¼ ÑÑ…Ð»Ò¯Ò¯Ð»Ð½Ñ.', style: TextStyle(color: _dim)),
     ]));
   }
 
@@ -391,9 +426,9 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
       Row(children: [
         const Icon(Icons.psychology_rounded, color: Color(0xFFFFD15A)),
         const SizedBox(width: 8),
-        Text('АСУУЛТ ${(question['index'] as int) + 1} / ${room['max_answers']}', style: const TextStyle(color: _dim, fontWeight: FontWeight.w800)),
+        Text('ÐÐ¡Ð£Ð£Ð›Ð¢ ${(question['index'] as int) + 1} / ${room['max_answers']}', style: const TextStyle(color: _dim, fontWeight: FontWeight.w800)),
         const SizedBox(width: 6),
-        Expanded(child: Text('Зөв хариулт = +1', textAlign: TextAlign.end, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: Colors.green.shade200))),
+        Expanded(child: Text('Ð—Ó©Ð² Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚ = +1', textAlign: TextAlign.end, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: Colors.green.shade200))),
       ]),
       const SizedBox(height: 15),
       AnimatedSwitcher(
@@ -532,8 +567,8 @@ class _ArenaPainter extends CustomPainter {
         _character(canvas, Offset(w * (.21 + .12 * i) + shift, ropeY + 10), _left, tick + i);
         _character(canvas, Offset(w * (.63 + .10 * i) + shift, ropeY + 10), _right, tick + i + .5);
       }
-      _label(canvas, 'ЦЭНХЭР', Offset(14, h - 24), Colors.white);
-      _label(canvas, 'УЛБАР ШАР', Offset(w - 104, h - 24), Colors.white);
+      _label(canvas, 'Ð¦Ð­ÐÐ¥Ð­Ð ', Offset(14, h - 24), Colors.white);
+      _label(canvas, 'Ð£Ð›Ð‘ÐÐ  Ð¨ÐÐ ', Offset(w - 104, h - 24), Colors.white);
     } else if (mode == 'frog') {
       final rect = Rect.fromLTWH(0, 0, w, h);
       canvas.drawRect(rect, Paint()..shader = const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF41D3DD), Color(0xFF147CA9)]).createShader(rect));
@@ -545,13 +580,13 @@ class _ArenaPainter extends CustomPainter {
         }
       }
       _line(canvas, Offset(w * .9, h * .1), Offset(w * .9, h * .89), const Color(0xFFFFF1A1), 3);
-      _label(canvas, 'БАРИА', Offset(w * .75, 7), Colors.white, size: 11);
+      _label(canvas, 'Ð‘ÐÐ Ð˜Ð', Offset(w * .75, 7), Colors.white, size: 11);
       final leftX = w * (.1 + left * .8);
       final rightX = w * (.1 + right * .8);
       _frog(canvas, Offset(leftX, h * .27 - math.sin(tick * math.pi * 2).abs() * 8), const Color(0xFF64EA91), _left);
       _frog(canvas, Offset(rightX, h * .68 - math.sin(tick * math.pi * 2 + .8).abs() * 8), const Color(0xFFFFCE5C), _right);
-      _label(canvas, 'ЦЭНХЭР', const Offset(11, 10), Colors.white);
-      _label(canvas, 'УЛБАР ШАР', Offset(11, h * .50), Colors.white);
+      _label(canvas, 'Ð¦Ð­ÐÐ¥Ð­Ð ', const Offset(11, 10), Colors.white);
+      _label(canvas, 'Ð£Ð›Ð‘ÐÐ  Ð¨ÐÐ ', Offset(11, h * .50), Colors.white);
     } else {
       final rect = Rect.fromLTWH(0, 0, w, h);
       canvas.drawRect(rect, Paint()..shader = const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF192B65), Color(0xFF080E27)]).createShader(rect));
@@ -562,11 +597,11 @@ class _ArenaPainter extends CustomPainter {
       }
       final aX = w * .32, bX = w * .68;
       _line(canvas, Offset(w * .08, h * .2), Offset(w * .92, h * .2), const Color(0xFFB9B0FF), 3);
-      _label(canvas, 'БАРИА', Offset(w * .44, 12), Colors.white, size: 12);
+      _label(canvas, 'Ð‘ÐÐ Ð˜Ð', Offset(w * .44, 12), Colors.white, size: 12);
       _rocket(canvas, Offset(aX, h * (.82 - .64 * left)), _left, tick);
       _rocket(canvas, Offset(bX, h * (.82 - .64 * right)), _right, tick + .5);
-      _label(canvas, 'ЦЭНХЭР', Offset(aX - 30, h - 22), const Color(0xFFA0CEFF));
-      _label(canvas, 'УЛБАР ШАР', Offset(bX - 43, h - 22), const Color(0xFFFFD1A4));
+      _label(canvas, 'Ð¦Ð­ÐÐ¥Ð­Ð ', Offset(aX - 30, h - 22), const Color(0xFFA0CEFF));
+      _label(canvas, 'Ð£Ð›Ð‘ÐÐ  Ð¨ÐÐ ', Offset(bX - 43, h - 22), const Color(0xFFFFD1A4));
     }
   }
 
@@ -610,3 +645,4 @@ class _ArenaPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _ArenaPainter old) => old.left != left || old.right != right || old.tick != tick || old.mode != mode;
 }
+

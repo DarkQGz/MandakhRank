@@ -2,17 +2,13 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'theme_settings.dart';
 import 'package:flutter/services.dart';
 
 // This game is intentionally local-only. No practice/contest leaderboard points
 // are granted and no student code is executed.
-const Color _navy = Color(0xFF091121);
-const Color _card = Color(0xFF14223A);
-const Color _border = Color(0xFF30425E);
 const Color _blue = Color(0xFF4C98FF);
 const Color _orange = Color(0xFFFFA34B);
-const Color _muted = Color(0xFFB5C3D9);
-const Color _green = Color(0xFF58E2AA);
 
 class _Topic {
   const _Topic(this.id, this.label, this.icon);
@@ -126,6 +122,7 @@ enum _Stage { setup, playing, results }
 
 class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
     with TickerProviderStateMixin {
+  MandakhPalette get palette => MandakhPalette.of(context);
   final TextEditingController _blueName = TextEditingController(text: 'Цэнхэр баг');
   final TextEditingController _orangeName = TextEditingController(text: 'Улбар шар баг');
   final math.Random _random = math.Random();
@@ -159,9 +156,9 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
   @override
   void initState() {
     super.initState();
-    _ambient = AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat();
-    _blast = AnimationController(vsync: this, duration: const Duration(milliseconds: 1050));
-    _clock = Timer.periodic(const Duration(milliseconds: 200), (_) {
+    _ambient = AnimationController(vsync: this, duration: Duration(seconds: 4))..repeat();
+    _blast = AnimationController(vsync: this, duration: Duration(milliseconds: 1050));
+    _clock = Timer.periodic(Duration(milliseconds: 200), (_) {
       if (!mounted || _stage != _Stage.playing || _reveal || _deadline == null) return;
       if (!DateTime.now().isBefore(_deadline!)) {
         _finishQuestion();
@@ -271,7 +268,7 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
     _blast.forward(from: 0);
     final ended = _blueHp == 0 || _orangeHp == 0 || _index + 1 >= _match.length;
     _next?.cancel();
-    _next = Timer(const Duration(milliseconds: 2300), () {
+    _next = Timer(Duration(milliseconds: 2300), () {
       if (!mounted) return;
       setState(() {
         if (ended) {
@@ -300,18 +297,18 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _navy,
+      backgroundColor: palette.background,
       appBar: AppBar(
-        backgroundColor: _navy,
-        title: const Text('Цайзын тулаан', style: TextStyle(fontWeight: FontWeight.w900)),
+        backgroundColor: palette.background,
+        title: Text('Цайзын тулаан', style: TextStyle(fontWeight: FontWeight.w900)),
         actions: [
           if (_stage != _Stage.setup)
             TextButton.icon(
               onPressed: _newMatch,
-              icon: const Icon(Icons.restart_alt_rounded),
-              label: const Text('Шинэ тоглоом'),
+              icon: Icon(Icons.restart_alt_rounded),
+              label: Text('Шинэ тоглоом'),
             ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
@@ -327,79 +324,79 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
         padding: EdgeInsets.symmetric(horizontal: roomy ? 30 : 16, vertical: 12),
         children: [
           Center(child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1080),
+            constraints: BoxConstraints(maxWidth: 1080),
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               Container(
-                padding: const EdgeInsets.all(24),
-                decoration: _decoration(const Color(0xFF142C56), const Color(0xFF1C2445)),
+                padding: EdgeInsets.all(24),
+                decoration: _decoration(context, palette.tint, palette.surface),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('НЭГ ДЭЛГЭЦ • ХОЁР БАГ', style: TextStyle(color: Color(0xFF8FBFFF), letterSpacing: 1.4, fontWeight: FontWeight.w900)),
-                  const SizedBox(height: 8),
-                  const Text('Цайзаа хамгаал, нөгөө багийн цайзыг довтол!', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)),
-                  const SizedBox(height: 9),
-                  const Text('Хоёр баг зурагтын хоёр талд зогсоод нэг асуултад зэрэг хариулна. Зөв хариулбал нөгөө багийн цайз руу гэрэлт сум харвана. Хурдан зөв хариулсан баг илүү хүчтэй довтолно!', style: TextStyle(color: _muted, height: 1.5)),
-                  const SizedBox(height: 14),
-                  const Wrap(spacing: 16, runSpacing: 8, children: [
+                  Text('НЭГ ДЭЛГЭЦ • ХОЁР БАГ', style: TextStyle(color: palette.accentInk, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
+                  SizedBox(height: 8),
+                  Text('Цайзаа хамгаал, нөгөө багийн цайзыг довтол!', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)),
+                  SizedBox(height: 9),
+                  Text('Хоёр баг зурагтын хоёр талд зогсоод нэг асуултад зэрэг хариулна. Зөв хариулбал нөгөө багийн цайз руу гэрэлт сум харвана. Хурдан зөв хариулсан баг илүү хүчтэй довтолно!', style: TextStyle(color: MandakhPalette.of(context).muted, height: 1.5)),
+                  SizedBox(height: 14),
+                  Wrap(spacing: 16, runSpacing: 8, children: [
                     _Hint(Icons.touch_app_rounded, 'Том мэдрэгч товч'),
                     _Hint(Icons.groups_rounded, '2 баг • Нэг төхөөрөмж'),
                     _Hint(Icons.tv_rounded, 'Зурагт дээр F11'),
                   ]),
                 ]),
               ),
-              const SizedBox(height: 24),
-              const Text('Багуудын нэр', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 12),
+              SizedBox(height: 24),
+              Text('Багуудын нэр', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+              SizedBox(height: 12),
               Row(children: [
                 Expanded(child: TextField(
                   controller: _blueName,
                   maxLength: 20,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.shield_rounded, color: _blue),
+                    prefixIcon: Icon(Icons.shield_rounded, color: _blue),
                     labelText: 'Зүүн тал • Цэнхэр баг',
                     counterText: '',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 )),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(child: TextField(
                   controller: _orangeName,
                   maxLength: 20,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.shield_rounded, color: _orange),
+                    prefixIcon: Icon(Icons.shield_rounded, color: _orange),
                     labelText: 'Баруун тал • Улбар шар баг',
                     counterText: '',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 )),
               ]),
-              const SizedBox(height: 24),
-              const Text('Асуултын төрөл сонгох', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 12),
+              SizedBox(height: 24),
+              Text('Асуултын төрөл сонгох', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+              SizedBox(height: 12),
               Wrap(spacing: 10, runSpacing: 12, children: _topics.map((topic) => ChoiceChip(
-                avatar: Icon(topic.icon, size: 20, color: _topic == topic.id ? const Color(0xFF0C2040) : const Color(0xFF9CBCE5)),
+                avatar: Icon(topic.icon, size: 20, color: _topic == topic.id ? palette.onAccent : palette.accentInk),
                 label: Text(topic.label),
                 selected: _topic == topic.id,
-                selectedColor: const Color(0xFF90BDFF),
-                backgroundColor: _card,
-                labelStyle: TextStyle(color: _topic == topic.id ? const Color(0xFF0C2040) : Colors.white, fontWeight: FontWeight.w800),
+                selectedColor: palette.accentInk,
+                backgroundColor: palette.surface,
+                labelStyle: TextStyle(color: _topic == topic.id ? palette.onAccent : palette.text, fontWeight: FontWeight.w800),
                 onSelected: (_) => setState(() => _topic = topic.id),
               )).toList()),
-              const SizedBox(height: 24),
-              const Text('Тоглоомын тохиргоо', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 10),
+              SizedBox(height: 24),
+              Text('Тоглоомын тохиргоо', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+              SizedBox(height: 10),
               _choiceRow('Нийт асуулт', [6, 10, 12], _rounds, (v) => setState(() => _rounds = v)),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               _choiceRow('Асуулт бүрийн хугацаа', [15, 20, 30], _roundSeconds, (v) => setState(() => _roundSeconds = v), suffix: ' сек'),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               SizedBox(height: 62, child: FilledButton.icon(
                 onPressed: _start,
-                icon: const Icon(Icons.play_arrow_rounded, size: 28),
-                label: const Text('ТУЛААН ЭХЛҮҮЛЭХ', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900)),
-                style: FilledButton.styleFrom(backgroundColor: const Color(0xFF6098FF), foregroundColor: const Color(0xFF071526)),
+                icon: Icon(Icons.play_arrow_rounded, size: 28),
+                label: Text('ТУЛААН ЭХЛҮҮЛЭХ', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900)),
+                style: FilledButton.styleFrom(backgroundColor: palette.accentInk, foregroundColor: palette.onAccent),
               )),
-              const SizedBox(height: 12),
-              const Text('Энэ нь нэг дэлгэцийн найрсаг тоглоом. Интернет, тусдаа өрөө, нэвтрэх эрх шаардлагагүй. Албан ёсны бодлогын оноонд нөлөөлөхгүй.', style: TextStyle(color: _muted, fontSize: 12, height: 1.5)),
-              const SizedBox(height: 26),
+              SizedBox(height: 12),
+              Text('Энэ нь нэг дэлгэцийн найрсаг тоглоом. Интернет, тусдаа өрөө, нэвтрэх эрх шаардлагагүй. Албан ёсны бодлогын оноонд нөлөөлөхгүй.', style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 12, height: 1.5)),
+              SizedBox(height: 26),
             ]),
           )),
         ],
@@ -409,13 +406,13 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
 
   Widget _choiceRow(String label, List<int> options, int current, ValueChanged<int> onChange, {String suffix = ''}) {
     return Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 10, runSpacing: 8, children: [
-      SizedBox(width: 220, child: Text(label, style: const TextStyle(color: _muted, fontWeight: FontWeight.w700))),
+      SizedBox(width: 220, child: Text(label, style: TextStyle(color: MandakhPalette.of(context).muted, fontWeight: FontWeight.w700))),
       ...options.map((n) => ChoiceChip(
         label: Text('$n$suffix'),
         selected: current == n,
-        selectedColor: const Color(0xFF90BDFF),
-        backgroundColor: _card,
-        labelStyle: TextStyle(color: current == n ? const Color(0xFF0C2040) : Colors.white, fontWeight: FontWeight.bold),
+        selectedColor: palette.accentInk,
+        backgroundColor: palette.surface,
+        labelStyle: TextStyle(color: current == n ? palette.onAccent : palette.text, fontWeight: FontWeight.bold),
         onSelected: (_) => onChange(n),
       )),
     ]);
@@ -432,22 +429,22 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: wide ? 26 : 10, vertical: 6),
       children: [
-        Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 1700), child: Column(children: [
+        Center(child: ConstrainedBox(constraints: BoxConstraints(maxWidth: 1700), child: Column(children: [
           Row(children: [
             Expanded(child: _scoreBadge(_blueLabel, _blueHp, _bluePoints, _blue, true)),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Container(
               padding: EdgeInsets.symmetric(horizontal: wide ? 18 : 8, vertical: 12),
-              decoration: BoxDecoration(color: const Color(0xFF1B2B42), borderRadius: BorderRadius.circular(14)),
+              decoration: BoxDecoration(color: palette.tint, borderRadius: BorderRadius.circular(14)),
               child: Column(children: [
-                Text(isOver ? 'ДУУСЛАА' : 'ҮЕ ${_index + 1}/${_match.length}', style: TextStyle(color: _muted, fontWeight: FontWeight.w900, fontSize: wide ? 14 : 10)),
-                Text(_reveal ? '✓' : '$secondsLeft', style: TextStyle(fontSize: wide ? 28 : 23, fontWeight: FontWeight.w900, color: secondsLeft <= 5 && !_reveal ? const Color(0xFFFF7777) : Colors.white)),
+                Text(isOver ? 'ДУУСЛАА' : 'ҮЕ ${_index + 1}/${_match.length}', style: TextStyle(color: MandakhPalette.of(context).muted, fontWeight: FontWeight.w900, fontSize: wide ? 14 : 10)),
+                Text(_reveal ? '✓' : '$secondsLeft', style: TextStyle(fontSize: wide ? 28 : 23, fontWeight: FontWeight.w900, color: secondsLeft <= 5 && !_reveal ? palette.negative : palette.text)),
               ]),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Expanded(child: _scoreBadge(_orangeLabel, _orangeHp, _orangePoints, _orange, false)),
           ]),
-          const SizedBox(height: 9),
+          SizedBox(height: 9),
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: SizedBox(
@@ -468,42 +465,42 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
               ),
             ),
           ),
-          const SizedBox(height: 13),
+          SizedBox(height: 13),
           if (isOver) _resultsPanel() else ...[
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(wide ? 19 : 13),
-              decoration: BoxDecoration(color: _card, border: Border.all(color: _border), borderRadius: BorderRadius.circular(17)),
+              decoration: BoxDecoration(color: palette.surface, border: Border.all(color: palette.outline), borderRadius: BorderRadius.circular(17)),
               child: Column(children: [
-                Text(_topics.firstWhere((e) => e.id == q.topic).label.toUpperCase(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: Color(0xFF92BEFF))),
-                const SizedBox(height: 6),
+                Text(_topics.firstWhere((e) => e.id == q.topic).label.toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: palette.accentInk)),
+                SizedBox(height: 6),
                 Text(q.prompt, textAlign: TextAlign.center, style: TextStyle(fontSize: wide ? 25 : 19, height: 1.2, fontWeight: FontWeight.w900)),
                 if (q.code.isNotEmpty) ...[
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   Container(
-                    constraints: const BoxConstraints(maxWidth: 720),
+                    constraints: BoxConstraints(maxWidth: 720),
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-                    decoration: BoxDecoration(color: const Color(0xFF080F1E), borderRadius: BorderRadius.circular(12)),
-                    child: SelectableText(q.code, textAlign: TextAlign.center, style: TextStyle(color: const Color(0xFFA4E4FF), fontFamily: 'monospace', fontSize: wide ? 18 : 14, height: 1.4)),
+                    padding: EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+                    decoration: BoxDecoration(color: palette.background, borderRadius: BorderRadius.circular(12)),
+                    child: SelectableText(q.code, textAlign: TextAlign.center, style: TextStyle(color: palette.accentInk, fontFamily: 'monospace', fontSize: wide ? 18 : 14, height: 1.4)),
                   ),
                 ],
                 if (_reveal) ...[
-                  const SizedBox(height: 9),
-                  Text('Зөв хариулт: ${q.options[q.answer]}', textAlign: TextAlign.center, style: const TextStyle(color: _green, fontWeight: FontWeight.w900, fontSize: 16)),
+                  SizedBox(height: 9),
+                  Text('Зөв хариулт: ${q.options[q.answer]}', textAlign: TextAlign.center, style: TextStyle(color: palette.positive, fontWeight: FontWeight.w900, fontSize: 16)),
                 ],
               ]),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(child: _answers(1, q, wide)),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(child: _answers(2, q, wide)),
             ]),
-            const SizedBox(height: 10),
-            Text(_reveal ? 'Дараагийн асуулт эхлэх гэж байна…' : 'Баг бүр зөвхөн өөрийн талын хариултад хүрнэ. Хоёр баг сонгомогц асуулт дуусна.', textAlign: TextAlign.center, style: const TextStyle(color: _muted, fontSize: 12)),
+            SizedBox(height: 10),
+            Text(_reveal ? 'Дараагийн асуулт эхлэх гэж байна…' : 'Баг бүр зөвхөн өөрийн талын хариултад хүрнэ. Хоёр баг сонгомогц асуулт дуусна.', textAlign: TextAlign.center, style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 12)),
           ],
-          const SizedBox(height: 30),
+          SizedBox(height: 30),
         ]))),
       ],
     );
@@ -511,20 +508,20 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
 
   Widget _scoreBadge(String name, int health, int points, Color color, bool left) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-      decoration: BoxDecoration(color: _card, border: Border.all(color: color.withOpacity(.6)), borderRadius: BorderRadius.circular(15)),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      decoration: BoxDecoration(color: palette.surface, border: Border.all(color: color.withOpacity(.6)), borderRadius: BorderRadius.circular(15)),
       child: Column(crossAxisAlignment: left ? CrossAxisAlignment.start : CrossAxisAlignment.end, children: [
         Row(children: [
           if (left) Icon(Icons.shield_rounded, color: color, size: 22),
-          if (left) const SizedBox(width: 6),
-          Expanded(child: Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: left ? TextAlign.left : TextAlign.right, style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.w900))),
-          if (!left) const SizedBox(width: 6),
+          if (left) SizedBox(width: 6),
+          Expanded(child: Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: left ? TextAlign.left : TextAlign.right, style: TextStyle(color: palette.readable(color), fontSize: 15, fontWeight: FontWeight.w900))),
+          if (!left) SizedBox(width: 6),
           if (!left) Icon(Icons.shield_rounded, color: color, size: 22),
         ]),
-        const SizedBox(height: 5),
-        Text('$health/16 хамгаалалт • $points оноо', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: _muted, fontWeight: FontWeight.w700, fontSize: 12)),
-        const SizedBox(height: 7),
-        ClipRRect(borderRadius: BorderRadius.circular(7), child: LinearProgressIndicator(value: health / 16, minHeight: 9, backgroundColor: const Color(0xFF263650), valueColor: AlwaysStoppedAnimation(color))),
+        SizedBox(height: 5),
+        Text('$health/16 хамгаалалт • $points оноо', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: MandakhPalette.of(context).muted, fontWeight: FontWeight.w700, fontSize: 12)),
+        SizedBox(height: 7),
+        ClipRRect(borderRadius: BorderRadius.circular(7), child: LinearProgressIndicator(value: health / 16, minHeight: 9, backgroundColor: palette.tint, valueColor: AlwaysStoppedAnimation(color))),
       ]),
     );
   }
@@ -535,22 +532,22 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
     final damage = side == 1 ? _blueDamage : _orangeDamage;
     final name = side == 1 ? _blueLabel : _orangeLabel;
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(color: color.withOpacity(.075), border: Border.all(color: color.withOpacity(.5)), borderRadius: BorderRadius.circular(16)),
       child: Column(children: [
-        Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: wide ? 20 : 13)),
-        const SizedBox(height: 3),
+        Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: palette.readable(color), fontWeight: FontWeight.w900, fontSize: wide ? 20 : 13)),
+        SizedBox(height: 3),
         AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
+          duration: Duration(milliseconds: 200),
           child: Text(
             _reveal ? damage > 0 ? '+$damage ДОВТОЛГОО!' : pick == null ? 'Хугацаа дууслаа' : 'Буруу хариулт' : pick == null ? 'Хариултаа сонгоно уу' : 'Хариултаа өгсөн ✓',
             key: ValueKey('$side:$_reveal:$damage:$pick'),
             maxLines: 1,
             textAlign: TextAlign.center,
-            style: TextStyle(color: _reveal && damage > 0 ? _green : _muted, fontSize: wide ? 13 : 11, fontWeight: FontWeight.w800),
+            style: TextStyle(color: _reveal && damage > 0 ? palette.positive : MandakhPalette.of(context).muted, fontSize: wide ? 13 : 11, fontWeight: FontWeight.w800),
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         LayoutBuilder(builder: (context, constraints) {
           final twoCols = constraints.maxWidth >= 430;
           final gap = 8.0;
@@ -558,9 +555,9 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
           return Wrap(spacing: gap, runSpacing: gap, children: List.generate(4, (i) {
             final chosen = pick == i;
             final isCorrect = question.answer == i;
-            final background = _reveal && isCorrect ? const Color(0xFF174B3E)
-              : _reveal && chosen ? const Color(0xFF5A2838)
-              : chosen ? color.withOpacity(.25) : _card;
+            final background = _reveal && isCorrect ? Color.lerp(palette.surface, palette.positive, .13)!
+              : _reveal && chosen ? Color.lerp(palette.surface, palette.negative, .13)!
+              : chosen ? Color.lerp(palette.surface, color, .15)! : palette.surface;
             return SizedBox(
               width: itemWidth,
               height: wide ? 76 : 82,
@@ -571,9 +568,9 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
                   borderRadius: BorderRadius.circular(12),
                   onTap: pick != null || _reveal ? null : () => _choose(side, i),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                    decoration: BoxDecoration(border: Border.all(color: _reveal && isCorrect ? _green : chosen ? color : _border, width: chosen ? 2 : 1), borderRadius: BorderRadius.circular(12)),
-                    child: Center(child: Text('${i + 1}. ${question.options[i]}', textAlign: TextAlign.center, maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w800, fontSize: wide ? 17 : 13, color: Colors.white))),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                    decoration: BoxDecoration(border: Border.all(color: _reveal && isCorrect ? palette.positive : chosen ? color : palette.outline, width: chosen ? 2 : 1), borderRadius: BorderRadius.circular(12)),
+                    child: Center(child: Text('${i + 1}. ${question.options[i]}', textAlign: TextAlign.center, maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w800, fontSize: wide ? 17 : 13, color: MandakhPalette.contrast(palette.text, background) >= 4.5 ? palette.text : (MandakhPalette.contrast(Colors.white, background) >= MandakhPalette.contrast(Colors.black, background) ? Colors.white : Colors.black)))),
                   ),
                 ),
               ),
@@ -588,18 +585,18 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
     final title = _winner == 0 ? 'ТЭНЦЛЭЭ!' : '${_winner == 1 ? _blueLabel : _orangeLabel} ЯЛЛАА!';
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(28),
-      decoration: _decoration(const Color(0xFF183553), const Color(0xFF161D37)),
+      padding: EdgeInsets.all(28),
+      decoration: _decoration(context, palette.tint, palette.surface),
       child: Column(children: [
-        Icon(_winner == 0 ? Icons.handshake_rounded : Icons.emoji_events_rounded, size: 74, color: const Color(0xFFFFCA56)),
-        const SizedBox(height: 8),
-        Text(title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900)),
-        const SizedBox(height: 12),
-        Text('Цэнхэр: $_bluePoints оноо  •  Улбар шар: $_orangePoints оноо', textAlign: TextAlign.center, style: const TextStyle(color: _muted, fontSize: 16)),
-        const SizedBox(height: 24),
-        SizedBox(height: 60, child: FilledButton.icon(onPressed: _newMatch, icon: const Icon(Icons.replay_rounded), label: const Text('ДАХИН ТОГЛОХ', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900)))),
-        const SizedBox(height: 10),
-        const Text('Оноо зөвхөн энэ дэлгэц дээр хадгалагдана.', style: TextStyle(color: _muted, fontSize: 12)),
+        Icon(_winner == 0 ? Icons.handshake_rounded : Icons.emoji_events_rounded, size: 74, color: Color(0xFFFFCA56)),
+        SizedBox(height: 8),
+        Text(title, textAlign: TextAlign.center, style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900)),
+        SizedBox(height: 12),
+        Text('Цэнхэр: $_bluePoints оноо  •  Улбар шар: $_orangePoints оноо', textAlign: TextAlign.center, style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 16)),
+        SizedBox(height: 24),
+        SizedBox(height: 60, child: FilledButton.icon(onPressed: _newMatch, icon: Icon(Icons.replay_rounded), label: Text('ДАХИН ТОГЛОХ', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900)))),
+        SizedBox(height: 10),
+        Text('Оноо зөвхөн энэ дэлгэц дээр хадгалагдана.', style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 12)),
       ]),
     );
   }
@@ -611,15 +608,15 @@ class _Hint extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
-    Icon(icon, size: 18, color: const Color(0xFF9CC7FF)),
-    const SizedBox(width: 6),
-    Text(text, style: const TextStyle(color: _muted, fontWeight: FontWeight.w700)),
+    Icon(icon, size: 18, color: MandakhPalette.of(context).accentInk),
+    SizedBox(width: 6),
+    Text(text, style: TextStyle(color: MandakhPalette.of(context).muted, fontWeight: FontWeight.w700)),
   ]);
 }
 
-BoxDecoration _decoration(Color a, Color b) => BoxDecoration(
+BoxDecoration _decoration(BuildContext context, Color a, Color b) => BoxDecoration(
   gradient: LinearGradient(colors: [a, b]),
-  border: Border.all(color: const Color(0xFF395780)),
+  border: Border.all(color: MandakhPalette.of(context).outline),
   borderRadius: BorderRadius.circular(20),
 );
 

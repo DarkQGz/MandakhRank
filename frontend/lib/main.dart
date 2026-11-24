@@ -7,44 +7,32 @@ import 'auth_screen.dart';
 import 'practice_screen.dart';
 import 'dashboard_screen.dart';
 import 'minigames_screen.dart';
+import 'theme_settings.dart';
 
-const bg = Color(0xFF080E1C);
-const panel = Color(0xFF111C30);
-const blue = Color(0xFF4C86FF);
-const muted = Color(0xFF96A8C5);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await PracticeApi.restoreSession();
-  runApp(const MandakhApp());
+  final palette = await MandakhPalette.load();
+  runApp(MandakhApp(initialPalette: palette));
 }
 
-class MandakhApp extends StatelessWidget {
-  const MandakhApp({super.key});
+class MandakhApp extends StatefulWidget {
+  const MandakhApp({super.key, this.initialPalette = MandakhPalette.original});
+  final MandakhPalette initialPalette;
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'Mandakhrank',
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: bg,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: blue,
-        brightness: Brightness.dark,
-        surface: panel,
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: panel,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-      ),
-      navigationBarTheme: const NavigationBarThemeData(backgroundColor: panel),
-      dividerColor: const Color(0xFF22314A),
+  State<MandakhApp> createState() => _MandakhAppState();
+}
+class _MandakhAppState extends State<MandakhApp> {
+  late MandakhPalette palette = widget.initialPalette;
+  @override
+  Widget build(BuildContext context) => ThemeSettingsScope(
+    palette: palette,
+    onChanged: (value) => setState(() => palette = value),
+    child: MaterialApp(
+      title: 'Mandakhrank', debugShowCheckedModeBanner: false,
+      theme: palette.themeData(), themeAnimationDuration: Duration.zero,
+      home: const Home(),
     ),
-    home: const Home(),
   );
 }
 
@@ -55,6 +43,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  MandakhPalette get palette => MandakhPalette.of(context);
+  Color get bg => palette.background;
+  Color get panel => palette.surface;
+  Color get blue => palette.accentInk;
+  Color get muted => palette.muted;
   late Future<Map<String, dynamic>> future;
   Timer? refreshTimer;
   bool refreshing = false;
@@ -92,7 +85,7 @@ class _HomeState extends State<Home> {
     super.initState();
     future = Repository().load();
     refreshTimer = Timer.periodic(
-      const Duration(seconds: 15),
+      Duration(seconds: 15),
       (_) => refreshLive(),
     );
   }
@@ -115,7 +108,7 @@ class _HomeState extends State<Home> {
         await PracticeApi.request('auth/logout/', body: {});
         await PracticeApi.signOut();
       } else {
-        await Navigator.push(context, MaterialPageRoute<bool>(builder: (_) => const AuthScreen()));
+        await Navigator.push(context, MaterialPageRoute<bool>(builder: (_) => AuthScreen()));
       }
     } catch (_) {
       // Temporary network failures must not leave the user stranded on logout.
@@ -130,7 +123,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final wide = MediaQuery.sizeOf(context).width >= 950;
+    final width = MediaQuery.sizeOf(context).width;
+    final wide = width >= 950;
     return Scaffold(
       bottomNavigationBar: wide
           ? null
@@ -154,17 +148,17 @@ class _HomeState extends State<Home> {
             if (wide)
               Container(
                 width: 238,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF0C1425),
-                  border: Border(right: BorderSide(color: Color(0xFF22314A))),
+                decoration: BoxDecoration(
+                  color: panel,
+                  border: Border(right: BorderSide(color: palette.outline)),
                 ),
-                padding: const EdgeInsets.all(22),
+                padding: EdgeInsets.all(22),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     brand(),
-                    const SizedBox(height: 48),
-                    const Text(
+                    SizedBox(height: 48),
+                    Text(
                       'СУРАЛЦ. БОД. АХИ.',
                       style: TextStyle(
                         color: muted,
@@ -172,50 +166,50 @@ class _HomeState extends State<Home> {
                         letterSpacing: 2,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     ...List.generate(
                       5,
                       (i) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
+                        padding: EdgeInsets.only(bottom: 10),
                         child: ListTile(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           selected: page == i,
                           selectedTileColor: blue.withOpacity(.16),
-                          selectedColor: const Color(0xFF8DB0FF),
+                          selectedColor: blue,
                           leading: Icon(icons[i]),
                           title: Text(labels[i]),
                           onTap: () => navigate(i),
                         ),
                       ),
                     ),
-                    const Spacer(),
+                    Spacer(),
                     box(
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.auto_awesome, color: blue),
-                          const SizedBox(height: 12),
-                          const Text(
+                          Icon(Icons.auto_awesome, color: blue),
+                          SizedBox(height: 12),
+                          Text(
                             'Өдөр бүр нэг алхам',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
+                          SizedBox(height: 8),
+                          Text(
                             'Нэг бодлогоос эхэл.\nЧадвараа хамтдаа хөгжүүлье.',
                             style: TextStyle(color: muted, height: 1.6),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           TextButton(
                             onPressed: () => navigate(1),
-                            child: const Text('Бодлого үзэх →'),
+                            child: Text('Бодлого үзэх →'),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    const Text(
+                    SizedBox(height: 24),
+                    Text(
                       'MANDАKHRANK / v0.1',
                       style: TextStyle(
                         color: muted,
@@ -231,29 +225,30 @@ class _HomeState extends State<Home> {
                 future: future,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done)
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator());
                   if (snapshot.hasError)
                     return Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(24),
+                        padding: EdgeInsets.all(24),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.cloud_off, size: 48, color: muted),
-                            const SizedBox(height: 16),
-                            const Text('Сервертэй холбогдож чадсангүй.'),
-                            const Text(
+                            Icon(Icons.cloud_off, size: 48, color: muted),
+                            SizedBox(height: 16),
+                            Text('Сервертэй холбогдож чадсангүй.'),
+                            Text(
                               'Django ажиллаж байгаа эсэх болон API_BASE_URL-ийг шалгана уу.',
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             FilledButton(
                               onPressed: () => setState(() {
                                 liveData = null;
                                 future = Repository().load();
                               }),
-                              child: const Text('Дахин оролдох'),
+                              child: Text('Дахин оролдох'),
                             ),
+                            TextButton.icon(onPressed: () => openThemeSettings(context), icon: Icon(Icons.palette_outlined), label: Text('Өнгө, загвар')),
                           ],
                         ),
                       ),
@@ -263,20 +258,21 @@ class _HomeState extends State<Home> {
                     padding: EdgeInsets.all(wide ? 36 : 18),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 1180),
+                        constraints: BoxConstraints(maxWidth: 1180),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if (!wide && width < 600) ...[brand(), SizedBox(height: 8)],
                             Row(
                               children: [
-                                if (!wide)
+                                if (!wide && width >= 600)
                                   brand()
-                                else
+                                else if (wide)
                                   Text(
                                     'Суралцах орчин / ${labels[page]}',
-                                    style: const TextStyle(color: muted),
+                                    style: TextStyle(color: muted),
                                   ),
-                                const Spacer(),
+                                Spacer(),
                                 TextButton(
                                   onPressed: authAction,
                                   child: Text(
@@ -286,12 +282,17 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 IconButton(
+                                  tooltip: 'Өнгө, загвар',
+                                  onPressed: () => openThemeSettings(context),
+                                  icon: Icon(Icons.palette_outlined),
+                                ),
+                                IconButton(
                                   tooltip: 'Шинэчлэх',
                                   onPressed: () => setState(() {
                                     liveData = null;
                                     future = Repository().load();
                                   }),
-                                  icon: const Icon(Icons.refresh),
+                                  icon: Icon(Icons.refresh),
                                 ),
                                 IconButton(
                                   tooltip: 'Миний самбар / Зураг солих',
@@ -300,12 +301,12 @@ class _HomeState extends State<Home> {
                                     radius: 18,
                                     backgroundColor: panel,
                                     backgroundImage: PracticeApi.avatarUrl == null ? null : NetworkImage(PracticeApi.avatarUrl!),
-                                    child: PracticeApi.avatarUrl == null ? const Icon(Icons.person_outline, size: 20) : null,
+                                    child: PracticeApi.avatarUrl == null ? Icon(Icons.person_outline, size: 20) : null,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
@@ -320,7 +321,7 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 22),
+                            SizedBox(height: 22),
                             if (page == 0)
                               rankings(data)
                             else if (page == 1)
@@ -336,8 +337,8 @@ class _HomeState extends State<Home> {
                                 onLogin: authAction,
                                 onAvatarChanged: () { if (mounted) setState(() {}); },
                               ),
-                            const SizedBox(height: 32),
-                            const Text(
+                            SizedBox(height: 32),
+                            Text(
                               'Mandakhrank • Монгол хэлээр кодлож суръя.',
                               style: TextStyle(color: muted, fontSize: 12),
                             ),
@@ -355,7 +356,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget brand() => const Row(
+  Widget brand() => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
       Icon(Icons.terminal_rounded, color: blue, size: 30),
@@ -376,23 +377,23 @@ class _HomeState extends State<Home> {
   );
   Widget box(Widget child, {Color? color}) => Container(
     width: double.infinity,
-    padding: const EdgeInsets.all(20),
+    padding: EdgeInsets.all(20),
     decoration: BoxDecoration(
       color: color ?? panel,
       borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: const Color(0xFF22314A)),
+      border: Border.all(color: palette.outline),
     ),
     child: child,
   );
   Widget badge(String text, Color color) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     decoration: BoxDecoration(
       color: color.withOpacity(.12),
       borderRadius: BorderRadius.circular(7),
     ),
     child: Text(
       text,
-      style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600),
+      style: TextStyle(color: palette.readable(color), fontSize: 11, fontWeight: FontWeight.w600),
     ),
   );
   Widget title(String eyebrow, String heading, String subtitle) => Column(
@@ -400,25 +401,25 @@ class _HomeState extends State<Home> {
     children: [
       Text(
         eyebrow,
-        style: const TextStyle(
+        style: TextStyle(
           color: blue,
           fontSize: 11,
           letterSpacing: 2,
           fontWeight: FontWeight.w700,
         ),
       ),
-      const SizedBox(height: 10),
+      SizedBox(height: 10),
       Text(
         heading,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.w800,
           letterSpacing: -.8,
         ),
       ),
-      const SizedBox(height: 8),
-      Text(subtitle, style: const TextStyle(color: muted, height: 1.6)),
-      const SizedBox(height: 26),
+      SizedBox(height: 8),
+      Text(subtitle, style: TextStyle(color: muted, height: 1.6)),
+      SizedBox(height: 26),
     ],
   );
   Widget searchField(String hint) => TextField(
@@ -427,7 +428,7 @@ class _HomeState extends State<Home> {
       query = v.toLowerCase().trim();
     }),
     decoration: InputDecoration(
-      prefixIcon: const Icon(Icons.search, color: muted),
+      prefixIcon: Icon(Icons.search, color: muted),
       hintText: hint,
     ),
   );
@@ -453,13 +454,13 @@ class _HomeState extends State<Home> {
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
   Widget empty() => Padding(
-    padding: const EdgeInsets.all(32),
+    padding: EdgeInsets.all(32),
     child: Center(
       child: Column(
         children: [
-          const Icon(Icons.search_off, size: 40, color: muted),
-          const SizedBox(height: 12),
-          const Text('Илэрц олдсонгүй'),
+          Icon(Icons.search_off, size: 40, color: muted),
+          SizedBox(height: 12),
+          Text('Илэрц олдсонгүй'),
           TextButton(
             onPressed: () => setState(() {
               query = '';
@@ -468,7 +469,7 @@ class _HomeState extends State<Home> {
               topic = 'Бүгд';
               level = 'Бүгд';
             }),
-            child: const Text('Шүүлтүүр арилгах'),
+            child: Text('Шүүлтүүр арилгах'),
           ),
         ],
       ),
@@ -500,9 +501,9 @@ class _HomeState extends State<Home> {
               children: List.generate(all.length < 3 ? all.length : 3, (i) {
                 final p = all[i];
                 final color = [
-                  const Color(0xFFFFCA6A),
-                  const Color(0xFFAFC6EA),
-                  const Color(0xFFDBA087),
+                  Color(0xFFFFCA6A),
+                  Color(0xFFAFC6EA),
+                  Color(0xFFDBA087),
                 ][i];
                 return SizedBox(
                   width: width,
@@ -513,14 +514,14 @@ class _HomeState extends State<Home> {
                         Row(
                           children: [
                             badge('#${p['rank'] ?? i + 1}', color),
-                            const Spacer(),
+                            Spacer(),
                             Icon(
                               Icons.workspace_premium_outlined,
-                              color: color,
+                              color: palette.readable(color),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         CircleAvatar(
                           radius: 23,
                           backgroundColor: color.withOpacity(.13),
@@ -531,48 +532,48 @@ class _HomeState extends State<Home> {
                               ? Text((p['name'] as String).substring(0, 1), style: TextStyle(color: color))
                               : null,
                         ),
-                        const SizedBox(height: 14),
+                        SizedBox(height: 14),
                         Text(
                           p['name'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           '@${p['handle']}',
-                          style: const TextStyle(color: muted),
+                          style: TextStyle(color: muted),
                         ),
-                        const SizedBox(height: 18),
+                        SizedBox(height: 18),
                         Text(
                           '${p['score']} оноо',
                           style: TextStyle(
-                            color: color,
+                            color: palette.readable(color),
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           '${p['solved']} бодлого',
-                          style: const TextStyle(color: muted),
+                          style: TextStyle(color: muted),
                         ),
                       ],
                     ),
-                    color: i == 0 ? const Color(0xFF142442) : null,
+                    color: i == 0 ? palette.tint : null,
                   ),
                 );
               }),
             );
           },
         ),
-        const SizedBox(height: 32),
-        const Text(
+        SizedBox(height: 32),
+        Text(
           'Нийт эрэмбэ',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         searchField('Username хайх'),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         if (found.isEmpty)
           empty()
         else
@@ -581,7 +582,7 @@ class _HomeState extends State<Home> {
               children: found
                   .map(
                     (p) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       child: Row(
                         children: [
                           SizedBox(
@@ -591,7 +592,7 @@ class _HomeState extends State<Home> {
                                 2,
                                 '0',
                               ),
-                              style: const TextStyle(color: muted),
+                              style: TextStyle(color: muted),
                             ),
                           ),
                           CircleAvatar(
@@ -600,20 +601,20 @@ class _HomeState extends State<Home> {
                             backgroundImage: ProfileApi.imageUrl(p['avatar_url'] as String?) == null ? null : NetworkImage(ProfileApi.imageUrl(p['avatar_url'] as String?)!),
                             child: p['avatar_url'] == null ? Text((p['name'] as String).substring(0, 1)) : null,
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   p['name'],
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 Text(
                                   '@${p['handle']}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: muted,
                                     fontSize: 11,
                                   ),
@@ -621,20 +622,20 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
                                 '${p['score']}',
-                                style: const TextStyle(
-                                  color: Color(0xFF9BB9FF),
+                                style: TextStyle(
+                                  color: blue,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
                                 '${p['solved']} бодлого',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: muted,
                                   fontSize: 11,
                                 ),
@@ -673,13 +674,13 @@ class _HomeState extends State<Home> {
         box(
           Row(
             children: [
-              const Icon(Icons.code, size: 38, color: blue),
-              const SizedBox(width: 18),
+              Icon(Icons.code, size: 38, color: blue),
+              SizedBox(width: 18),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Жижиг алхам. Том ахиц.',
                       style: TextStyle(
                         fontSize: 20,
@@ -688,7 +689,7 @@ class _HomeState extends State<Home> {
                     ),
                     Text(
                       '${all.length} бодлого • ${all.where((p) => p['completed'] == true).length} бодсон',
-                      style: const TextStyle(color: muted),
+                      style: TextStyle(color: muted),
                     ),
                   ],
                 ),
@@ -696,27 +697,27 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         searchField('Бодлогын нэр, сэдвээр хайх'),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         filters(
           ['Бүгд', 'Хялбар', 'Дунд', 'Хүнд'],
           difficulty,
           (v) => difficulty = v,
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         filters(
           ['Бүгд', ...all.map((p) => p['topic'] as String).toSet()],
           topic,
           (v) => topic = v,
         ),
-        const SizedBox(height: 20),
-        Text('${found.length} бодлого', style: const TextStyle(color: muted)),
-        const SizedBox(height: 12),
+        SizedBox(height: 20),
+        Text('${found.length} бодлого', style: TextStyle(color: muted)),
+        SizedBox(height: 12),
         if (found.isEmpty) empty(),
         ...found.map(
           (p) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: EdgeInsets.only(bottom: 12),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
@@ -735,22 +736,22 @@ class _HomeState extends State<Home> {
                         ),
                         child: Text(
                           '${p['id']}'.padLeft(2, '0'),
-                          style: const TextStyle(color: muted),
+                          style: TextStyle(color: muted),
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      SizedBox(width: 14),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               '${p['completed'] == true ? '✓ ' : ''}${p['title']}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8),
                             Wrap(
                               spacing: 8,
                               runSpacing: 6,
@@ -758,10 +759,10 @@ class _HomeState extends State<Home> {
                                 badge(
                                   p['difficulty'],
                                   p['difficulty'] == 'Хялбар'
-                                      ? const Color(0xFF58D6AE)
+                                      ? Color(0xFF58D6AE)
                                       : p['difficulty'] == 'Дунд'
                                       ? Colors.amber
-                                      : const Color(0xFFFF8197),
+                                      : Color(0xFFFF8197),
                                 ),
                                 badge(p['topic'], muted),
                                 badge('${p['points']} оноо', blue),
@@ -770,7 +771,7 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       ),
-                      const Icon(Icons.chevron_right, color: muted),
+                      Icon(Icons.chevron_right, color: muted),
                     ],
                   ),
                 ),
@@ -805,31 +806,31 @@ class _HomeState extends State<Home> {
       mainAxisSize: MainAxisSize.min,
       children: [
         badge('${p['difficulty']} • ${p['points']} оноо', blue),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         Text(
           p['description'],
-          style: const TextStyle(fontSize: 16, height: 1.7),
+          style: TextStyle(fontSize: 16, height: 1.7),
         ),
-        const SizedBox(height: 24),
-        const Text('Жишээ оролт', style: TextStyle(color: muted)),
-        const SizedBox(height: 8),
+        SizedBox(height: 24),
+        Text('Жишээ оролт', style: TextStyle(color: muted)),
+        SizedBox(height: 8),
         box(
           SelectableText(
             p['input'],
-            style: const TextStyle(fontFamily: 'monospace'),
+            style: TextStyle(fontFamily: 'monospace'),
           ),
         ),
-        const SizedBox(height: 16),
-        const Text('Жишээ гаралт', style: TextStyle(color: muted)),
-        const SizedBox(height: 8),
+        SizedBox(height: 16),
+        Text('Жишээ гаралт', style: TextStyle(color: muted)),
+        SizedBox(height: 8),
         box(
           SelectableText(
             p['output'],
-            style: const TextStyle(fontFamily: 'monospace'),
+            style: TextStyle(fontFamily: 'monospace'),
           ),
         ),
-        const SizedBox(height: 20),
-        const Text(
+        SizedBox(height: 20),
+        Text(
           'Энэ хувилбар нь бодлогын загвар. Код илгээх, ажиллуулах, оноо тооцох боломж дараагийн хувилбарт нэмэгдэнэ.',
           style: TextStyle(color: muted, height: 1.5),
         ),
@@ -853,13 +854,13 @@ class _HomeState extends State<Home> {
           'Монгол хэлээр ойлгож, өөрийн хурдаар суралц. Чиглэлээ сонгоод эхэлцгээе.',
         ),
         searchField('Сургалт хайх'),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         filters(
           ['Бүгд', 'Анхан шат', 'Дунд шат', 'Ахисан шат'],
           level,
           (v) => level = v,
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         if (found.isEmpty) empty(),
         LayoutBuilder(
           builder: (context, c) {
@@ -870,11 +871,11 @@ class _HomeState extends State<Home> {
               children: found.map((course) {
                 final colors = {
                   'blue': blue,
-                  'purple': const Color(0xFFB392FF),
-                  'cyan': const Color(0xFF58D7EC),
-                  'green': const Color(0xFF58D6AE),
+                  'purple': Color(0xFFB392FF),
+                  'cyan': Color(0xFF58D7EC),
+                  'green': Color(0xFF58D6AE),
                 };
-                final color = colors[course['color']]!;
+                final color = palette.readable(colors[course['color']] ?? blue);
                 return SizedBox(
                   width: width,
                   child: box(
@@ -890,48 +891,48 @@ class _HomeState extends State<Home> {
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20),
                           child: Row(
                             children: [
                               Icon(Icons.data_object, size: 44, color: color),
-                              const Spacer(),
+                              Spacer(),
                               Text(
                                 course['tag'],
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: color,
+                                  color: palette.readable(color),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         badge(course['level'], color),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         Text(
                           course['title'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
                           course['description'],
-                          style: const TextStyle(color: muted, height: 1.6),
+                          style: TextStyle(color: muted, height: 1.6),
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         Text(
                           '${(course['lessons'] as List).length} сэдэв • Сургалтын хөтөлбөр',
-                          style: const TextStyle(color: muted, fontSize: 12),
+                          style: TextStyle(color: muted, fontSize: 12),
                         ),
-                        const SizedBox(height: 18),
+                        SizedBox(height: 18),
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton(
                             onPressed: () => courseDetail(course),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.all(12),
                               child: Text('Хөтөлбөр үзэх →'),
                             ),
@@ -957,9 +958,9 @@ class _HomeState extends State<Home> {
       children: [
         Text(
           c['description'],
-          style: const TextStyle(color: muted, height: 1.6),
+          style: TextStyle(color: muted, height: 1.6),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         ...List.generate(
           (c['lessons'] as List).length,
           (i) => ExpansionTile(
@@ -967,14 +968,14 @@ class _HomeState extends State<Home> {
             leading: Text('${i + 1}'),
             children: [
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: SelectableText(
                     c['lesson_content'] != null
                         ? c['lesson_content'][i]['content'] as String
                         : 'Жишээ хөтөлбөр. Агуулгыг CMS-ээс нэмнэ.',
-                    style: const TextStyle(height: 1.7),
+                    style: TextStyle(height: 1.7),
                   ),
                 ),
               ),
@@ -982,7 +983,7 @@ class _HomeState extends State<Home> {
           ),
         ),
         if ((c['lessons'] as List).isEmpty)
-          const Text('Хичээл хараахан нийтлэгдээгүй.'),
+          Text('Хичээл хараахан нийтлэгдээгүй.'),
       ],
     ),
   );
@@ -996,7 +997,7 @@ class _HomeState extends State<Home> {
   Future<void> openMiniGames() async {
     if (PracticeApi.token == null) await authAction();
     if (!mounted || PracticeApi.token == null) return;
-    await Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const MiniGamesLobby()));
+    await Navigator.push(context, MaterialPageRoute<void>(builder: (_) => MiniGamesLobby()));
   }
 
   Widget contests(Map<String, dynamic> data) {
@@ -1017,15 +1018,15 @@ class _HomeState extends State<Home> {
         ),
         MiniGamesPreview(onPlay: openMiniGames),
         searchField('Тэмцээний нэрээр хайх'),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         filters(
           ['Бүгд', 'Удахгүй', 'Явагдаж байна', 'Дууссан'],
           contestFilter,
           (v) => contestFilter = v,
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         if (found.isEmpty)
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(24),
             child: Text(
               'Тэмцээн олдсонгүй. Нийтэлсэн тэмцээнүүд энд харагдана.',
@@ -1033,34 +1034,34 @@ class _HomeState extends State<Home> {
           ),
         ...found.map(
           (c) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: EdgeInsets.only(bottom: 16),
             child: box(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   badge(c['status'], blue),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Text(
                     c['title'],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 23,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(c['description'], style: const TextStyle(color: muted)),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 8),
+                  Text(c['description'], style: TextStyle(color: muted)),
+                  SizedBox(height: 12),
                   Text(
                     '${localTime(c['starts_at'])} • ${c['duration_minutes']} минут',
                   ),
-                  const Text(
+                  Text(
                     'Цагийг таны төхөөрөмжийн бүсээр харуулав.',
                     style: TextStyle(color: muted, fontSize: 11),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () => contestDetail(c),
-                    child: const Text('Тэмцээн үзэх →'),
+                    child: Text('Тэмцээн үзэх →'),
                   ),
                 ],
               ),
@@ -1078,11 +1079,11 @@ class _HomeState extends State<Home> {
       mainAxisSize: MainAxisSize.min,
       children: [
         badge(c['status'], blue),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text(c['announcement']),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         if (c['status'] == 'Удахгүй')
-          const Text(
+          Text(
             'Бодлогууд тэмцээн эхлэхэд нээгдэнэ. Шинэчлэх товчоор дахин ачаална уу.',
           ),
         ...(c['problems'] as List).map(
@@ -1091,16 +1092,16 @@ class _HomeState extends State<Home> {
             subtitle: Text("${p['points']} оноо"),
             children: [
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SelectableText(p['statement']),
-                    const SizedBox(height: 16),
-                    const Text('Жишээ оролт'),
+                    SizedBox(height: 16),
+                    Text('Жишээ оролт'),
                     SelectableText(p['input']),
-                    const SizedBox(height: 12),
-                    const Text('Жишээ гаралт'),
+                    SizedBox(height: 12),
+                    Text('Жишээ гаралт'),
                     SelectableText(p['output']),
                   ],
                 ),
@@ -1108,17 +1109,17 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        const Text(
+        SizedBox(height: 24),
+        Text(
           'Дүнгийн хүснэгт',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const Text(
+        Text(
           'Админы баталгаажуулсан оноо. Оноо тэнцвэл торгуулийн минут бага нь түрүүлнэ.',
           style: TextStyle(color: muted),
         ),
         if ((c['standings'] as List).isEmpty)
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Text('Дүн хараахан ороогүй.'),
           ),
@@ -1130,8 +1131,8 @@ class _HomeState extends State<Home> {
             trailing: Text("${r['score']} оноо"),
           ),
         ),
-        const SizedBox(height: 16),
-        const Text(
+        SizedBox(height: 16),
+        Text(
           'Код илгээх, автоматаар шалгах боломж энэ хувилбарт ороогүй.',
           style: TextStyle(color: muted),
         ),
@@ -1142,9 +1143,9 @@ class _HomeState extends State<Home> {
     context: context,
     builder: (context) => Dialog(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 620),
+        constraints: BoxConstraints(maxWidth: 620),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1154,7 +1155,7 @@ class _HomeState extends State<Home> {
                   Expanded(
                     child: Text(
                       heading,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1163,11 +1164,11 @@ class _HomeState extends State<Home> {
                   IconButton(
                     tooltip: 'Хаах',
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               content,
             ],
           ),

@@ -5,14 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'data.dart';
+import 'theme_settings.dart';
 import 'tv_castle_game.dart';
 
-const _background = Color(0xFF091121);
-const _surface = Color(0xFF14223A);
-const _outline = Color(0xFF30425E);
 const _left = Color(0xFF338CF5);
 const _right = Color(0xFFFF9A36);
-const _dim = Color(0xFFA5B6D0);
 
 class _GameInfo {
   const _GameInfo(this.id, this.name, this.subtitle, this.icon, this.accent);
@@ -35,28 +32,28 @@ class MiniGamesPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(20),
-    margin: const EdgeInsets.only(bottom: 26),
+    padding: EdgeInsets.all(20),
+    margin: EdgeInsets.only(bottom: 26),
     decoration: BoxDecoration(
-      gradient: const LinearGradient(colors: [Color(0xFF172E61), Color(0xFF17223F)]),
+      gradient: LinearGradient(colors: [MandakhPalette.of(context).tint, MandakhPalette.of(context).surface]),
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: const Color(0xFF4164B4)),
+      border: Border.all(color: MandakhPalette.of(context).outline),
     ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Text('ШИНЭ • БЯЦХАН ТОГЛООМУУД', style: TextStyle(color: Color(0xFF8FBDFF), fontWeight: FontWeight.w800, fontSize: 12)),
-      const SizedBox(height: 8),
-      const Text('Хамтдаа кодлож, өрсөлдөцгөөе!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
-      const SizedBox(height: 8),
-      const Text('Гар утас, таблет, компьютер дээр өрөөний кодоор өрсөлдөөрэй. Мөн нэг мэдрэгч дэлгэц дээр хоёр баг зэрэг тоглох тусгай горимтой.', style: TextStyle(color: _dim, height: 1.5)),
-      const SizedBox(height: 18),
-      Wrap(spacing: 14, runSpacing: 8, children: const [
+      Text('ШИНЭ • БЯЦХАН ТОГЛООМУУД', style: TextStyle(color: MandakhPalette.of(context).accentInk, fontWeight: FontWeight.w800, fontSize: 12)),
+      SizedBox(height: 8),
+      Text('Хамтдаа кодлож, өрсөлдөцгөөе!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+      SizedBox(height: 8),
+      Text('Гар утас, таблет, компьютер дээр өрөөний кодоор өрсөлдөөрэй. Мөн нэг мэдрэгч дэлгэц дээр хоёр баг зэрэг тоглох тусгай горимтой.', style: TextStyle(color: MandakhPalette.of(context).muted, height: 1.5)),
+      SizedBox(height: 18),
+      Wrap(spacing: 14, runSpacing: 8, children: [
         _PreviewTag(icon: Icons.sports_handball, label: 'Олс таталт'),
         _PreviewTag(icon: Icons.water, label: 'Мэлхийн үсрэлт'),
         _PreviewTag(icon: Icons.rocket_launch, label: 'Кодын пуужин'),
         _PreviewTag(icon: Icons.shield, label: 'Цайзын тулаан'),
       ]),
-      const SizedBox(height: 16),
-      FilledButton.icon(onPressed: onPlay, icon: const Icon(Icons.sports_esports), label: const Text('Тоглож эхлэх')),
+      SizedBox(height: 16),
+      FilledButton.icon(onPressed: onPlay, icon: Icon(Icons.sports_esports), label: Text('Тоглож эхлэх')),
     ]),
   );
 }
@@ -67,9 +64,9 @@ class _PreviewTag extends StatelessWidget {
   final String label;
   @override
   Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
-    Icon(icon, size: 18, color: const Color(0xFFB4D4FF)),
-    const SizedBox(width: 6),
-    Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+    Icon(icon, size: 18, color: MandakhPalette.of(context).accentInk),
+    SizedBox(width: 6),
+    Text(label, style: TextStyle(fontWeight: FontWeight.w600)),
   ]);
 }
 
@@ -80,6 +77,7 @@ class MiniGamesLobby extends StatefulWidget {
 }
 
 class _MiniGamesLobbyState extends State<MiniGamesLobby> {
+  MandakhPalette get palette => MandakhPalette.of(context);
   String selectedMode = 'tug';
   String format = 'solo';
   String invite = '';
@@ -112,27 +110,27 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     return Scaffold(
-      backgroundColor: _background,
-      appBar: AppBar(backgroundColor: _background, title: const Text('Тоглоомын талбар'), centerTitle: false),
+      backgroundColor: palette.background,
+      appBar: AppBar(backgroundColor: palette.background, title: Text('Тоглоомын талбар'), centerTitle: false),
       body: SafeArea(child: ListView(padding: EdgeInsets.symmetric(horizontal: width < 600 ? 16 : 30, vertical: 18), children: [
-        Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 940), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('КОДООР ӨРСӨЛДӨЕ', style: TextStyle(color: Color(0xFF7CB0FF), fontSize: 12, letterSpacing: 2, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 8),
-          const Text('3 онлайн + 1 дэлгэцийн тоглоом', style: TextStyle(fontSize: 30, height: 1.1, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 10),
-          const Text('Асуултад хурдан, зөв хариулж багтаа давуу тал ав. Найзтайгаа нэг өрөөнд орж тоглоно.', style: TextStyle(color: _dim, height: 1.6)),
-          const SizedBox(height: 22),
+        Center(child: ConstrainedBox(constraints: BoxConstraints(maxWidth: 940), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('КОДООР ӨРСӨЛДӨЕ', style: TextStyle(color: palette.accentInk, fontSize: 12, letterSpacing: 2, fontWeight: FontWeight.w900)),
+          SizedBox(height: 8),
+          Text('3 онлайн + 1 дэлгэцийн тоглоом', style: TextStyle(fontSize: 30, height: 1.1, fontWeight: FontWeight.w900)),
+          SizedBox(height: 10),
+          Text('Асуултад хурдан, зөв хариулж багтаа давуу тал ав. Найзтайгаа нэг өрөөнд орж тоглоно.', style: TextStyle(color: MandakhPalette.of(context).muted, height: 1.6)),
+          SizedBox(height: 22),
           LayoutBuilder(builder: (context, constraints) {
             final cardWidth = constraints.maxWidth >= 770 ? (constraints.maxWidth - 26) / 3 : constraints.maxWidth;
             return Wrap(spacing: 13, runSpacing: 13, children: _games.map((game) => SizedBox(width: cardWidth, child: _gameCard(game))).toList());
           }),
-          const SizedBox(height: 17),
+          SizedBox(height: 17),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF1B355E), Color(0xFF302342)]),
-              border: Border.all(color: const Color(0xFF6887CF)),
+              gradient: LinearGradient(colors: [palette.tint, palette.surface]),
+              border: Border.all(color: palette.outline),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Wrap(
@@ -144,65 +142,65 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
                 ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 560),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                    Text('ШИНЭ • НЭГ ДЭЛГЭЦИЙН ТОГЛООМ', style: TextStyle(color: Color(0xFFB4D4FF), fontSize: 12, fontWeight: FontWeight.w900)),
+                    Text('ШИНЭ • НЭГ ДЭЛГЭЦИЙН ТОГЛООМ', style: TextStyle(color: MandakhPalette.of(context).accentInk, fontSize: 12, fontWeight: FontWeight.w900)),
                     SizedBox(height: 7),
                     Text('Цайзын тулаан', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
                     SizedBox(height: 7),
-                    Text('Мэдрэгч зурагт дээр хоёр баг нэг дэлгэцээс өрсөлдөнө. Математик, алгоритм, програмчлал, ерөнхий мэдлэгийн асуултад хариулаад нөгөө багийн цайз руу гэрэлт сум харваарай!', style: TextStyle(color: _dim, height: 1.45)),
+                    Text('Мэдрэгч зурагт дээр хоёр баг нэг дэлгэцээс өрсөлдөнө. Математик, алгоритм, програмчлал, ерөнхий мэдлэгийн асуултад хариулаад нөгөө багийн цайз руу гэрэлт сум харваарай!', style: TextStyle(color: MandakhPalette.of(context).muted, height: 1.45)),
                   ]),
                 ),
                 FilledButton.icon(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const TvCastleBattleScreen())),
-                  icon: const Icon(Icons.castle_rounded),
-                  label: const Padding(padding: EdgeInsets.symmetric(vertical: 13), child: Text('Нэг дэлгэцээр тоглох', style: TextStyle(fontWeight: FontWeight.w800))),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => TvCastleBattleScreen())),
+                  icon: Icon(Icons.castle_rounded),
+                  label: Padding(padding: EdgeInsets.symmetric(vertical: 13), child: Text('Нэг дэлгэцээр тоглох', style: TextStyle(fontWeight: FontWeight.w800))),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 28),
-          const Text('Хэрхэн тоглох вэ?', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 12),
+          SizedBox(height: 28),
+          Text('Хэрхэн тоглох вэ?', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+          SizedBox(height: 12),
           Wrap(spacing: 10, runSpacing: 10, children: [
-            ChoiceChip(label: const Text('1-ийн эсрэг 1'), selected: format == 'solo', onSelected: (_) => setState(() => format = 'solo')),
-            ChoiceChip(label: const Text('Багийн тоглолт (3 хүртэл)'), selected: format == 'team', onSelected: (_) => setState(() => format = 'team')),
+            ChoiceChip(label: Text('1-ийн эсрэг 1'), selected: format == 'solo', onSelected: (_) => setState(() => format = 'solo')),
+            ChoiceChip(label: Text('Багийн тоглолт (3 хүртэл)'), selected: format == 'team', onSelected: (_) => setState(() => format = 'team')),
           ]),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           SizedBox(width: double.infinity, child: FilledButton.icon(
             onPressed: loading ? null : () => _run(() => PracticeApi.request('games/create/', body: {'mode': selectedMode, 'format': format})),
-            icon: const Icon(Icons.add_circle_outline),
-            label: const Padding(padding: EdgeInsets.all(12), child: Text('Шинэ өрөө нээх', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
+            icon: Icon(Icons.add_circle_outline),
+            label: Padding(padding: EdgeInsets.all(12), child: Text('Шинэ өрөө нээх', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
           )),
-          const SizedBox(height: 24),
-          _panel(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Найзынхаа өрөөнд нэгдэх', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 7),
-            const Text('Найзаасаа 6 тэмдэгттэй өрөөний кодыг аваарай.', style: TextStyle(color: _dim)),
-            const SizedBox(height: 15),
+          SizedBox(height: 24),
+          _panel(context, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Найзынхаа өрөөнд нэгдэх', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+            SizedBox(height: 7),
+            Text('Найзаасаа 6 тэмдэгттэй өрөөний кодыг аваарай.', style: TextStyle(color: MandakhPalette.of(context).muted)),
+            SizedBox(height: 15),
             TextField(
               controller: inviteController,
               maxLength: 6,
               textCapitalization: TextCapitalization.characters,
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]'))],
-              decoration: const InputDecoration(prefixIcon: Icon(Icons.key), hintText: 'Өрөөний код', counterText: ''),
+              decoration: InputDecoration(prefixIcon: Icon(Icons.key), hintText: 'Өрөөний код', counterText: ''),
               onChanged: (value) => setState(() => invite = value.toUpperCase()),
             ),
-            const SizedBox(height: 8),
-            const Text('Нэгдэх тал', style: TextStyle(color: _dim)),
+            SizedBox(height: 8),
+            Text('Нэгдэх тал', style: TextStyle(color: MandakhPalette.of(context).muted)),
             Wrap(spacing: 8, children: [
-              ChoiceChip(label: const Text('Автоматаар'), selected: side == null, onSelected: (_) => setState(() => side = null)),
-              ChoiceChip(label: const Text('Цэнхэр'), selected: side == 1, onSelected: (_) => setState(() => side = 1)),
-              ChoiceChip(label: const Text('Улбар шар'), selected: side == 2, onSelected: (_) => setState(() => side = 2)),
+              ChoiceChip(label: Text('Автоматаар'), selected: side == null, onSelected: (_) => setState(() => side = null)),
+              ChoiceChip(label: Text('Цэнхэр'), selected: side == 1, onSelected: (_) => setState(() => side = 1)),
+              ChoiceChip(label: Text('Улбар шар'), selected: side == 2, onSelected: (_) => setState(() => side = 2)),
             ]),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             SizedBox(width: double.infinity, child: OutlinedButton.icon(
               onPressed: loading || invite.length != 6 ? null : () => _run(() => PracticeApi.request('games/$invite/join/', body: {if (side != null) 'side': side})),
-              icon: const Icon(Icons.login), label: const Text('Кодоор нэгдэх'),
+              icon: Icon(Icons.login), label: Text('Кодоор нэгдэх'),
             )),
           ])),
-          if (loading) const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator())),
-          if (error != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(error!, style: const TextStyle(color: Color(0xFFFF9D98)))),
-          const SizedBox(height: 18),
-          const Text('Эдгээр тоглоомын оноо нь албан ёсны бодлого бодолтын эрэмбэд нөлөөлөхгүй.', style: TextStyle(color: _dim, fontSize: 12)),
+          if (loading) Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator())),
+          if (error != null) Padding(padding: EdgeInsets.only(top: 12), child: Text(error!, style: TextStyle(color: palette.negative))),
+          SizedBox(height: 18),
+          Text('Эдгээр тоглоомын оноо нь албан ёсны бодлого бодолтын эрэмбэд нөлөөлөхгүй.', style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 12)),
         ]))),
       ])),
     );
@@ -214,33 +212,33 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
       onTap: () => setState(() => selectedMode = game.id),
       borderRadius: BorderRadius.circular(20),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
+        duration: Duration(milliseconds: 250),
         height: 190,
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [game.accent.withOpacity(.23), _surface]),
-          border: Border.all(color: selected ? game.accent : _outline, width: selected ? 2 : 1),
+          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [game.accent.withOpacity(.23), palette.surface]),
+          border: Border.all(color: selected ? game.accent : palette.outline, width: selected ? 2 : 1),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Icon(game.icon, color: game.accent, size: 34),
-            Icon(selected ? Icons.check_circle : Icons.radio_button_unchecked, color: selected ? game.accent : _dim),
+            Icon(game.icon, color: palette.readable(game.accent), size: 34),
+            Icon(selected ? Icons.check_circle : Icons.radio_button_unchecked, color: selected ? palette.readable(game.accent) : palette.muted),
           ]),
-          const Spacer(),
-          Text(game.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 7),
-          Text(game.subtitle, maxLines: 2, style: const TextStyle(color: _dim, fontSize: 12)),
+          Spacer(),
+          Text(game.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+          SizedBox(height: 7),
+          Text(game.subtitle, maxLines: 2, style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 12)),
         ]),
       ),
     ));
   }
 }
 
-Widget _panel(Widget child) => Container(
+Widget _panel(BuildContext context, Widget child) => Container(
   width: double.infinity,
-  decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: _outline)),
-  padding: const EdgeInsets.all(18),
+  decoration: BoxDecoration(color: MandakhPalette.of(context).surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: MandakhPalette.of(context).outline)),
+  padding: EdgeInsets.all(18),
   child: child,
 );
 
@@ -253,6 +251,7 @@ class MiniGameRoomScreen extends StatefulWidget {
 }
 
 class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
+  MandakhPalette get palette => MandakhPalette.of(context);
   late Map<String, dynamic> room;
   Timer? pollTimer;
   Timer? clockTimer;
@@ -266,8 +265,8 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
   void initState() {
     super.initState();
     room = widget.initialRoom;
-    pollTimer = Timer.periodic(const Duration(milliseconds: 1200), (_) => _poll());
-    clockTimer = Timer.periodic(const Duration(milliseconds: 400), (_) {
+    pollTimer = Timer.periodic(Duration(milliseconds: 1200), (_) => _poll());
+    clockTimer = Timer.periodic(Duration(milliseconds: 400), (_) {
       if (mounted && room['status'] == 'running') setState(() {});
     });
   }
@@ -306,7 +305,7 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
       });
       if (action == 'answer') {
         feedbackTimer?.cancel();
-        feedbackTimer = Timer(const Duration(milliseconds: 1150), () { if (mounted) setState(() => feedback = null); });
+        feedbackTimer = Timer(Duration(milliseconds: 1150), () { if (mounted) setState(() => feedback = null); });
       }
     } catch (e) {
       if (mounted) setState(() => networkError = e.toString().replaceFirst('Exception: ', ''));
@@ -329,64 +328,64 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
     final leftWins = room['winner'] == mySide;
     final draw = room['winner'] == 0;
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: palette.background,
       appBar: AppBar(
-        backgroundColor: _background,
+        backgroundColor: palette.background,
         title: Text(room['name'] as String),
         actions: [
-          IconButton(tooltip: 'Шинэчлэх', onPressed: _poll, icon: const Icon(Icons.refresh)),
+          IconButton(tooltip: 'Шинэчлэх', onPressed: _poll, icon: Icon(Icons.refresh)),
         ],
       ),
-      body: SafeArea(child: ListView(padding: const EdgeInsets.fromLTRB(14, 8, 14, 28), children: [
-        Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      body: SafeArea(child: ListView(padding: EdgeInsets.fromLTRB(14, 8, 14, 28), children: [
+        Center(child: ConstrainedBox(constraints: BoxConstraints(maxWidth: 760), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Өрөөний код', style: TextStyle(color: _dim, fontWeight: FontWeight.bold)),
+            Text('Өрөөний код', style: TextStyle(color: MandakhPalette.of(context).muted, fontWeight: FontWeight.bold)),
             OutlinedButton.icon(
-              onPressed: () { Clipboard.setData(ClipboardData(text: room['code'] as String)); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Өрөөний кодыг хууллаа.'))); },
-              icon: const Icon(Icons.copy, size: 15),
-              label: Text(room['code'] as String, style: const TextStyle(letterSpacing: 3, fontWeight: FontWeight.w800)),
+              onPressed: () { Clipboard.setData(ClipboardData(text: room['code'] as String)); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Өрөөний кодыг хууллаа.'))); },
+              icon: Icon(Icons.copy, size: 15),
+              label: Text(room['code'] as String, style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w800)),
             ),
           ]),
-          const SizedBox(height: 10),
-          _panel(Column(children: [
+          SizedBox(height: 10),
+          _panel(context, Column(children: [
             Row(children: [
               Expanded(child: _sideInfo('ЦЭНХЭР', teamOne, scores[0], _left)),
-              const Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Text('ЭСРЭГ', style: TextStyle(color: _dim, fontSize: 11, fontWeight: FontWeight.bold))),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Text('ЭСРЭГ', style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 11, fontWeight: FontWeight.bold))),
               Expanded(child: _sideInfo('УЛБАР ШАР', teamTwo, scores[1], _right)),
             ]),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Row(children: [
-              Expanded(child: TweenAnimationBuilder<double>(tween: Tween<double>(end: scores[0] / 8.0), duration: const Duration(milliseconds: 650), curve: Curves.easeOutCubic, builder: (context, value, _) => LinearProgressIndicator(value: value.clamp(0.0, 1.0).toDouble(), minHeight: 10, backgroundColor: const Color(0xFF24344A), valueColor: const AlwaysStoppedAnimation(_left), borderRadius: BorderRadius.circular(8)))),
-              const SizedBox(width: 10),
-              Text('$remaining с', style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(width: 10),
-              Expanded(child: TweenAnimationBuilder<double>(tween: Tween<double>(end: scores[1] / 8.0), duration: const Duration(milliseconds: 650), curve: Curves.easeOutCubic, builder: (context, value, _) => LinearProgressIndicator(value: value.clamp(0.0, 1.0).toDouble(), minHeight: 10, backgroundColor: const Color(0xFF24344A), valueColor: const AlwaysStoppedAnimation(_right), borderRadius: BorderRadius.circular(8)))),
+              Expanded(child: TweenAnimationBuilder<double>(tween: Tween<double>(end: scores[0] / 8.0), duration: Duration(milliseconds: 650), curve: Curves.easeOutCubic, builder: (context, value, _) => LinearProgressIndicator(value: value.clamp(0.0, 1.0).toDouble(), minHeight: 10, backgroundColor: palette.tint, valueColor: AlwaysStoppedAnimation(_left), borderRadius: BorderRadius.circular(8)))),
+              SizedBox(width: 10),
+              Text('$remaining с', style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(width: 10),
+              Expanded(child: TweenAnimationBuilder<double>(tween: Tween<double>(end: scores[1] / 8.0), duration: Duration(milliseconds: 650), curve: Curves.easeOutCubic, builder: (context, value, _) => LinearProgressIndicator(value: value.clamp(0.0, 1.0).toDouble(), minHeight: 10, backgroundColor: palette.tint, valueColor: AlwaysStoppedAnimation(_right), borderRadius: BorderRadius.circular(8)))),
             ]),
           ])),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           GameArena(mode: mode, leftScore: scores[0], rightScore: scores[1], target: room['target'] as int),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           if (status == 'waiting') _waiting(teamOne, teamTwo),
           if (status == 'running') ...[
-            if (question != null) _questionCard(question) else _panel(const Column(children: [
+            if (question != null) _questionCard(question) else _panel(context, Column(children: [
               Icon(Icons.hourglass_top, color: Color(0xFFFFC829), size: 32),
               SizedBox(height: 12),
               Text('Асуултуудаа дуусгалаа!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              Text('Нөгөө талын хариулт эсвэл хугацаа дуусахыг хүлээнэ үү.', textAlign: TextAlign.center, style: TextStyle(color: _dim)),
+              Text('Нөгөө талын хариулт эсвэл хугацаа дуусахыг хүлээнэ үү.', textAlign: TextAlign.center, style: TextStyle(color: MandakhPalette.of(context).muted)),
             ])),
           ],
-          if (status == 'finished') _panel(Column(children: [
-            Icon(draw ? Icons.handshake_rounded : leftWins ? Icons.emoji_events_rounded : Icons.flag_outlined, color: draw ? Colors.white : leftWins ? const Color(0xFFFFCB3D) : _dim, size: 58),
-            const SizedBox(height: 12),
-            Text(draw ? 'Тэнцлээ!' : leftWins ? 'Ялалт байгууллаа!' : 'Энэ удаа нөгөө тал яллаа', textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 10),
-            Text('Эцсийн оноо: ${scores[0]} – ${scores[1]}', style: const TextStyle(color: _dim, fontSize: 17)),
-            const SizedBox(height: 14),
-            FilledButton.icon(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.replay), label: const Text('Дахин тоглох өрөө нээх')),
+          if (status == 'finished') _panel(context, Column(children: [
+            Icon(draw ? Icons.handshake_rounded : leftWins ? Icons.emoji_events_rounded : Icons.flag_outlined, color: draw ? palette.text : leftWins ? Color(0xFFFFCB3D) : MandakhPalette.of(context).muted, size: 58),
+            SizedBox(height: 12),
+            Text(draw ? 'Тэнцлээ!' : leftWins ? 'Ялалт байгууллаа!' : 'Энэ удаа нөгөө тал яллаа', textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
+            SizedBox(height: 10),
+            Text('Эцсийн оноо: ${scores[0]} – ${scores[1]}', style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 17)),
+            SizedBox(height: 14),
+            FilledButton.icon(onPressed: () => Navigator.pop(context), icon: Icon(Icons.replay), label: Text('Дахин тоглох өрөө нээх')),
           ])),
-          if (feedback != null) Padding(padding: const EdgeInsets.only(top: 12), child: AnimatedSwitcher(duration: const Duration(milliseconds: 250), child: Text(feedback!, key: ValueKey(feedback), textAlign: TextAlign.center, style: TextStyle(color: feedback!.startsWith('Зөв') ? const Color(0xFF63E5B1) : const Color(0xFFFFC176), fontWeight: FontWeight.w800)))),
-          if (networkError != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(networkError!, style: const TextStyle(color: Color(0xFFFF9999)), textAlign: TextAlign.center)),
+          if (feedback != null) Padding(padding: EdgeInsets.only(top: 12), child: AnimatedSwitcher(duration: Duration(milliseconds: 250), child: Text(feedback!, key: ValueKey(feedback), textAlign: TextAlign.center, style: TextStyle(color: feedback!.startsWith('Зөв') ? palette.positive : palette.negative, fontWeight: FontWeight.w800)))),
+          if (networkError != null) Padding(padding: EdgeInsets.only(top: 12), child: Text(networkError!, style: TextStyle(color: palette.negative), textAlign: TextAlign.center)),
         ]))),
       ])),
     );
@@ -394,56 +393,56 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
 
   Widget _sideInfo(String label, List<Map<String, dynamic>> members, int score, Color color) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1)),
-      const SizedBox(height: 5),
-      Text('$score оноо', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 23)),
-      const SizedBox(height: 4),
-      Text(members.isEmpty ? 'Хүлээж байна…' : members.map((p) => p['name']).join(', '), style: const TextStyle(color: _dim, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
+      Text(label, style: TextStyle(color: palette.readable(color), fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1)),
+      SizedBox(height: 5),
+      Text('$score оноо', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 23)),
+      SizedBox(height: 4),
+      Text(members.isEmpty ? 'Хүлээж байна…' : members.map((p) => p['name']).join(', '), style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
     ]);
   }
 
   Widget _waiting(List<Map<String, dynamic>> teamOne, List<Map<String, dynamic>> teamTwo) {
     final ready = teamOne.isNotEmpty && teamTwo.isNotEmpty;
     final host = room['host'] == true;
-    return _panel(Column(children: [
-      const Icon(Icons.groups, color: Color(0xFFFFC829), size: 40),
-      const SizedBox(height: 12),
-      const Text('Тоглогчдоо хүлээж байна', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
-      const SizedBox(height: 9),
-      const Text('Өрөөний кодоо найздаа илгээнэ үү. Хоёр талд тоглогч орсны дараа тоглоом эхэлнэ.', textAlign: TextAlign.center, style: TextStyle(color: _dim, height: 1.5)),
-      const SizedBox(height: 18),
+    return _panel(context, Column(children: [
+      Icon(Icons.groups, color: Color(0xFFFFC829), size: 40),
+      SizedBox(height: 12),
+      Text('Тоглогчдоо хүлээж байна', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+      SizedBox(height: 9),
+      Text('Өрөөний кодоо найздаа илгээнэ үү. Хоёр талд тоглогч орсны дараа тоглоом эхэлнэ.', textAlign: TextAlign.center, style: TextStyle(color: MandakhPalette.of(context).muted, height: 1.5)),
+      SizedBox(height: 18),
       if (host) SizedBox(width: double.infinity, child: FilledButton.icon(
         onPressed: ready && !answering ? () => _action('start') : null,
-        icon: const Icon(Icons.play_arrow_rounded),
-        label: const Padding(padding: EdgeInsets.all(11), child: Text('Тоглоом эхлүүлэх')),
-      )) else const Text('Өрөө нээсэн хүн тоглоом эхлүүлнэ.', style: TextStyle(color: _dim)),
+        icon: Icon(Icons.play_arrow_rounded),
+        label: Padding(padding: EdgeInsets.all(11), child: Text('Тоглоом эхлүүлэх')),
+      )) else Text('Өрөө нээсэн хүн тоглоом эхлүүлнэ.', style: TextStyle(color: MandakhPalette.of(context).muted)),
     ]));
   }
 
   Widget _questionCard(Map<String, dynamic> question) {
     final options = (question['options'] as List).cast<String>();
-    return _panel(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return _panel(context, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
-        const Icon(Icons.psychology_rounded, color: Color(0xFFFFD15A)),
-        const SizedBox(width: 8),
-        Text('АСУУЛТ ${(question['index'] as int) + 1} / ${room['max_answers']}', style: const TextStyle(color: _dim, fontWeight: FontWeight.w800)),
-        const SizedBox(width: 6),
-        Expanded(child: Text('Зөв хариулт = +1', textAlign: TextAlign.end, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: Colors.green.shade200))),
+        Icon(Icons.psychology_rounded, color: Color(0xFFFFD15A)),
+        SizedBox(width: 8),
+        Text('АСУУЛТ ${(question['index'] as int) + 1} / ${room['max_answers']}', style: TextStyle(color: MandakhPalette.of(context).muted, fontWeight: FontWeight.w800)),
+        SizedBox(width: 6),
+        Expanded(child: Text('Зөв хариулт = +1', textAlign: TextAlign.end, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: palette.positive))),
       ]),
-      const SizedBox(height: 15),
+      SizedBox(height: 15),
       AnimatedSwitcher(
-        duration: const Duration(milliseconds: 230),
-        transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: SlideTransition(position: Tween(begin: const Offset(.07, 0), end: Offset.zero).animate(animation), child: child)),
+        duration: Duration(milliseconds: 230),
+        transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: SlideTransition(position: Tween(begin: Offset(.07, 0), end: Offset.zero).animate(animation), child: child)),
         child: Column(key: ValueKey(question['index']), crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(question['prompt'] as String, style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 14),
+          Text(question['prompt'] as String, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+          SizedBox(height: 14),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(17),
-            decoration: BoxDecoration(color: const Color(0xFF080F1E), border: Border.all(color: const Color(0xFF314467)), borderRadius: BorderRadius.circular(15)),
-            child: SelectableText(question['code'] as String, style: const TextStyle(color: Color(0xFF8AD9FF), fontFamily: 'monospace', height: 1.5, fontSize: 16)),
+            padding: EdgeInsets.all(17),
+            decoration: BoxDecoration(color: palette.background, border: Border.all(color: palette.outline), borderRadius: BorderRadius.circular(15)),
+            child: SelectableText(question['code'] as String, style: TextStyle(color: palette.accentInk, fontFamily: 'monospace', height: 1.5, fontSize: 16)),
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           LayoutBuilder(builder: (context, constraints) {
             final cardWidth = constraints.maxWidth < 440 ? constraints.maxWidth : (constraints.maxWidth - 10) / 2;
             return Wrap(spacing: 10, runSpacing: 10, children: List.generate(options.length, (i) => SizedBox(width: cardWidth, child: OutlinedButton(
@@ -452,18 +451,18 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
                 _action('answer', data: {'index': question['index'], 'choice': i});
               },
               style: OutlinedButton.styleFrom(
-                minimumSize: const Size(0, 62),
+                minimumSize: Size(0, 62),
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                side: const BorderSide(color: _outline),
-                foregroundColor: Colors.white,
-                backgroundColor: const Color(0xFF1B304D),
+                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                side: BorderSide(color: palette.outline),
+                foregroundColor: palette.text,
+                backgroundColor: palette.surface,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
               ),
               child: Row(children: [
-                CircleAvatar(radius: 13, backgroundColor: const Color(0xFF354E70), child: Text('${i + 1}', style: const TextStyle(fontSize: 11, color: Colors.white))),
-                const SizedBox(width: 11),
-                Expanded(child: Text(options[i], style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600))),
+                CircleAvatar(radius: 13, backgroundColor: palette.tint, child: Text('${i + 1}', style: TextStyle(fontSize: 11, color: palette.text))),
+                SizedBox(width: 11),
+                Expanded(child: Text(options[i], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600))),
               ]),
             ))));
           }),

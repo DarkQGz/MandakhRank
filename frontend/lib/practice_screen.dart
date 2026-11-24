@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'data.dart';
+import 'theme_settings.dart';
 import 'auth_screen.dart';
 
 class PracticeScreen extends StatefulWidget {
@@ -87,9 +88,9 @@ class _PracticeState extends State<PracticeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (completed)
-                  const Chip(
+                  Chip(
                     label: Text('✓ Амжилттай бодсон'),
-                    avatar: Icon(Icons.check_circle, color: Colors.green),
+                    avatar: Icon(Icons.check_circle, color: MandakhPalette.of(context).positive),
                   ),
                 SelectableText(
                   p['description'],
@@ -170,7 +171,7 @@ class _PracticeState extends State<PracticeScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Text(
                       message,
-                      style: const TextStyle(color: Colors.orange),
+                      style: TextStyle(color: MandakhPalette.of(context).negative),
                     ),
                   ),
                 const SizedBox(height: 24),
@@ -184,7 +185,7 @@ class _PracticeState extends State<PracticeScreen> {
                       s['status'] == 'Accepted'
                           ? Icons.check_circle
                           : Icons.code,
-                      color: s['status'] == 'Accepted' ? Colors.green : null,
+                      color: s['status'] == 'Accepted' ? MandakhPalette.of(context).positive : null,
                     ),
                     title: Text('#${s['id']} • ${s['status']}'),
                     subtitle: Text(

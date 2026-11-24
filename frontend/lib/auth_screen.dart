@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'data.dart';
+import 'theme_settings.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -145,7 +146,7 @@ class _AuthState extends State<AuthScreen> {
               children: [
                 Icon(
                   verify ? Icons.mark_email_read_outlined : Icons.terminal,
-                  color: const Color(0xFF4C86FF),
+                  color: MandakhPalette.of(context).accentInk,
                   size: 60,
                 ),
                 const SizedBox(height: 24),

@@ -763,7 +763,7 @@ class _HomeState extends State<Home> {
         searchField('Бодлогын нэр, сэдвээр хайх'),
         SizedBox(height: 16),
         filters(
-          ['Бүгд', 'Хялбар', 'Дунд', 'Хүнд'],
+          ['Бүгд', 'Анхан шат', 'Хялбар', 'Дунд', 'Хүнд', 'Мэргэжлийн'],
           difficulty,
           (v) => difficulty = v,
         ),

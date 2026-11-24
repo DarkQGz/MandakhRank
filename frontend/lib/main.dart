@@ -8,7 +8,6 @@ import 'practice_screen.dart';
 import 'dashboard_screen.dart';
 import 'minigames_screen.dart';
 import 'theme_settings.dart';
-import 'public_profile_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -337,6 +336,7 @@ class _HomeState extends State<Home> {
                                 onNavigate: navigate,
                                 onLogin: authAction,
                                 onAvatarChanged: () { if (mounted) setState(() {}); },
+                                onOpenProfile: (id) => openStudentProfile(id, data),
                               ),
                             SizedBox(height: 32),
                             Text(
@@ -476,12 +476,44 @@ class _HomeState extends State<Home> {
       ),
     ),
   );
-  void openPublicProfile(Map<String, dynamic> person) {
-    final id = person['id'];
-    if (id is! int || Repository.base.isEmpty) return;
-    Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (_) => PublicProfileScreen(userId: id),
-    ));
+  void openStudentProfile(int id, Map<String, dynamic> data) {
+    if (id <= 0 || Repository.base.isEmpty) return;
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (routeContext) => Scaffold(
+      appBar: AppBar(title: const Text('Профайл')),
+      body: SafeArea(child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Center(child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: StudentDashboard(
+            userId: id,
+            catalog: data,
+            onNavigate: (page) {
+              Navigator.of(routeContext).popUntil((route) => route.isFirst);
+              if (mounted) navigate(page);
+            },
+            onLogin: authAction,
+            onAvatarChanged: () { if (mounted) setState(() {}); },
+            onOpenProfile: (otherId) => openStudentProfile(otherId, data),
+          ),
+        )),
+      )),
+    )));
+  }
+
+  Widget rankingCard(Map<String, dynamic> person, Map<String, dynamic> data,
+      Widget child, {required bool featured, Color? color}) {
+    final id = int.tryParse('${person['id']}');
+    return Material(
+      color: color ?? panel,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: palette.outline)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        key: ValueKey('rank-card-${featured ? 'top' : 'row'}-$id'),
+        onTap: id == null || id <= 0 || Repository.base.isEmpty ? null : () => openStudentProfile(id, data),
+        child: Padding(padding: EdgeInsets.all(featured ? 20 : 12), child: child),
+      ),
+    );
   }
 
   Widget rankings(Map<String, dynamic> data) {
@@ -516,7 +548,7 @@ class _HomeState extends State<Home> {
                 ][i];
                 return SizedBox(
                   width: width,
-                  child: box(
+                  child: rankingCard(p, data,
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -566,9 +598,9 @@ class _HomeState extends State<Home> {
                           '${p['solved']} бодлого',
                           style: TextStyle(color: muted),
                         ),
-                        TextButton.icon(onPressed: () => openPublicProfile(p), icon: const Icon(Icons.person_outline), label: const Text('Профайл үзэх')),
                       ],
                     ),
+                    featured: true,
                     color: i == 0 ? palette.tint : null,
                   ),
                 );
@@ -587,13 +619,12 @@ class _HomeState extends State<Home> {
         if (found.isEmpty)
           empty()
         else
-          box(
-            Column(
+          Column(
               children: found
                   .map(
                     (p) => Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: rankingCard(p, data, Row(
                         children: [
                           SizedBox(
                             width: 36,
@@ -616,15 +647,14 @@ class _HomeState extends State<Home> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                InkWell(onTap: () => openPublicProfile(p), child: Text(
+                                Text(
                                   p['name'],
-                                  style: TextStyle(
-                                    color: blue,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )),
+                                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                ),
                                 Text(
                                   '@${p['handle']}',
+                                  maxLines: 1, overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: muted,
                                     fontSize: 11,
@@ -653,13 +683,11 @@ class _HomeState extends State<Home> {
                               ),
                             ],
                           ),
-                          IconButton(tooltip: 'Профайл үзэх', onPressed: () => openPublicProfile(p), icon: const Icon(Icons.chevron_right)),
                         ],
-                      ),
+                      ), featured: false),
                     ),
                   )
                   .toList(),
-            ),
           ),
       ],
     );

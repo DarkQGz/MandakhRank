@@ -7,7 +7,7 @@ import 'public_profile_screen.dart';
 
 
 /// Dashboard is part of the existing app, not a separate site.
-/// Private activity is fetched from the authenticated Django endpoint.
+/// The same dashboard renders the signed-in student and any visited student.
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({
     super.key,
@@ -15,12 +15,16 @@ class StudentDashboard extends StatefulWidget {
     required this.onNavigate,
     required this.onLogin,
     required this.onAvatarChanged,
+    required this.onOpenProfile,
+    this.userId,
   });
 
   final Map<String, dynamic> catalog;
   final ValueChanged<int> onNavigate;
   final Future<void> Function() onLogin;
   final VoidCallback onAvatarChanged;
+  final ValueChanged<int> onOpenProfile;
+  final int? userId;
 
   @override
   State<StudentDashboard> createState() => _StudentDashboardState();
@@ -37,50 +41,64 @@ class _StudentDashboardState extends State<StudentDashboard> {
   bool loading = false;
   bool saving = false;
   String? previousToken;
+  int _loadGeneration = 0;
+  int _identityGeneration = 0;
+  bool get isOwner => profile?['is_owner'] == true && PracticeApi.token != null && previousToken == PracticeApi.token;
+  bool get canLoad => widget.userId != null || PracticeApi.token != null;
 
   @override
   void initState() {
     super.initState();
     previousToken = PracticeApi.token;
-    if (previousToken != null) load();
+    if (canLoad) load();
   }
 
   @override
   void didUpdateWidget(covariant StudentDashboard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (previousToken != PracticeApi.token) {
+    if (previousToken != PracticeApi.token || oldWidget.userId != widget.userId) {
       previousToken = PracticeApi.token;
+      _loadGeneration++;
+      _identityGeneration++;
+      loading = false;
       profile = null;
       error = null;
-      if (previousToken != null) load();
+      if (canLoad) load();
     }
   }
 
   Future<void> load() async {
-    if (loading || PracticeApi.token == null) return;
+    if (loading || !canLoad) return;
+    final generation = ++_loadGeneration;
     setState(() {
       loading = true;
       error = null;
     });
     final requestedToken = PracticeApi.token;
     try {
-      final result = await PracticeApi.request('profile/me/');
-      if (!mounted || requestedToken != PracticeApi.token) return;
+      final result = await PracticeApi.request(widget.userId == null
+          ? 'profile/me/' : 'profile/public/${widget.userId}/');
+      if (!mounted || generation != _loadGeneration || requestedToken != PracticeApi.token) return;
       setState(() => profile = result);
-      PracticeApi.avatarUrl = ProfileApi.imageUrl(result['avatar_url'] as String?);
-      widget.onAvatarChanged();
+      if (result['is_owner'] == true && requestedToken != null) {
+        PracticeApi.avatarUrl = ProfileApi.imageUrl(result['avatar_url'] as String?);
+        widget.onAvatarChanged();
+      }
     } catch (e) {
-      if (mounted) setState(() => error = e.toString());
+      if (mounted && generation == _loadGeneration && requestedToken == PracticeApi.token) {
+        setState(() => error = e.toString());
+      }
     } finally {
-      if (mounted) setState(() => loading = false);
+      if (mounted && generation == _loadGeneration) setState(() => loading = false);
     }
   }
 
   Future<void> upload() async {
-    if (saving) return;
+    if (saving || !isOwner) return;
+    final token = PracticeApi.token;
     try {
       final result = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
-      if (result == null || result.files.isEmpty) return;
+      if (!mounted || token != PracticeApi.token || !isOwner || result == null || result.files.isEmpty) return;
       final file = result.files.single;
       if (file.bytes == null) {
         throw Exception('Зургийг уншиж чадсангүй. Дахин сонгоно уу.');
@@ -90,7 +108,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       }
       setState(() => saving = true);
       final output = await ProfileApi.uploadAvatar(file.bytes!, file.name);
-      if (!mounted) return;
+      if (!mounted || token != PracticeApi.token || !isOwner) return;
       setState(() { if (profile != null) profile!['avatar_url'] = output['avatar_url']; });
       widget.onAvatarChanged();
       notify('Профайл зураг шинэчлэгдлээ.');
@@ -102,11 +120,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
   }
 
   Future<void> removeAvatar() async {
-    if (saving) return;
+    if (saving || !isOwner) return;
+    final token = PracticeApi.token;
     setState(() => saving = true);
     try {
       await ProfileApi.deleteAvatar();
-      if (!mounted) return;
+      if (!mounted || token != PracticeApi.token || !isOwner) return;
       setState(() { if (profile != null) profile!['avatar_url'] = null; });
       widget.onAvatarChanged();
       notify('Зургийг устгалаа.');
@@ -164,7 +183,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
         children: [
           iconBox(icon, color),
           SizedBox(height: 16),
-          Text(value, style: TextStyle(fontSize: 29, fontWeight: FontWeight.w800)),
+          FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(value, style: const TextStyle(fontSize: 29, fontWeight: FontWeight.w800))),
           SizedBox(height: 5),
           Text(label, style: TextStyle(color: _subdued, fontSize: 13)),
         ],
@@ -195,9 +214,24 @@ class _StudentDashboardState extends State<StudentDashboard> {
         ],
       );
 
+  String formatDate(dynamic value, {bool time = false}) {
+    final d = DateTime.tryParse(value?.toString() ?? '')?.toLocal();
+    if (d == null) return '—';
+    String pad(int n) => n.toString().padLeft(2, '0');
+    return '${d.year}.${pad(d.month)}.${pad(d.day)}${time ? ' ${pad(d.hour)}:${pad(d.minute)}' : ''}';
+  }
+
+  String verdict(dynamic value) => const <String, String>{
+    'Accepted': 'Зөв', 'Wrong Answer': 'Буруу хариу', 'Queued': 'Хүлээгдэж байна',
+    'Running': 'Шалгаж байна', 'Time Limit Exceeded': 'Хугацаа хэтэрсэн',
+    'Memory Limit Exceeded': 'Санах ой хэтэрсэн', 'Runtime Error': 'Ажиллуулах алдаа',
+    'Compilation Error': 'Хөрвүүлэх алдаа', 'Judge Error': 'Шүүгчийн алдаа',
+    'Output Limit Exceeded': 'Гаралтын хэмжээ хэтэрсэн',
+  }[value] ?? value.toString();
+
   @override
   Widget build(BuildContext context) {
-    if (PracticeApi.token == null) {
+    if (widget.userId == null && PracticeApi.token == null) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         sectionTitle('Миний самбар', 'Суралцах явцаа нэг дороос удирдаарай.'),
         SizedBox(height: 22),
@@ -224,19 +258,18 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ]));
     }
 
+    final owner = isOwner;
     final stats = Map<String, dynamic>.from(profile!['statistics'] as Map);
     final recent = (profile!['recent'] as List).cast<Map>();
     final courses = (widget.catalog['courses'] as List?) ?? [];
     return LayoutBuilder(builder: (context, constraints) {
       final wide = constraints.maxWidth >= 740;
-      final cell = wide ? (constraints.maxWidth - 14 * 3) / 4 : (constraints.maxWidth - 14) / 2;
-      // The profile header has 24px padding on each side, an 80px avatar,
-      // and an 18px gap. Keep the name/email inside the available width.
-      final identityWidth = (constraints.maxWidth - 146.0)
-          .clamp(0.0, 320.0)
-          .toDouble();
+      final cell = wide ? (constraints.maxWidth - 14 * 3) / 4 : constraints.maxWidth < 250 ? constraints.maxWidth : (constraints.maxWidth - 14) / 2;
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        sectionTitle('Миний самбар', 'Тавтай морил! Өнөөдөр бас нэг бодлого бодоцгооё.'),
+        sectionTitle(owner ? 'Миний самбар' : 'Хэрэглэгчийн самбар', owner ? 'Тавтай морил! Өнөөдөр бас нэг бодлого бодоцгооё.' : 'Суралцах явц, бодолтын түүх, сэтгэгдлүүд.'),
+        Align(alignment: Alignment.centerRight, child: TextButton.icon(onPressed: loading ? null : load, icon: const Icon(Icons.refresh), label: const Text('Шинэчлэх'))),
+        if (loading) const LinearProgressIndicator(),
+        if (error != null) Text(error!, style: TextStyle(color: palette.muted)),
         SizedBox(height: 22),
         Container(
           width: double.infinity,
@@ -252,24 +285,18 @@ class _StudentDashboardState extends State<StudentDashboard> {
             spacing: 22,
             runSpacing: 20,
             children: [
-              Row(mainAxisSize: MainAxisSize.min, children: [
+              Row(children: [
                 avatar(),
                 SizedBox(width: 18),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('САЙН БАЙНА УУ!', style: TextStyle(color: _primary, fontSize: 11, letterSpacing: 1.8, fontWeight: FontWeight.w700)),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(owner ? 'САЙН БАЙНА УУ!' : 'СУРАЛЦАГЧ', style: TextStyle(color: _primary, fontSize: 11, letterSpacing: 1.8, fontWeight: FontWeight.w700)),
                   SizedBox(height: 5),
-                  SizedBox(width: identityWidth, child: Text(profile!['username'].toString(), overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold))),
-                  SizedBox(width: identityWidth, child: Text(profile!['email'].toString(), overflow: TextOverflow.ellipsis, style: TextStyle(color: _subdued, fontSize: 11))),
-                ]),
+                  Text(profile!['username'].toString(), style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold)),
+                  if (owner && profile!['email'] != null) Text(profile!['email'].toString(), style: TextStyle(color: _subdued, fontSize: 11)),
+                  Text('Элссэн: ${formatDate(profile!['joined_at'])}', style: TextStyle(color: _subdued, fontSize: 11)),
+                ])),
               ]),
-              Wrap(spacing: 8, runSpacing: 8, children: [
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) => PublicProfileScreen(userId: profile!['id'] as int),
-                  )),
-                  icon: const Icon(Icons.person_outline),
-                  label: const Text('Миний нийтийн профайл'),
-                ),
+              if (owner) Wrap(spacing: 8, runSpacing: 8, children: [
                 OutlinedButton.icon(
                   onPressed: saving ? null : upload,
                   icon: Icon(Icons.add_a_photo_outlined, size: 18),
@@ -286,14 +313,15 @@ class _StudentDashboardState extends State<StudentDashboard> {
           ),
         ),
         SizedBox(height: 16),
-        Text('JPG, PNG, WebP • 2 MB хүртэл • Зураг таны профайлд хадгалагдана.', style: TextStyle(color: _subdued, fontSize: 11)),
+        if (owner) Text('JPG, PNG, WebP • 2 MB хүртэл • Зураг таны профайлд хадгалагдана.', style: TextStyle(color: _subdued, fontSize: 11)),
         SizedBox(height: 26),
         Wrap(spacing: 14, runSpacing: 14, children: [
           SizedBox(width: cell, child: metric('Нийт оноо', '${stats['points'] ?? 0}', Icons.stars_outlined, Color(0xFFFFC66B))),
           SizedBox(width: cell, child: metric('Бодсон бодлого', '${stats['solved'] ?? 0}', Icons.task_alt_rounded, palette.positive)),
           SizedBox(width: cell, child: metric('Илгээлт', '${stats['submissions'] ?? 0}', Icons.terminal_rounded, Color(0xFF8CB3FF))),
-          SizedBox(width: cell, child: metric('Сургалт', '${stats['courses'] ?? 0}', Icons.school_outlined, Color(0xFFBE9BFF))),
+          SizedBox(width: cell, child: metric('Нийт сургалт', '${stats['courses'] ?? 0}', Icons.school_outlined, Color(0xFFBE9BFF))),
         ]),
+        if (owner) ...[
         SizedBox(height: 30),
         sectionTitle('Түргэн холбоос', 'Дараагийн алхмаа сонгоорой.'),
         SizedBox(height: 14),
@@ -303,10 +331,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
           SizedBox(width: wide ? (constraints.maxWidth - 28) / 3 : constraints.maxWidth, child: action('Эрэмбэ харах', 'Бусадтай өрсөлдөх', Icons.emoji_events_outlined, Color(0xFFFFC66B), 0)),
         ]),
         SizedBox(height: 30),
-        sectionTitle('Сүүлийн илгээлтүүд', 'Таны хамгийн сүүлд шалгуулсан кодууд.'),
+        ],
+        if (!owner) const SizedBox(height: 30),
+        sectionTitle('Сүүлийн илгээлтүүд', owner ? 'Таны хамгийн сүүлд шалгуулсан кодууд.' : 'Нийтлэгдсэн бодлогын сүүлийн илгээлтүүд.'),
         SizedBox(height: 14),
         surface(recent.isEmpty
-            ? Padding(padding: EdgeInsets.all(14), child: Text('Одоогоор илгээлт алга. Эхний бодлогоо бодоорой!', style: TextStyle(color: _subdued)))
+            ? Padding(padding: EdgeInsets.all(14), child: Text(owner ? 'Одоогоор илгээлт алга. Эхний бодлогоо бодоорой!' : 'Одоогоор илгээлт алга.', style: TextStyle(color: _subdued)))
             : Column(children: [
                 ...recent.map((item) {
                   final accepted = item['status'] == 'Accepted';
@@ -319,15 +349,21 @@ class _StudentDashboardState extends State<StudentDashboard> {
                         Text('${item['title']}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w600)),
                         SizedBox(height: 4),
                         Text('#${item['id']} • ${item['passed']}/${item['total']} тест', style: TextStyle(color: _subdued, fontSize: 12)),
+                        Text(formatDate(item['created_at'], time: true), style: TextStyle(color: _subdued, fontSize: 11)),
+                        Text(verdict(item['status']), style: TextStyle(color: accepted ? palette.positive : _subdued, fontSize: 12, fontWeight: FontWeight.w600)),
                       ])),
-                      Text('${item['status']}', style: TextStyle(color: accepted ? palette.positive : _subdued, fontSize: 12, fontWeight: FontWeight.w600)),
                     ]),
                   );
                 }),
-                SizedBox(height: 4),
-                Align(alignment: Alignment.centerRight, child: TextButton.icon(onPressed: load, icon: Icon(Icons.refresh, size: 16), label: Text('Шинэчлэх'))),
               ])),
-        if (courses.isNotEmpty) ...[
+        SizedBox(height: 30),
+        ProfileComments(
+          key: ValueKey('profile-comments-${profile!['id']}-$_identityGeneration'),
+          initialData: profile!.containsKey('comments') ? profile : null,
+          userId: profile!['id'] as int,
+          onOpenProfile: widget.onOpenProfile,
+        ),
+        if (owner && courses.isNotEmpty) ...[
           SizedBox(height: 30),
           sectionTitle('Санал болгох сургалт', 'Одоогоор нийтлэгдсэн сургалтууд.'),
           SizedBox(height: 14),

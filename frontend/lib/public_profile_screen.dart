@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'data.dart';
 
-class PublicProfileScreen extends StatefulWidget {
-  const PublicProfileScreen({super.key, required this.userId});
+class ProfileComments extends StatefulWidget {
+  const ProfileComments({super.key, required this.userId, required this.onOpenProfile, this.initialData});
   final int userId;
+  final Map<String, dynamic>? initialData;
+  final ValueChanged<int> onOpenProfile;
   @override
-  State<PublicProfileScreen> createState() => _PublicProfileScreenState();
+  State<ProfileComments> createState() => _ProfileCommentsState();
 }
 
-class _PublicProfileScreenState extends State<PublicProfileScreen> {
+class _ProfileCommentsState extends State<ProfileComments> {
   final controller = TextEditingController();
   Map<String, dynamic>? profile;
   List<Map<String, dynamic>> comments = [];
@@ -20,7 +22,15 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
   @override
   void initState() {
     super.initState();
-    load();
+    final initial = widget.initialData;
+    if (initial != null) {
+      profile = initial;
+      comments = (initial['comments'] as List).map((v) => Map<String, dynamic>.from(v as Map)).toList();
+      cursor = initial['next_before'] as int?;
+      loading = false;
+    } else {
+      load();
+    }
   }
   @override
   void dispose() {
@@ -30,7 +40,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
   String message(Object e) => e is ApiException ? e.toString() : 'Сервертэй холбогдож чадсангүй. Дахин оролдоно уу.';
 
   Future<void> load({bool more = false}) async {
-    if (more && cursor == null) return;
+    if (!mounted || (more && cursor == null)) return;
     setState(() { loading = true; error = null; });
     try {
       final data = await PracticeApi.request(more ? '$endpoint?before=$cursor' : endpoint);
@@ -102,40 +112,20 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
       child: Text(name.isEmpty ? '?' : String.fromCharCode(name.runes.first).toUpperCase()));
   }
 
-  Widget stat(String label, dynamic value) => Expanded(child: Card(child: Padding(
-    padding: const EdgeInsets.all(14), child: Column(children: [
-      Text('$value', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
-      Text(label, textAlign: TextAlign.center),
-    ]),
-  )));
-
   @override
   Widget build(BuildContext context) {
     final data = profile;
     final colors = Theme.of(context).colorScheme;
     final disabled = loading || busy;
-    return Scaffold(
-      appBar: AppBar(title: const Text('Хэрэглэгчийн профайл'), actions: [
-        IconButton(tooltip: 'Шинэчлэх', onPressed: disabled ? null : () => load(), icon: const Icon(Icons.refresh)),
-      ]),
-      body: SafeArea(child: ListView(padding: const EdgeInsets.all(16), children: [
-        Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 850), child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            if (loading) const LinearProgressIndicator(),
-            if (error != null) Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Text(error!, style: TextStyle(color: colors.error))),
-            if (data == null && !loading) OutlinedButton(onPressed: () => load(), child: const Text('Дахин оролдох')),
-            if (data != null) ...[
-              Card(child: Padding(padding: const EdgeInsets.all(20), child: Row(children: [
-                avatar(data['username'].toString(), data['avatar_url'], 34),
-                const SizedBox(width: 16),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(data['username'].toString(), style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
-                  Text('Элссэн огноо: ${date(data['joined_at'])}'),
-                ])),
-              ]))),
-              Row(children: [stat('Нийт оноо', data['statistics']['points']), stat('Бодсон бодлого', data['statistics']['solved'])]),
-              const SizedBox(height: 24),
-              Text('Сэтгэгдлүүд', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      if (loading) const LinearProgressIndicator(),
+      if (error != null) Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Text(error!, style: TextStyle(color: colors.error))),
+      if (data == null && !loading) OutlinedButton(onPressed: () => load(), child: const Text('Дахин оролдох')),
+      if (data != null) ...[
+              Row(children: [
+                Expanded(child: Text('Сэтгэгдлүүд', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold))),
+                IconButton(tooltip: 'Сэтгэгдэл шинэчлэх', onPressed: disabled ? null : () => load(), icon: const Icon(Icons.refresh)),
+              ]),
               const SizedBox(height: 8),
               if (data['can_comment'] == true) ...[
                 TextField(controller: controller, maxLength: 500, minLines: 2, maxLines: 5, enabled: !busy,
@@ -148,8 +138,8 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                 Row(children: [
                   avatar(c['author'].toString(), c['avatar_url'], 18),
                   const SizedBox(width: 10),
-                  Expanded(child: InkWell(onTap: c['author_id'] == widget.userId ? null : () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => PublicProfileScreen(userId: c['author_id'] as int))), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(c['author'].toString(), style: TextStyle(color: colors.primary, fontWeight: FontWeight.bold)),
+                  Expanded(child: InkWell(onTap: c['author_id'] == widget.userId ? null : () => widget.onOpenProfile(c['author_id'] as int), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(c['author'].toString(), style: TextStyle(fontWeight: FontWeight.bold)),
                     Text(date(c['created_at']), style: Theme.of(context).textTheme.bodySmall),
                   ]))),
                   if (c['can_delete'] == true) IconButton(tooltip: 'Сэтгэгдэл устгах', onPressed: disabled ? null : () => remove(c), icon: const Icon(Icons.delete_outline)),
@@ -158,10 +148,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                 SelectableText(c['body'].toString()),
               ]))),
               if (cursor != null) OutlinedButton(onPressed: disabled ? null : () => load(more: true), child: const Text('Өмнөх сэтгэгдлүүдийг үзэх')),
-            ],
-          ],
-        ))),
-      ])),
-    );
+      ],
+    ]);
   }
 }

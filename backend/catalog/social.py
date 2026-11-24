@@ -1,12 +1,11 @@
 """Public student profiles and authenticated profile-wall comments."""
 from django.contrib.auth import get_user_model
-from django.db.models import Sum
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .accounts import limited
-from .models import Problem, Submission, ProfileAvatar, ProfileComment
+from .models import ProfileAvatar, ProfileComment
 from .practice import current_user, payload, response
-from .profile import avatar_url
+from .profile import avatar_url, profile_data
 
 PAGE_SIZE = 20
 
@@ -55,15 +54,13 @@ def public_profile(request, user_id):
     more = len(page) > PAGE_SIZE
     page = page[:PAGE_SIZE]
     avatars = dict(ProfileAvatar.objects.filter(user_id__in={owner.pk, *(c.author_id for c in page)}).values_list('user_id', 'updated_at'))
-    solved_ids = Submission.objects.filter(user=owner, status='Accepted', problem__published=True).values_list('problem_id', flat=True).distinct()
-    solved = Problem.objects.filter(pk__in=solved_ids, published=True)
-    return response({'id': owner.pk, 'username': owner.username,
-        'avatar_url': avatar_url(owner.pk, avatars.get(owner.pk)),
-        'joined_at': owner.date_joined.isoformat(),
-        'statistics': {'solved': solved.count(), 'points': solved.aggregate(total=Sum('points'))['total'] or 0},
+    data = profile_data(owner, is_owner=bool(viewer and viewer.pk == owner.pk), avatar_version=avatars.get(owner.pk))
+    data.update({
         'can_comment': viewer is not None,
         'comments': [comment_data(c, viewer, avatars) for c in page],
-        'next_before': page[-1].pk if more else None})
+        'next_before': page[-1].pk if more else None,
+    })
+    return response(data)
 
 
 @csrf_exempt

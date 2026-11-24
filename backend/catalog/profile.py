@@ -24,31 +24,27 @@ def avatar_url(user_id, version=None):
     return f'/api/profile/avatar/{user_id}/?v={int(version.timestamp() * 1000000)}'
 
 
-@require_GET
-def me(request):
-    user = current_user(request)
-    if not user:
-        return response({'error': 'Эхлээд нэвтэрнэ үү.'}, 401)
-
-    avatar = ProfileAvatar.objects.filter(user=user).first()
-    solved_ids = Submission.objects.filter(
-        user=user, status='Accepted', problem__published=True
-    ).values_list('problem_id', flat=True).distinct()
+def profile_data(user, *, is_owner=False, avatar_version=None):
+    """Shared profile payload; only the authenticated owner gets private data."""
+    if avatar_version is None:
+        avatar_version = ProfileAvatar.objects.filter(user=user).values_list('updated_at', flat=True).first()
+    activity = Submission.objects.filter(user=user)
+    if not is_owner:
+        activity = activity.filter(problem__published=True)
+    solved_ids = activity.filter(status='Accepted', problem__published=True).order_by().values_list('problem_id', flat=True).distinct()
     solved_problems = Problem.objects.filter(id__in=solved_ids, published=True)
-    solved = solved_problems.count()
-    points = solved_problems.aggregate(total=Sum('points'))['total'] or 0
-    submissions = list(Submission.objects.filter(user=user).select_related('problem')[:6])
-    return response({
+    submissions = list(activity.select_related('problem').order_by('-created_at', '-pk')[:6])
+    data = {
         'id': user.pk,
         'username': user.username,
-        'display_name': user.get_full_name().strip() or user.username,
-        'email': user.email,
+        'display_name': (user.get_full_name().strip() or user.username) if is_owner else user.username,
         'joined_at': user.date_joined.isoformat(),
-        'avatar_url': avatar_url(user.id, avatar.updated_at) if avatar else None,
+        'avatar_url': avatar_url(user.pk, avatar_version),
+        'is_owner': is_owner,
         'statistics': {
-            'solved': solved,
-            'points': points,
-            'submissions': Submission.objects.filter(user=user).count(),
+            'solved': solved_problems.count(),
+            'points': solved_problems.aggregate(total=Sum('points'))['total'] or 0,
+            'submissions': activity.count(),
             'courses': Course.objects.filter(published=True).count(),
         },
         'recent': [
@@ -57,7 +53,18 @@ def me(request):
              'created_at': s.created_at.isoformat()}
             for s in submissions
         ],
-    })
+    }
+    if is_owner:
+        data['email'] = user.email
+    return data
+
+
+@require_GET
+def me(request):
+    user = current_user(request)
+    if not user:
+        return response({'error': 'Эхлээд нэвтэрнэ үү.'}, 401)
+    return response(profile_data(user, is_owner=True))
 
 
 @csrf_exempt

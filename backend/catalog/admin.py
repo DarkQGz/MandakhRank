@@ -108,3 +108,16 @@ class MiniGameAnswerAdmin(admin.ModelAdmin):
     readonly_fields = ('player', 'question_index', 'selected', 'correct', 'created_at')
     def has_add_permission(self, request): return False
     def has_change_permission(self, request, obj=None): return False
+
+
+from .models import ProfileComment
+
+@admin.register(ProfileComment)
+class ProfileCommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'owner', 'author', 'body', 'created_at')
+    search_fields = ('owner__username', 'author__username', 'body')
+    list_filter = ('created_at',)
+    list_select_related = ('owner', 'author')
+    readonly_fields = ('owner', 'author', 'body', 'created_at')
+    def has_add_permission(self, request): return False
+    def has_change_permission(self, request, obj=None): return False

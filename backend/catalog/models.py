@@ -182,3 +182,16 @@ class MiniGameAnswer(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['player', 'question_index'], name='unique_minigame_answer')]
+
+
+class ProfileComment(models.Model):
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='profile_comments')
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='written_profile_comments')
+    body = models.CharField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-id']
+        indexes = [models.Index(fields=['owner', '-id'], name='profile_wall_owner_idx')]
+        verbose_name = 'Профайлын сэтгэгдэл'
+        verbose_name_plural = 'Профайлын сэтгэгдлүүд'

@@ -8,6 +8,7 @@ import 'practice_screen.dart';
 import 'dashboard_screen.dart';
 import 'minigames_screen.dart';
 import 'theme_settings.dart';
+import 'public_profile_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -475,6 +476,14 @@ class _HomeState extends State<Home> {
       ),
     ),
   );
+  void openPublicProfile(Map<String, dynamic> person) {
+    final id = person['id'];
+    if (id is! int || Repository.base.isEmpty) return;
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => PublicProfileScreen(userId: id),
+    ));
+  }
+
   Widget rankings(Map<String, dynamic> data) {
     final all = items(data, 'rankings');
     final found = all
@@ -557,6 +566,7 @@ class _HomeState extends State<Home> {
                           '${p['solved']} бодлого',
                           style: TextStyle(color: muted),
                         ),
+                        TextButton.icon(onPressed: () => openPublicProfile(p), icon: const Icon(Icons.person_outline), label: const Text('Профайл үзэх')),
                       ],
                     ),
                     color: i == 0 ? palette.tint : null,
@@ -606,12 +616,13 @@ class _HomeState extends State<Home> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                InkWell(onTap: () => openPublicProfile(p), child: Text(
                                   p['name'],
                                   style: TextStyle(
+                                    color: blue,
                                     fontWeight: FontWeight.w600,
                                   ),
-                                ),
+                                )),
                                 Text(
                                   '@${p['handle']}',
                                   style: TextStyle(
@@ -642,6 +653,7 @@ class _HomeState extends State<Home> {
                               ),
                             ],
                           ),
+                          IconButton(tooltip: 'Профайл үзэх', onPressed: () => openPublicProfile(p), icon: const Icon(Icons.chevron_right)),
                         ],
                       ),
                     ),

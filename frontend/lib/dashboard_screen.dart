@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'data.dart';
 import 'theme_settings.dart';
+import 'public_profile_screen.dart';
 
 
 /// Dashboard is part of the existing app, not a separate site.
@@ -262,6 +263,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 ]),
               ]),
               Wrap(spacing: 8, runSpacing: 8, children: [
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => PublicProfileScreen(userId: profile!['id'] as int),
+                  )),
+                  icon: const Icon(Icons.person_outline),
+                  label: const Text('Миний нийтийн профайл'),
+                ),
                 OutlinedButton.icon(
                   onPressed: saving ? null : upload,
                   icon: Icon(Icons.add_a_photo_outlined, size: 18),

@@ -140,13 +140,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
-  Widget surface(Widget content, {EdgeInsets padding = const EdgeInsets.all(22)}) =>
+  Widget surface(Widget content, {EdgeInsets padding = const EdgeInsets.all(16)}) =>
       Container(
         width: double.infinity,
         padding: padding,
         decoration: BoxDecoration(
           color: _surface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: _line),
         ),
         child: content,
@@ -158,7 +158,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
         child: Icon(icon, color: palette.readable(color), size: 24),
       );
 
-  Widget avatar({double radius = 40}) {
+  Widget avatar({double radius = 30}) {
     final url = ProfileApi.imageUrl(profile?['avatar_url'] as String?);
     return CircleAvatar(
       radius: radius,
@@ -183,11 +183,27 @@ class _StudentDashboardState extends State<StudentDashboard> {
         children: [
           iconBox(icon, color),
           SizedBox(height: 16),
-          FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(value, style: const TextStyle(fontSize: 29, fontWeight: FontWeight.w800))),
+          FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(value, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800))),
           SizedBox(height: 5),
           Text(label, style: TextStyle(color: _subdued, fontSize: 13)),
         ],
       ));
+
+  Widget activityChart(List values) {
+    final counts = values.map((v) => (v as Map)['count'] as int).toList();
+    if (counts.isEmpty) return const SizedBox.shrink();
+    final peak = counts.fold<int>(1, (a, b) => a > b ? a : b);
+    final total = counts.fold<int>(0, (a, b) => a + b);
+    return surface(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [const Expanded(child: Text('Илгээлтийн идэвх', style: TextStyle(fontWeight: FontWeight.w700))), Text('28 хоног', style: TextStyle(color: _subdued, fontSize: 12))]),
+      const SizedBox(height: 6),
+      Text('$total илгээлт', style: TextStyle(color: _subdued, fontSize: 12)),
+      const SizedBox(height: 16),
+      Semantics(label: 'Сүүлийн 28 хоногт $total илгээлт', child: SizedBox(height: 74, child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        for (var i = 0; i < counts.length; i++) Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 1.5), child: Tooltip(message: '${(values[i] as Map)['date']}: ${counts[i]} илгээлт', child: AnimatedContainer(duration: const Duration(milliseconds: 220), height: counts[i] == 0 ? 4 : 74.0 * counts[i] / peak, decoration: BoxDecoration(color: counts[i] == 0 ? _line : _primary.withOpacity(.75), borderRadius: BorderRadius.circular(3)))))),
+      ]))),
+    ]));
+  }
 
   Widget action(String label, String description, IconData icon, Color color, int destination) =>
       InkWell(
@@ -208,7 +224,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
   Widget sectionTitle(String title, String subtitle) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 21)),
+          Text(title, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20)),
           SizedBox(height: 5),
           Text(subtitle, style: TextStyle(color: _subdued, fontSize: 13)),
         ],
@@ -270,13 +286,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
         Align(alignment: Alignment.centerRight, child: TextButton.icon(onPressed: loading ? null : load, icon: const Icon(Icons.refresh), label: const Text('Шинэчлэх'))),
         if (loading) const LinearProgressIndicator(),
         if (error != null) Text(error!, style: TextStyle(color: palette.muted)),
-        SizedBox(height: 22),
+        const SizedBox(height: 12),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
-            gradient: LinearGradient(colors: [palette.tint, _surface]),
+            borderRadius: BorderRadius.circular(16),
+            color: _surface,
             border: Border.all(color: _line),
           ),
           child: Wrap(
@@ -321,8 +337,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
           SizedBox(width: cell, child: metric('Илгээлт', '${stats['submissions'] ?? 0}', Icons.terminal_rounded, Color(0xFF8CB3FF))),
           SizedBox(width: cell, child: metric('Нийт сургалт', '${stats['courses'] ?? 0}', Icons.school_outlined, Color(0xFFBE9BFF))),
         ]),
+        if (profile!['activity'] is List) ...[
+          const SizedBox(height: 20),
+          activityChart(profile!['activity'] as List),
+        ],
         if (owner) ...[
-        SizedBox(height: 30),
+        SizedBox(height: 24),
         sectionTitle('Түргэн холбоос', 'Дараагийн алхмаа сонгоорой.'),
         SizedBox(height: 14),
         Wrap(spacing: 14, runSpacing: 14, children: [
@@ -343,7 +363,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 9),
                     child: Row(children: [
-                      iconBox(accepted ? Icons.check_circle_outline : Icons.code, accepted ? palette.positive : _primary),
+                      iconBox(accepted ? Icons.check_circle_outline : item['status'] == 'Wrong Answer' ? Icons.cancel_outlined : Icons.code, accepted ? palette.positive : item['status'] == 'Wrong Answer' ? palette.negative : _primary),
                       SizedBox(width: 12),
                       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text('${item['title']}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w600)),

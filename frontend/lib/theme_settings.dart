@@ -7,9 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MandakhPalette {
   const MandakhPalette(this.background, this.surface, this.text, this.accent);
   final Color background, surface, text, accent;
-  static const original = MandakhPalette(Color(0xFF080E1C), Color(0xFF111C30), Color(0xFFE4E9F3), Color(0xFF4C86FF));
-  static const light = MandakhPalette(Color(0xFFF5F7FB), Color(0xFFFFFFFF), Color(0xFF17243A), Color(0xFF245BC5));
-  static const orange = MandakhPalette(Color(0xFFFFFFFF), Color(0xFFFFF8F0), Color(0xFF8F390C), Color(0xFFB54708));
+  static const original = MandakhPalette(Color(0xFF0B1018), Color(0xFF141D29), Color(0xFFF0F4FA), Color(0xFF80A9FF));
+  static const light = MandakhPalette(Color(0xFFF2F5F9), Color(0xFFFFFFFF), Color(0xFF182335), Color(0xFF2459D0));
+  static const orange = MandakhPalette(Color(0xFFFAF9F6), Color(0xFFFFFFFF), Color(0xFF58301B), Color(0xFFBC4C10));
   static const purple = MandakhPalette(Color(0xFF171022), Color(0xFF241A35), Color(0xFFECE4FA), Color(0xFFC3A0FF));
   static const midnight = MandakhPalette(Color(0xFF121212), Color(0xFF202020), Color(0xFFF1F1F1), Color(0xFFFFA64D));
   static const storageKey = 'mandakhrank.theme.v1';
@@ -21,10 +21,12 @@ class MandakhPalette {
     return x > y ? (x + .05) / (y + .05) : (y + .05) / (x + .05);
   }
   bool get isReadable => contrast(text, background) >= 4.5 && contrast(text, surface) >= 4.5;
-  Color get muted => readable(Color.lerp(text, surface, .32)!);
-  Color get outline => Color.lerp(surface, text, .29)!;
+  Color get muted => readable(Color.lerp(text, surface, .37)!);
+  Color get outline => Color.lerp(surface, text, .12)!;
   Color get accentInk => readable(accent);
   Color get onAccent => contrast(accentInk, Colors.white) >= contrast(accentInk, Colors.black) ? Colors.white : Colors.black;
+  Color get button => colors.asMap().entries.every((e) => e.value == original.colors[e.key]) ? const Color(0xFF3267DF) : accentInk;
+  Color get onButton => contrast(button, Colors.white) >= contrast(button, Colors.black) ? Colors.white : Colors.black;
   Color get tint => Color.lerp(surface, accentInk, .09)!;
   Color readable(Color candidate) {
     for (var i = 0; i <= 20; i++) {
@@ -54,7 +56,12 @@ class MandakhPalette {
   static Future<MandakhPalette> load() async {
     try {
       final raw = (await SharedPreferences.getInstance()).getString(storageKey);
-      if (raw != null) return MandakhPalette.fromJson(Map<String, dynamic>.from(jsonDecode(raw) as Map));
+      if (raw != null) {
+        final saved = MandakhPalette.fromJson(Map<String, dynamic>.from(jsonDecode(raw) as Map));
+        const oldDefault = MandakhPalette(Color(0xFF080E1C), Color(0xFF111C30), Color(0xFFE4E9F3), Color(0xFF4C86FF));
+        if (saved.colors.asMap().entries.every((e) => e.value == oldDefault.colors[e.key])) return original;
+        return saved;
+      }
     } catch (_) { /* Bad or unavailable storage falls back to the default. */ }
     return original;
   }
@@ -81,9 +88,16 @@ class MandakhPalette {
       textTheme: base.textTheme.apply(bodyColor: text, displayColor: text),
       primaryTextTheme: base.primaryTextTheme.apply(bodyColor: text, displayColor: text),
       iconTheme: IconThemeData(color: text),
+      visualDensity: VisualDensity.standard,
+      filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(backgroundColor: button, foregroundColor: onButton, minimumSize: const Size(48, 48), padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
+      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(foregroundColor: accentInk, minimumSize: const Size(48, 48), side: BorderSide(color: outline), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
+      textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: accentInk, minimumSize: const Size(44, 44), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))),
+      chipTheme: base.chipTheme.copyWith(backgroundColor: surface, selectedColor: tint, side: BorderSide(color: outline), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), labelStyle: TextStyle(color: text, fontSize: 13)),
+      dividerTheme: DividerThemeData(color: outline, space: 16, thickness: 1),
+      snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
       appBarTheme: AppBarTheme(backgroundColor: background, foregroundColor: text, surfaceTintColor: Colors.transparent),
-      navigationBarTheme: NavigationBarThemeData(backgroundColor: surface, indicatorColor: tint, labelTextStyle: WidgetStatePropertyAll(TextStyle(color: text))),
-      inputDecorationTheme: InputDecorationTheme(filled: true, fillColor: surface, hintStyle: TextStyle(color: muted), labelStyle: TextStyle(color: muted), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none)),
+      navigationBarTheme: NavigationBarThemeData(height: 72, backgroundColor: surface, indicatorColor: tint, labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(color: states.contains(WidgetState.selected) ? accentInk : muted, fontSize: 11, fontWeight: FontWeight.w600)), iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(color: states.contains(WidgetState.selected) ? accentInk : muted))),
+      inputDecorationTheme: InputDecorationTheme(filled: true, fillColor: surface, hintStyle: TextStyle(color: muted), labelStyle: TextStyle(color: muted), contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: outline)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: outline)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: accentInk, width: 1.5))),
       textSelectionTheme: TextSelectionThemeData(cursorColor: accentInk, selectionColor: accentInk.withOpacity(.25), selectionHandleColor: accentInk),
     );
   }
@@ -154,10 +168,20 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
           const SizedBox(height: 8),
           const Text('Бэлэн загвар сонгох эсвэл өнгө бүрийг өөрчил. Тохиргоо энэ төхөөрөмжид хадгалагдана.'),
           const SizedBox(height: 20),
-          Wrap(spacing: 8, runSpacing: 8, children: presets.entries.map((entry) => ChoiceChip(
-            label: Text(entry.key), selected: draft.colors.asMap().entries.every((e) => e.value == entry.value.colors[e.key]),
-            avatar: CircleAvatar(backgroundColor: entry.value.accent), onSelected: saving ? null : (_) => setState(() { draft = entry.value; error = null; }),
-          )).toList()),
+          Text('Бэлэн загварууд', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 10),
+          for (final entry in presets.entries) Padding(padding: const EdgeInsets.only(bottom: 8), child: Material(
+            color: MandakhPalette.of(context).surface,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: draft.colors.asMap().entries.every((e) => e.value == entry.value.colors[e.key]) ? MandakhPalette.of(context).accentInk : MandakhPalette.of(context).outline)),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(onTap: saving ? null : () => setState(() { draft = entry.value; error = null; }), child: Padding(padding: const EdgeInsets.all(14), child: Row(children: [
+              for (final color in [entry.value.background, entry.value.surface, entry.value.accent]) Padding(padding: const EdgeInsets.only(right: 4), child: Container(width: 18, height: 18, decoration: BoxDecoration(color: color, shape: BoxShape.circle, border: Border.all(color: MandakhPalette.of(context).outline)))),
+              const SizedBox(width: 8), Expanded(child: Text(entry.key, style: const TextStyle(fontWeight: FontWeight.w600))),
+              Icon(draft.colors.asMap().entries.every((e) => e.value == entry.value.colors[e.key]) ? Icons.check_circle_outline : Icons.radio_button_unchecked, color: MandakhPalette.of(context).accentInk, size: 20),
+            ]))),
+          )),
+          const SizedBox(height: 16),
+          Text('Өөрийн өнгө', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: 24),
           for (var i = 0; i < labels.length; i++) Card(child: ListTile(
             leading: Container(width: 36, height: 36, decoration: BoxDecoration(color: draft.colors[i], borderRadius: BorderRadius.circular(8), border: Border.all(color: Theme.of(context).dividerColor))),

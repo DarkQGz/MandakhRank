@@ -48,6 +48,9 @@ class SocialProfilesTests(TestCase):
         Submission.objects.create(user=self.owner, problem=private, status='Accepted', code='private code')
         other = self.client.get(self.url, **self.headers[self.other.pk]).json()
         self.assertEqual(other['statistics']['submissions'], 9)
+        self.assertEqual(len(other['activity']), 28)
+        self.assertEqual(sum(day['count'] for day in other['activity']), 9)
+        self.assertEqual(other['activity'][-1]['count'], 9)
         self.assertEqual(other['statistics']['points'], 12)
         self.assertEqual(len(other['recent']), 6)
         self.assertEqual(other['recent'][0]['id'], latest.pk)
@@ -63,6 +66,7 @@ class SocialProfilesTests(TestCase):
         self.assertTrue(own['is_owner'])
         self.assertEqual(own['email'], self.owner.email)
         self.assertEqual(own['statistics']['submissions'], 10)
+        self.assertEqual(sum(day['count'] for day in own['activity']), 10)
         for field, value in me.items():
             self.assertEqual(own[field], value)
 

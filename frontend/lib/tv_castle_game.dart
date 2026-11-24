@@ -332,7 +332,7 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text('НЭГ ДЭЛГЭЦ • ХОЁР БАГ', style: TextStyle(color: palette.accentInk, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
                   SizedBox(height: 8),
-                  Text('Цайзаа хамгаал, нөгөө багийн цайзыг довтол!', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)),
+                  Text('Цайзаа хамгаал, нөгөө багийн цайзыг довтол!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
                   SizedBox(height: 9),
                   Text('Хоёр баг зурагтын хоёр талд зогсоод нэг асуултад зэрэг хариулна. Зөв хариулбал нөгөө багийн цайз руу гэрэлт сум харвана. Хурдан зөв хариулсан баг илүү хүчтэй довтолно!', style: TextStyle(color: MandakhPalette.of(context).muted, height: 1.5)),
                   SizedBox(height: 14),
@@ -344,7 +344,7 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
                 ]),
               ),
               SizedBox(height: 24),
-              Text('Багуудын нэр', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+              Text('Багуудын нэр', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
               SizedBox(height: 12),
               Row(children: [
                 Expanded(child: TextField(
@@ -370,7 +370,7 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
                 )),
               ]),
               SizedBox(height: 24),
-              Text('Асуултын төрөл сонгох', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+              Text('Асуултын төрөл сонгох', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
               SizedBox(height: 12),
               Wrap(spacing: 10, runSpacing: 12, children: _topics.map((topic) => ChoiceChip(
                 avatar: Icon(topic.icon, size: 20, color: _topic == topic.id ? palette.onAccent : palette.accentInk),
@@ -382,7 +382,7 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
                 onSelected: (_) => setState(() => _topic = topic.id),
               )).toList()),
               SizedBox(height: 24),
-              Text('Тоглоомын тохиргоо', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+              Text('Тоглоомын тохиргоо', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
               SizedBox(height: 10),
               _choiceRow('Нийт асуулт', [6, 10, 12], _rounds, (v) => setState(() => _rounds = v)),
               SizedBox(height: 10),
@@ -446,7 +446,7 @@ class _TvCastleBattleScreenState extends State<TvCastleBattleScreen>
           ]),
           SizedBox(height: 9),
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             child: SizedBox(
               height: wide ? 250 : 180,
               width: double.infinity,
@@ -617,7 +617,7 @@ class _Hint extends StatelessWidget {
 BoxDecoration _decoration(BuildContext context, Color a, Color b) => BoxDecoration(
   gradient: LinearGradient(colors: [a, b]),
   border: Border.all(color: MandakhPalette.of(context).outline),
-  borderRadius: BorderRadius.circular(20),
+  borderRadius: BorderRadius.circular(16),
 );
 
 class _CastlePainter extends CustomPainter {

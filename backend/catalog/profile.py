@@ -4,6 +4,10 @@ Avatar bytes are stored as small normalized JPEGs in PostgreSQL; Render's
 free service filesystem is ephemeral and must not be used for uploaded files.
 """
 from io import BytesIO
+from datetime import timedelta
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+from django.utils import timezone
 
 from django.db.models import Sum
 from django.http import HttpResponse
@@ -34,7 +38,14 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
     solved_ids = activity.filter(status='Accepted', problem__published=True).order_by().values_list('problem_id', flat=True).distinct()
     solved_problems = Problem.objects.filter(id__in=solved_ids, published=True)
     submissions = list(activity.select_related('problem').order_by('-created_at', '-pk')[:6])
+    today = timezone.localdate()
+    start = today - timedelta(days=27)
+    daily = dict(activity.filter(created_at__date__gte=start, created_at__date__lte=today)
+                 .annotate(day=TruncDate('created_at')).values('day')
+                 .annotate(count=Count('pk')).values_list('day', 'count'))
     data = {
+        'activity': [{'date': (start + timedelta(days=i)).isoformat(),
+                      'count': daily.get(start + timedelta(days=i), 0)} for i in range(28)],
         'id': user.pk,
         'username': user.username,
         'display_name': (user.get_full_name().strip() or user.username) if is_owner else user.username,

@@ -36,11 +36,11 @@ class MiniGamesPreview extends StatelessWidget {
     margin: EdgeInsets.only(bottom: 26),
     decoration: BoxDecoration(
       gradient: LinearGradient(colors: [MandakhPalette.of(context).tint, MandakhPalette.of(context).surface]),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(14),
       border: Border.all(color: MandakhPalette.of(context).outline),
     ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('ШИНЭ • БЯЦХАН ТОГЛООМУУД', style: TextStyle(color: MandakhPalette.of(context).accentInk, fontWeight: FontWeight.w800, fontSize: 12)),
+      Text('ӨРСӨЛДӨӨНТ ТОГЛООМ', style: TextStyle(color: MandakhPalette.of(context).accentInk, fontWeight: FontWeight.w800, fontSize: 12)),
       SizedBox(height: 8),
       Text('Хамтдаа кодлож, өрсөлдөцгөөе!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
       SizedBox(height: 8),
@@ -116,12 +116,12 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
         Center(child: ConstrainedBox(constraints: BoxConstraints(maxWidth: 940), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('КОДООР ӨРСӨЛДӨЕ', style: TextStyle(color: palette.accentInk, fontSize: 12, letterSpacing: 2, fontWeight: FontWeight.w900)),
           SizedBox(height: 8),
-          Text('3 онлайн + 1 дэлгэцийн тоглоом', style: TextStyle(fontSize: 30, height: 1.1, fontWeight: FontWeight.w900)),
+          Text('Тоглоомоо сонго', style: TextStyle(fontSize: 25, height: 1.1, fontWeight: FontWeight.w900)),
           SizedBox(height: 10),
           Text('Асуултад хурдан, зөв хариулж багтаа давуу тал ав. Найзтайгаа нэг өрөөнд орж тоглоно.', style: TextStyle(color: MandakhPalette.of(context).muted, height: 1.6)),
           SizedBox(height: 22),
           LayoutBuilder(builder: (context, constraints) {
-            final cardWidth = constraints.maxWidth >= 770 ? (constraints.maxWidth - 26) / 3 : constraints.maxWidth;
+            final cardWidth = constraints.maxWidth >= 770 ? (constraints.maxWidth - 26) / 3 : constraints.maxWidth >= 480 ? (constraints.maxWidth - 13) / 2 : constraints.maxWidth;
             return Wrap(spacing: 13, runSpacing: 13, children: _games.map((game) => SizedBox(width: cardWidth, child: _gameCard(game))).toList());
           }),
           SizedBox(height: 17),
@@ -131,7 +131,7 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [palette.tint, palette.surface]),
               border: Border.all(color: palette.outline),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Wrap(
               alignment: WrapAlignment.spaceBetween,
@@ -142,9 +142,9 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
                 ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 560),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                    Text('ШИНЭ • НЭГ ДЭЛГЭЦИЙН ТОГЛООМ', style: TextStyle(color: MandakhPalette.of(context).accentInk, fontSize: 12, fontWeight: FontWeight.w900)),
+                    Text('НЭГ ДЭЛГЭЦИЙН ТОГЛООМ', style: TextStyle(color: MandakhPalette.of(context).accentInk, fontSize: 12, fontWeight: FontWeight.w900)),
                     SizedBox(height: 7),
-                    Text('Цайзын тулаан', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
+                    Text('Цайзын тулаан', style: TextStyle(fontSize: 23, fontWeight: FontWeight.w700)),
                     SizedBox(height: 7),
                     Text('Мэдрэгч зурагт дээр хоёр баг нэг дэлгэцээс өрсөлдөнө. Математик, алгоритм, програмчлал, ерөнхий мэдлэгийн асуултад хариулаад нөгөө багийн цайз руу гэрэлт сум харваарай!', style: TextStyle(color: MandakhPalette.of(context).muted, height: 1.45)),
                   ]),
@@ -210,7 +210,7 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
     final selected = game.id == selectedMode;
     return Material(color: Colors.transparent, child: InkWell(
       onTap: () => setState(() => selectedMode = game.id),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(14),
       child: AnimatedContainer(
         duration: Duration(milliseconds: 250),
         height: 190,
@@ -218,7 +218,7 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
         decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [game.accent.withOpacity(.23), palette.surface]),
           border: Border.all(color: selected ? game.accent : palette.outline, width: selected ? 2 : 1),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(14),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -226,7 +226,7 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
             Icon(selected ? Icons.check_circle : Icons.radio_button_unchecked, color: selected ? palette.readable(game.accent) : palette.muted),
           ]),
           Spacer(),
-          Text(game.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+          Text(game.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
           SizedBox(height: 7),
           Text(game.subtitle, maxLines: 2, style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 12)),
         ]),
@@ -237,7 +237,7 @@ class _MiniGamesLobbyState extends State<MiniGamesLobby> {
 
 Widget _panel(BuildContext context, Widget child) => Container(
   width: double.infinity,
-  decoration: BoxDecoration(color: MandakhPalette.of(context).surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: MandakhPalette.of(context).outline)),
+  decoration: BoxDecoration(color: MandakhPalette.of(context).surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: MandakhPalette.of(context).outline)),
   padding: EdgeInsets.all(18),
   child: child,
 );
@@ -378,7 +378,7 @@ class _MiniGameRoomScreenState extends State<MiniGameRoomScreen> {
           if (status == 'finished') _panel(context, Column(children: [
             Icon(draw ? Icons.handshake_rounded : leftWins ? Icons.emoji_events_rounded : Icons.flag_outlined, color: draw ? palette.text : leftWins ? Color(0xFFFFCB3D) : MandakhPalette.of(context).muted, size: 58),
             SizedBox(height: 12),
-            Text(draw ? 'Тэнцлээ!' : leftWins ? 'Ялалт байгууллаа!' : 'Энэ удаа нөгөө тал яллаа', textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
+            Text(draw ? 'Тэнцлээ!' : leftWins ? 'Ялалт байгууллаа!' : 'Энэ удаа нөгөө тал яллаа', textAlign: TextAlign.center, style: TextStyle(fontSize: 23, fontWeight: FontWeight.w700)),
             SizedBox(height: 10),
             Text('Эцсийн оноо: ${scores[0]} – ${scores[1]}', style: TextStyle(color: MandakhPalette.of(context).muted, fontSize: 17)),
             SizedBox(height: 14),
@@ -497,7 +497,7 @@ class _GameArenaState extends State<GameArena> with SingleTickerProviderStateMix
   }
   @override
   Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(20),
+    borderRadius: BorderRadius.circular(14),
     child: TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 800),
       curve: Curves.easeOutCubic,

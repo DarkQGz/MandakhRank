@@ -140,15 +140,11 @@ class _AuthState extends State<AuthScreen> {
         padding: const EdgeInsets.all(24),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 440),
-          child: AutofillGroup(
+          child: Container(padding: const EdgeInsets.all(24), decoration: BoxDecoration(color: MandakhPalette.of(context).surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: MandakhPalette.of(context).outline)), child: AutofillGroup(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(
-                  verify ? Icons.mark_email_read_outlined : Icons.terminal,
-                  color: MandakhPalette.of(context).accentInk,
-                  size: 60,
-                ),
+                Center(child: Container(width: 64, height: 64, decoration: BoxDecoration(color: MandakhPalette.of(context).button, borderRadius: BorderRadius.circular(16)), child: Icon(verify ? Icons.mark_email_read_outlined : Icons.code_rounded, color: MandakhPalette.of(context).onButton, size: 32))),
                 const SizedBox(height: 24),
                 Text(
                   verify
@@ -157,7 +153,7 @@ class _AuthState extends State<AuthScreen> {
                       ? 'Бүртгэл үүсгэх'
                       : 'Тавтай морил!',
                   style: const TextStyle(
-                    fontSize: 30,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -223,7 +219,7 @@ class _AuthState extends State<AuthScreen> {
                     controller: name,
                     enabled: !busy,
                     autofillHints: const [AutofillHints.username],
-                    decoration: const InputDecoration(labelText: 'Username эсвэл имэйл'),
+                    decoration: const InputDecoration(labelText: 'Хэрэглэгчийн нэр эсвэл имэйл', prefixIcon: Icon(Icons.person_outline)),
                   ),
                   const SizedBox(height: 14),
                   if (register) ...[
@@ -242,7 +238,7 @@ class _AuthState extends State<AuthScreen> {
                     controller: password,
                     enabled: !busy,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Нууц үг'),
+                    decoration: const InputDecoration(labelText: 'Нууц үг', prefixIcon: Icon(Icons.lock_outline)),
                   ),
                   const SizedBox(height: 14),
                   if (register)
@@ -261,7 +257,7 @@ class _AuthState extends State<AuthScreen> {
                     padding: const EdgeInsets.only(bottom: 16),
                     child: Text(
                       message,
-                      style: const TextStyle(color: Colors.amber),
+                      style: TextStyle(color: MandakhPalette.of(context).accentInk),
                     ),
                   ),
                 if (busy) const LinearProgressIndicator(),
@@ -306,7 +302,7 @@ class _AuthState extends State<AuthScreen> {
                   ),
               ],
             ),
-          ),
+          )),
         ),
       ),
     ),

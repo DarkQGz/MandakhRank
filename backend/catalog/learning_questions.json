@@ -20,6 +20,36 @@
             "23"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Дэлгэцэд Hello хэвлэхийн тулд ___(\"Hello\") кодын хоосон хэсгийг нөх.",
+          "accepted": [
+            "print"
+          ],
+          "casefold": false,
+          "explanation": "print() утгыг дэлгэцэд хэвлэнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "print(4 + 5) ямар гаралттай вэ?",
+          "choices": [
+            "9",
+            "45",
+            "4 + 5"
+          ],
+          "correct": 0,
+          "explanation": "Тоон утгууд нэмэгдэнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Python-д print(\"7\") нь 7 гэсэн тэмдэгтийг биш, хоосон мөр хэвлэнэ.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Хашилт доторх 7 тэмдэгт хэвлэгдэнэ."
         }
       ],
       "final": {
@@ -52,6 +82,36 @@
             "str"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "is_ready = ___ кодод Python-ийн худал логик утгыг бич.",
+          "accepted": [
+            "False"
+          ],
+          "casefold": false,
+          "explanation": "False нь bool төрлийн худал утга."
+        },
+        {
+          "kind": "output",
+          "prompt": "type(\"20\").__name__ ямар үр дүнтэй вэ?",
+          "choices": [
+            "str",
+            "int",
+            "float"
+          ],
+          "correct": 0,
+          "explanation": "Хашилттай 20 нь тэмдэгт мөр."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Python-д хувьсагчид нэг удаа int утга оноосон бол дараа нь str утга оноож болохгүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Хувьсагчид өөр төрлийн утга дахин оноож болно."
         }
       ],
       "final": {
@@ -84,6 +144,36 @@
             "str()-аар хөрвүүлэх"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a, b = map(int, input().___()) кодод зайгаар салгах method-ийг нөх.",
+          "accepted": [
+            "split"
+          ],
+          "casefold": false,
+          "explanation": "split() оролтын мөрийг хэсгүүдэд салгана."
+        },
+        {
+          "kind": "output",
+          "prompt": "a, b = map(int, input().split()); print(a*b) кодод 4 6 оруулбал?",
+          "choices": [
+            "24",
+            "46",
+            "10"
+          ],
+          "correct": 0,
+          "explanation": "4 ба 6-г бүхэл тоо болгож үржүүлнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Бодлогын гаралтын нөхцөл зөвхөн тоо шаардаж байвал нэмэлт мэндчилгээ хэвлэхгүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Шалгагч шаардсан гаралтыг л хүлээн авна."
         }
       ],
       "final": {
@@ -116,6 +206,36 @@
             "125 ** 60"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "2 ___ 5 кодод 2-ын таван зэрэг гаргах операторыг нөх.",
+          "accepted": [
+            "**"
+          ],
+          "casefold": false,
+          "explanation": "** зэрэг дэвшүүлдэг."
+        },
+        {
+          "kind": "output",
+          "prompt": "print((7 + 5) * 2) ямар гаралттай вэ?",
+          "choices": [
+            "24",
+            "17",
+            "19"
+          ],
+          "correct": 0,
+          "explanation": "Хаалт доторх нэмэх үйлдэл түрүүлнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Python-д -7 // 3 нь -2 болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "// доош тоймлодог тул -3 болно."
         }
       ],
       "final": {
@@ -148,6 +268,36 @@
             "8"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "if n > 0: ... ___ n == 0: ... кодод нэмэлт нөхцөлийн түлхүүр үгийг нөх.",
+          "accepted": [
+            "elif"
+          ],
+          "casefold": false,
+          "explanation": "elif нь өмнөх нөхцөл худал үед шалгана."
+        },
+        {
+          "kind": "output",
+          "prompt": "n=0 үед дараах кодын гаралт аль вэ?\nif n > 0:\n    print(1)\nelse:\n    print(2)",
+          "choices": [
+            "2",
+            "1",
+            "0"
+          ],
+          "correct": 0,
+          "explanation": "0 > 0 худал тул else ажиллана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Python-д if блокийн доторх кодыг догол мөрөөр ялгана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Догол мөр блокийн бүтцийг тодорхойлдог."
         }
       ],
       "final": {
@@ -180,6 +330,36 @@
             "return"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "for i in ___(1, 6): кодод бүхэл тооны дараалал үүсгэх функцийг нөх.",
+          "accepted": [
+            "range"
+          ],
+          "casefold": false,
+          "explanation": "range(1, 6) нь 1–5 утгыг өгнө."
+        },
+        {
+          "kind": "output",
+          "prompt": "sum(range(1, 5)) хэд вэ?",
+          "choices": [
+            "10",
+            "15",
+            "9"
+          ],
+          "correct": 0,
+          "explanation": "1+2+3+4=10."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "range(3) нь 3 утгыг агуулдаг бөгөөд сүүлийн утга нь 3.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Гурван утга нь 0, 1, 2."
         }
       ],
       "final": {
@@ -212,6 +392,36 @@
             "7"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "___ cube(x): кодод функц тодорхойлох түлхүүр үгийг нөх.",
+          "accepted": [
+            "def"
+          ],
+          "casefold": false,
+          "explanation": "def нь функцийн тодорхойлолтыг эхлүүлнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "def add(a,b): return a+b гэвэл add(2,9) хэд вэ?",
+          "choices": [
+            "11",
+            "18",
+            "29"
+          ],
+          "correct": 0,
+          "explanation": "Функц хоёр параметрийн нийлбэрийг буцаана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Функцэд утгыг параметрээр дамжуулж өөр өөр оролтод ашиглаж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Параметр нь дахин ашиглах боломж олгоно."
         }
       ],
       "final": {
@@ -244,6 +454,37 @@
             "12"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "d = {\"age\": 21}; print(d[___]) кодод age түлхүүрийг Python str literal-аар бич.",
+          "accepted": [
+            "\"age\"",
+            "'age'"
+          ],
+          "casefold": false,
+          "explanation": "dict-ийн түлхүүрийг тэмдэгт мөрөөр дамжуулна."
+        },
+        {
+          "kind": "output",
+          "prompt": "a=[1,3]; a.append(5); print(len(a)) ямар гаралттай вэ?",
+          "choices": [
+            "3",
+            "2",
+            "5"
+          ],
+          "correct": 0,
+          "explanation": "append нэг элемент нэмнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Python list-ийн эхний индекс 1 байдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Эхний индекс 0."
         }
       ],
       "final": {
@@ -276,6 +517,36 @@
             "axbc"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "s = \"abc\"; print(s[___]) кодод сүүлийн тэмдэгтийг сөрөг индексээр ав.",
+          "accepted": [
+            "-1"
+          ],
+          "casefold": false,
+          "explanation": "-1 нь сүүлийн элементийг заана."
+        },
+        {
+          "kind": "output",
+          "prompt": "len(\"Сайн\") хэд вэ?",
+          "choices": [
+            "4",
+            "8",
+            "3"
+          ],
+          "correct": 0,
+          "explanation": "Unicode тэмдэгтийн тоо дөрөв."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "str өөрчлөгдөшгүй тул replace() шинэ мөр буцаана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Анхны мөр өөрөө өөрчлөгдөхгүй."
         }
       ],
       "final": {
@@ -308,6 +579,36 @@
             "ZeroDivisionError"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "x = ___(\"2.5\") кодод бутархай тоо руу хөрвүүлэх функцийг нөх.",
+          "accepted": [
+            "float"
+          ],
+          "casefold": false,
+          "explanation": "float() бутархай тоон утга үүсгэнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "str(8) + str(2) ямар утгатай вэ?",
+          "choices": [
+            "82",
+            "10",
+            "16"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр str залгагдана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "int(\"4.2\") нь 4 бүхэл тоог алдаагүй буцаана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Бутархай хэлбэртэй str-ийг int() шууд хөрвүүлэхгүй."
         }
       ],
       "final": {
@@ -340,6 +641,36 @@
             "except IndexError"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "print(10 / 0) үед гарах Python exception-ийн нэрийг бич.",
+          "accepted": [
+            "ZeroDivisionError"
+          ],
+          "casefold": false,
+          "explanation": "Тэгээр хуваахад ZeroDivisionError гарна."
+        },
+        {
+          "kind": "bug",
+          "prompt": "print(unknown_name) кодод нэр өмнө тодорхойлогдоогүй бол ямар алдаа вэ?",
+          "choices": [
+            "NameError",
+            "ValueError",
+            "IndexError"
+          ],
+          "correct": 0,
+          "explanation": "Тодорхойлогдоогүй нэр ашигласан."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Traceback-ийн сүүлийн мөрөөс алдааны төрлийг харж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Алдааны төрөл, мэдээлэл ихэвчлэн сүүлийн мөрд байна."
         }
       ],
       "final": {
@@ -372,6 +703,36 @@
             "36"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Хоёр бүхэл тоог уншаад нийлбэр хэвлэх код: a,b=map(int,input().split()); ___(a+b). Нөх.",
+          "accepted": [
+            "print"
+          ],
+          "casefold": false,
+          "explanation": "print() шаардсан үр дүнг хэвлэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Хоёр тооны ихийг олох бодлогод аль захын жишээ чухал вэ?",
+          "choices": [
+            "Хоёр тоо ижил",
+            "Зөвхөн 1 ба 2",
+            "Зөвхөн их нь эхэнд"
+          ],
+          "correct": 0,
+          "explanation": "Тэнцүү үед ч зөв хариу өгөх ёстой."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Нэг жишээ зөв гарвал бүх далд тест заавал зөв гарна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Захын болон бусад оролтод алдаа байж болно."
         }
       ],
       "final": {
@@ -406,6 +767,36 @@
             "5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a ___ b кодод утгууд ялгаатай эсэхийг шалгах операторыг нөх.",
+          "accepted": [
+            "!="
+          ],
+          "casefold": false,
+          "explanation": "!= нь тэнцүү бишийг шалгана."
+        },
+        {
+          "kind": "output",
+          "prompt": "print(5 >= 5) ямар гаралттай вэ?",
+          "choices": [
+            "True",
+            "False",
+            "5"
+          ],
+          "correct": 0,
+          "explanation": ">= нь тэнцүүг мөн зөвшөөрнө."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Python-д = нь хоёр утга тэнцүү эсэхийг шалгах оператор.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "= нь оноолт; == нь харьцуулалт."
         }
       ],
       "final": {
@@ -438,6 +829,36 @@
             "None"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a ба b-ийн аль аль нь үнэн байхыг шалгах a ___ b кодыг нөх.",
+          "accepted": [
+            "and"
+          ],
+          "casefold": false,
+          "explanation": "and хоёр нөхцөл үнэн байхыг шаарддаг."
+        },
+        {
+          "kind": "output",
+          "prompt": "not (True or False) ямар утгатай вэ?",
+          "choices": [
+            "False",
+            "True",
+            "None"
+          ],
+          "correct": 0,
+          "explanation": "or нь True, not эсрэг болгоно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "or үйлдэлд ядаж нэг нөхцөл үнэн бол үр дүн үнэн.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хоёулаа үнэн байх шаардлагагүй."
         }
       ],
       "final": {
@@ -470,6 +891,36 @@
             "Дурын дараалал"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "if score>=90: ... ___ score>=80: ... кодын нэмэлт салааг нөх.",
+          "accepted": [
+            "elif"
+          ],
+          "casefold": false,
+          "explanation": "elif өмнөх нөхцөл худал үед шалгана."
+        },
+        {
+          "kind": "bug",
+          "prompt": "score=95 үед дараах код аль блокийг ажиллуулах вэ?\nif score >= 80:\n    ...\nelif score >= 90:\n    ...",
+          "choices": [
+            "Эхний >=80 блок",
+            ">=90 блок",
+            "Хоёр блок"
+          ],
+          "correct": 0,
+          "explanation": "Эхний үнэн салааны дараа бусдыг шалгахгүй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "if/elif дараалалд хоёр нөхцөл үнэн бол хоёр блок ажиллана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Зөвхөн эхний үнэн блок ажиллана."
         }
       ],
       "final": {
@@ -502,6 +953,36 @@
             "4"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "if age>=18 ___ has_id: кодод хоёр нөхцөл зэрэг биелэх операторыг нөх.",
+          "accepted": [
+            "and"
+          ],
+          "casefold": false,
+          "explanation": "and нь үүрлэсэн хоёр if-ийн нөхцөлийг нэгтгэнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "age=19, has_id=False бол age>=18 and has_id ямар утгатай вэ?",
+          "choices": [
+            "False",
+            "True",
+            "19"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр дахь нөхцөл худал."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Дотор if нь гаднах if үнэн байж тухайн блокт орсон үед шалгагдана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Үүрлэсэн код гаднах блокийн хэсэг."
         }
       ],
       "final": {
@@ -534,6 +1015,36 @@
             "1, 3, 5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "range(5, 0, ___) кодоор 5,4,3,2,1 үүсгэ.",
+          "accepted": [
+            "-1"
+          ],
+          "casefold": false,
+          "explanation": "Сөрөг step утгыг нэгээр бууруулна."
+        },
+        {
+          "kind": "output",
+          "prompt": "list(range(2,9,3)) ямар утгатай вэ?",
+          "choices": [
+            "[2, 5, 8]",
+            "[2, 5, 8, 9]",
+            "[2, 3, 4]"
+          ],
+          "correct": 0,
+          "explanation": "3 алхамтай, stop орохгүй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "range-ийн step 0 байж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "step=0 нь ValueError үүсгэнэ."
         }
       ],
       "final": {
@@ -566,6 +1077,36 @@
             "2"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "i=0; while i<3: ... кодод i-г нэгээр өсгөх i += ___ хэсгийг нөх.",
+          "accepted": [
+            "1"
+          ],
+          "casefold": false,
+          "explanation": "i-г өөрчлөх нь давталтыг зогсох нөхцөлд хүргэнэ."
+        },
+        {
+          "kind": "bug",
+          "prompt": "i=0; while i<3: print(i) код яагаад зогсохгүй вэ?",
+          "choices": [
+            "i огт өөрчлөгдөхгүй",
+            "print() i-г өсгөнө",
+            "Нөхцөл эхнээсээ худал"
+          ],
+          "correct": 0,
+          "explanation": "i үргэлж 0 тул нөхцөл үнэн хэвээр."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "while нөхцөл анхнаасаа худал бол блок нэг ч удаа ажиллахгүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Нөхцөлийг эхлэхээс өмнө шалгана."
         }
       ],
       "final": {
@@ -598,6 +1139,36 @@
             "0, 1, 2, 3"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Давталтын зөвхөн одоогийн алхмыг алгасах Python түлхүүр үгийг бич.",
+          "accepted": [
+            "continue"
+          ],
+          "casefold": false,
+          "explanation": "continue дараагийн алхамд шилжинэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "Дараах код ямар тоонуудыг хэвлэх вэ?\nfor i in range(5):\n    if i == 2:\n        break\n    print(i)",
+          "choices": [
+            "0, 1",
+            "0, 1, 2",
+            "3, 4"
+          ],
+          "correct": 0,
+          "explanation": "2 дээр давталт зогсоно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "break нь бүх үүрлэсэн давталтыг зэрэг зогсоодог.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Хамгийн доторх давталтаас гарна."
         }
       ],
       "final": {
@@ -630,6 +1201,36 @@
             "11"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "p = ___; for x in a: p *= x кодод үржвэрийн эхлэх утгыг нөх.",
+          "accepted": [
+            "1"
+          ],
+          "casefold": false,
+          "explanation": "1 нь үржүүлэх үйлдлийн саармаг элемент."
+        },
+        {
+          "kind": "output",
+          "prompt": "total=0; for x in [2,4,6]: total+=x дуусахад total хэд вэ?",
+          "choices": [
+            "12",
+            "6",
+            "3"
+          ],
+          "correct": 0,
+          "explanation": "Бүх утгыг нэмнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Эерэг тоонуудын үржвэрийг олох хуримтлуулагчийг 0-ээр эхлүүлбэл зөв үржвэр гарна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "0-ээр үржүүлэхэд үр дүн 0 хэвээр үлдэнэ."
         }
       ],
       "final": {
@@ -662,6 +1263,36 @@
             "O(log n)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "n удаа гадна, m удаа дотор давтвал ажиллагааны тоо n ___ m. Үржүүлэх Python операторыг нөх.",
+          "accepted": [
+            "*"
+          ],
+          "casefold": false,
+          "explanation": "Дотор давталт гаднах алхам бүрд m удаа ажиллана."
+        },
+        {
+          "kind": "output",
+          "prompt": "Гаднах давталт 4, доторх 3 алхамтай бол дотор блок хэдэн удаа ажиллах вэ?",
+          "choices": [
+            "12",
+            "7",
+            "4"
+          ],
+          "correct": 0,
+          "explanation": "4*3=12."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хоёр бүтэн n алхамтай үүрлэсэн давталтын ажил O(n²).",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "n*n үйлдэл хийгдэнэ."
         }
       ],
       "final": {
@@ -694,6 +1325,36 @@
             "583"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "n = ___(n) кодоор сөрөг оролтын тэмдгийг арилгах функцийг нөх.",
+          "accepted": [
+            "abs"
+          ],
+          "casefold": false,
+          "explanation": "abs() абсолют утга өгнө."
+        },
+        {
+          "kind": "output",
+          "prompt": "5086-ийн цифрийн нийлбэр хэд вэ?",
+          "choices": [
+            "19",
+            "14",
+            "20"
+          ],
+          "correct": 0,
+          "explanation": "5+0+8+6=19."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Эерэг n-ийн сүүлийн цифрийг n // 10 өгдөг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "n % 10 сүүлийн цифр; // 10 үлдсэн хэсэг."
         }
       ],
       "final": {
@@ -728,6 +1389,36 @@
             "Алдаа"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "def area(w,h): return w*h; area(w=3, ___=5) кодод параметрийн нэрийг нөх.",
+          "accepted": [
+            "h"
+          ],
+          "casefold": false,
+          "explanation": "Нэрээр argument дамжуулахад параметрийн нэр ашиглана."
+        },
+        {
+          "kind": "output",
+          "prompt": "def sub(a,b): return a-b гэвэл sub(b=2,a=9) хэд вэ?",
+          "choices": [
+            "7",
+            "-7",
+            "11"
+          ],
+          "correct": 0,
+          "explanation": "Нэрээр дамжуулсан тул a=9, b=2."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Argument нь функц дуудах үед дамжуулсан бодит утга.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Параметр нь тодорхойлолтын нэр юм."
         }
       ],
       "final": {
@@ -760,6 +1451,36 @@
             "False"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "def f(): print(1) функцийн буцаах Python утгыг бич.",
+          "accepted": [
+            "None"
+          ],
+          "casefold": false,
+          "explanation": "return байхгүй бол None буцаана."
+        },
+        {
+          "kind": "output",
+          "prompt": "def f(x): return x+1 гэвэл print(f(4)*2) хэд вэ?",
+          "choices": [
+            "10",
+            "9",
+            "8"
+          ],
+          "correct": 0,
+          "explanation": "f(4)=5; 5*2=10."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "print() функцийн хэвлэсэн утга автоматаар дуудагчид буцна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Хэвлэх ба return хоёр өөр үйлдэл."
         }
       ],
       "final": {
@@ -792,6 +1513,36 @@
             "3"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "def greet(name=\"Bat\"): ... функцэд name өгөөгүй үед ашиглах утгыг хашилтгүй бич.",
+          "accepted": [
+            "Bat"
+          ],
+          "casefold": false,
+          "explanation": "Default argument нь Bat."
+        },
+        {
+          "kind": "output",
+          "prompt": "def f(x=3): return x*2 гэвэл f(5) хэд вэ?",
+          "choices": [
+            "10",
+            "6",
+            "8"
+          ],
+          "correct": 0,
+          "explanation": "Дамжуулсан 5 default утгыг орлоно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Default list argument нь олон дуудлагад нэг объект байж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Default утга тодорхойлох үед нэг удаа үүсдэг."
         }
       ],
       "final": {
@@ -824,6 +1575,36 @@
             "Утгыг устгах"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "x=5 нь module-ийн түвшинд байна. Функцийн дотор үүнийг дахин оноохын өмнө ___ x гэж бичих түлхүүр үгийг нөх.",
+          "accepted": [
+            "global"
+          ],
+          "casefold": false,
+          "explanation": "global нь module түвшний нэрийг заана."
+        },
+        {
+          "kind": "output",
+          "prompt": "Дараах кодын f() ямар утга буцаах вэ?\nx=8\ndef f():\n    x=3\n    return x",
+          "choices": [
+            "3",
+            "8",
+            "11"
+          ],
+          "correct": 0,
+          "explanation": "Local x нь 3."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Функцийн дотор үүсгэсэн local нэр автоматаар бүх module-д тодорхойлогдоно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Local нэр функцийн хүрээнд хүчинтэй."
         }
       ],
       "final": {
@@ -856,6 +1637,36 @@
             "40.5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "import math; math.___(81) кодод квадрат язгуур олох method-ийн нэрийг нөх.",
+          "accepted": [
+            "sqrt"
+          ],
+          "casefold": false,
+          "explanation": "math.sqrt() квадрат язгуур олно."
+        },
+        {
+          "kind": "output",
+          "prompt": "import math; math.ceil(2.1) хэд вэ?",
+          "choices": [
+            "3",
+            "2",
+            "2.1"
+          ],
+          "correct": 0,
+          "explanation": "ceil дээш бүхэлчилнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "import math хийсний дараа math.sqrt-ийн оронд sqrt нэр шууд бэлэн болдог.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "import math нь math нэрийг холбодог."
         }
       ],
       "final": {
@@ -888,6 +1699,36 @@
             "Давтагдана"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "try: int(\"x\") ... ___ ValueError: ... кодын алдаа барих түлхүүр үгийг нөх.",
+          "accepted": [
+            "except"
+          ],
+          "casefold": false,
+          "explanation": "except тодорхой exception-ийг боловсруулна."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Тоон бус оролтыг int() хөрвүүлэхэд аль exception-ийг барих вэ?",
+          "choices": [
+            "ValueError",
+            "IndexError",
+            "KeyError"
+          ],
+          "correct": 0,
+          "explanation": "Хүчингүй тоон мөр ValueError гаргана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Тодорхой exception барих нь хамааралгүй алдааг нуухаас сэргийлнэ.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Зөвхөн хүлээж буй алдааг боловсруулна."
         }
       ],
       "final": {
@@ -920,6 +1761,37 @@
             "9"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Debugger-д кодыг тодорхой мөрд зогсоох тэмдэглэгээг English-ээр бич.",
+          "accepted": [
+            "breakpoint",
+            "Breakpoint"
+          ],
+          "casefold": false,
+          "explanation": "Breakpoint дээр програм түр зогсоно."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Том оролтод алдаа гарвал засварлахад эхлээд юу хийх вэ?",
+          "choices": [
+            "Алдаа давтагдах жижиг оролт олох",
+            "Бүх хувьсагч устгах",
+            "Тестийг арилгах"
+          ],
+          "correct": 0,
+          "explanation": "Жижиг оролт төлөвийг мөрдөхөд хялбар."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Debugging үед зөвхөн эцсийн гаралтыг харах нь завсрын төлөвийг үргэлж тодорхойлно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Завсрын утгыг шалгах шаардлагатай байж болно."
         }
       ],
       "final": {
@@ -952,6 +1824,36 @@
             "Дэлгэцийн хэмжээ"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "___ 2+3==5 кодод Python-ийн тестийн нөхцөл шалгах түлхүүр үгийг нөх.",
+          "accepted": [
+            "assert"
+          ],
+          "casefold": false,
+          "explanation": "assert нөхцөл худал бол exception гаргана."
+        },
+        {
+          "kind": "bug",
+          "prompt": "assert 4 == 5 ажиллахад ямар exception гарах вэ?",
+          "choices": [
+            "AssertionError",
+            "TypeError",
+            "NameError"
+          ],
+          "correct": 0,
+          "explanation": "Нөхцөл худал байна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "assert нь production оролтын шалгалтыг бүрэн орлож чадна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Python optimization үед assert алгасагдаж болно."
         }
       ],
       "final": {
@@ -984,6 +1886,36 @@
             "-5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "min([]) нөхцөлд default байхгүй үед гарах exception-ийн нэрийг бич.",
+          "accepted": [
+            "ValueError"
+          ],
+          "casefold": false,
+          "explanation": "Хоосон дарааллын хамгийн бага утга тодорхойгүй."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Хамгийн их утга олох бодлогод аль тест буруу 0 эхлэл илрүүлэх вэ?",
+          "choices": [
+            "[-7, -2, -9]",
+            "[1, 2, 3]",
+            "[0, 4, 1]"
+          ],
+          "correct": 0,
+          "explanation": "Бүх утга сөрөг үед 0 массивын элемент биш."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хоосон оролт зөвшөөрөгдөх эсэхийг бодлогын нөхцөлөөс шалгана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Алгоритмын шаардлагаар шийднэ."
         }
       ],
       "final": {
@@ -1016,6 +1948,36 @@
             "Дэлгэцийн өнгө"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Давтагдах логикийг дахин ашиглах Python функц тодорхойлох түлхүүр үгийг бич.",
+          "accepted": [
+            "def"
+          ],
+          "casefold": false,
+          "explanation": "Функц нэг зорилготой логикийг тусгаарлана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Нийт үнийг хадгалах хувьсагчийн аль нэр илүү ойлгомжтой вэ?",
+          "choices": [
+            "total_price",
+            "x1",
+            "aaa"
+          ],
+          "correct": 0,
+          "explanation": "Нэр утгыг тодорхой илэрхийлнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Нэг логикийг олон газар хуулж бичих нь засварын алдааг бууруулдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Нэг функцийг дахин ашиглах нь өөрчлөлтийг төвлөрүүлнэ."
         }
       ],
       "final": {
@@ -1050,6 +2012,36 @@
             "20"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a=[8,9,10]; a[___] кодод эхний элементийн индексийг нөх.",
+          "accepted": [
+            "0"
+          ],
+          "casefold": false,
+          "explanation": "Python индекс 0-ээс эхэлдэг."
+        },
+        {
+          "kind": "output",
+          "prompt": "[2,4,6,8][-2] хэд вэ?",
+          "choices": [
+            "6",
+            "4",
+            "8"
+          ],
+          "correct": 0,
+          "explanation": "Сүүлээс хоёр дахь элемент 6."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "3 элементтэй list-д индекс 3 ашиглавал IndexError гарна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Зөв эерэг индекс 0,1,2."
         }
       ],
       "final": {
@@ -1082,6 +2074,36 @@
             "[1,2]"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a=[1,2]; a.___(3) кодод төгсгөлд нэмэх method-ийн нэрийг нөх.",
+          "accepted": [
+            "append"
+          ],
+          "casefold": false,
+          "explanation": "append() элемент төгсгөлд нэмнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "a=[5,7,5]; a.remove(5); a ямар болох вэ?",
+          "choices": [
+            "[7, 5]",
+            "[5, 7]",
+            "[7]"
+          ],
+          "correct": 0,
+          "explanation": "remove эхний тохирсон утгыг устгана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "pop() нь устгасан утгыг буцаадаггүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "pop устгасан элементийг буцаана."
         }
       ],
       "final": {
@@ -1114,6 +2136,36 @@
             "[2,3,4]"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a=[1,2,3]; b=a[___] кодод бүх элементийн slice хийх тэмдэгтийг нөх.",
+          "accepted": [
+            ":"
+          ],
+          "casefold": false,
+          "explanation": "a[:] өнгөц хуулбар үүсгэнэ."
+        },
+        {
+          "kind": "bug",
+          "prompt": "b=a гэж оноогоод b.append(9) хийхэд a мөн өөрчлөгдөв. Тусдаа өнгөц хуулбар хийх зөв засвар?",
+          "choices": [
+            "b = a[:]",
+            "b = a",
+            "b = a[0]"
+          ],
+          "correct": 0,
+          "explanation": "Slice шинэ list үүсгэдэг."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "b=a гэж оноовол хоёр бие даасан list үүсдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Хоёр нэр нэг объектыг заана."
         }
       ],
       "final": {
@@ -1146,6 +2198,36 @@
             "Бүхэлд нь устгах"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "for i,x in ___(a): кодод индекс ба утга хамт өгөх функцийг нөх.",
+          "accepted": [
+            "enumerate"
+          ],
+          "casefold": false,
+          "explanation": "enumerate индекс, утгын хос өгнө."
+        },
+        {
+          "kind": "output",
+          "prompt": "list(enumerate([7,9]))-ийн эхний хос аль вэ?",
+          "choices": [
+            "(0, 7)",
+            "(1, 7)",
+            "(7, 0)"
+          ],
+          "correct": 0,
+          "explanation": "Үндсэн эхлэл 0."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "List-ээр давтаж байхдаа элемент устгавал дараагийн элементийг алгасаж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Индекс шилждэг учраас ийм эрсдэлтэй."
         }
       ],
       "final": {
@@ -1178,6 +2260,36 @@
             "24"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "___([4,9,2]) кодоор хамгийн их утга олдог функцийг нөх.",
+          "accepted": [
+            "max"
+          ],
+          "casefold": false,
+          "explanation": "max хамгийн их элементийг өгнө."
+        },
+        {
+          "kind": "output",
+          "prompt": "sum([-3, 8, 2]) хэд вэ?",
+          "choices": [
+            "7",
+            "13",
+            "10"
+          ],
+          "correct": 0,
+          "explanation": "-3+8+2=7."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "min([]) нь default өгөөгүй үед 0 буцаана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Хоосон дараалал ValueError үүсгэнэ."
         }
       ],
       "final": {
@@ -1210,6 +2322,36 @@
             "3"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a=[[0]*3 for _ in range(2)]; a[1][___]=7 кодоор хоёр дахь мөрийн эхний баганад 7 оноо.",
+          "accepted": [
+            "0"
+          ],
+          "casefold": false,
+          "explanation": "Мөр, багана хоёул 0-ээс эхэлнэ."
+        },
+        {
+          "kind": "bug",
+          "prompt": "Матрицын нэг мөрийг засахад бүх мөр өөрчлөгдөж байна. 2x3 тэг матрицын зөв эхлэл?",
+          "choices": [
+            "[[0]*3 for _ in range(2)]",
+            "[[0]*3]*2",
+            "[0]*6"
+          ],
+          "correct": 0,
+          "explanation": "Comprehension мөр бүрд шинэ list үүсгэнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "List comprehension ашиглан мөр бүрийг тусдаа үүсгэж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Давталт бүр шинэ мөр үүсгэнэ."
         }
       ],
       "final": {
@@ -1242,6 +2384,36 @@
             "-xy"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "\"-\".___([\"a\",\"b\"]) кодод нэгтгэх method-ийн нэрийг нөх.",
+          "accepted": [
+            "join"
+          ],
+          "casefold": false,
+          "explanation": "join нь сонгосон тусгаарлагчаар мөрүүдийг нэгтгэнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "\"a   b\".split() ямар list буцаах вэ?",
+          "choices": [
+            "['a', 'b']",
+            "['a', '', '', 'b']",
+            "['a b']"
+          ],
+          "correct": 0,
+          "explanation": "Параметргүй split олон зайг нэг тусгаарлалт мэт үзнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "join() нь str-ийг автоматаар бүхэл тоо болгож нэмдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "join тэмдэгт мөрүүдийг залгана."
         }
       ],
       "final": {
@@ -1274,6 +2446,36 @@
             "3"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "\"abc\".___(\"z\") кодод олдохгүй үед -1 буцаах method-ийн нэрийг нөх.",
+          "accepted": [
+            "find"
+          ],
+          "casefold": false,
+          "explanation": "find индекс эсвэл -1 өгдөг."
+        },
+        {
+          "kind": "output",
+          "prompt": "\"aaaa\".count(\"aa\") хэд вэ?",
+          "choices": [
+            "2",
+            "3",
+            "4"
+          ],
+          "correct": 0,
+          "explanation": "count давхцаагүй тааралтыг тоолно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "\"bc\" in \"abc\" нь True.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "bc нь abc-ийн дэд мөр."
         }
       ],
       "final": {
@@ -1306,6 +2508,36 @@
             "  hi  "
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "\"  Bat  \".___() кодод хоёр захын зайг арилгах method-ийг нөх.",
+          "accepted": [
+            "strip"
+          ],
+          "casefold": false,
+          "explanation": "strip захын whitespace арилгана."
+        },
+        {
+          "kind": "output",
+          "prompt": "\"AbC\".lower() ямар утгатай вэ?",
+          "choices": [
+            "abc",
+            "ABC",
+            "AbC"
+          ],
+          "correct": 0,
+          "explanation": "Бүх үсгийг жижиг болгоно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "lower() нь анхны str объектыг шууд өөрчилнө.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "str өөрчлөгдөшгүй; шинэ утга буцаана."
         }
       ],
       "final": {
@@ -1338,6 +2570,36 @@
             "Мөр бүхэл тоо эсэх"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "s[::-___] кодод урвуу мөр гаргах эерэг цифрийг нөх.",
+          "accepted": [
+            "1"
+          ],
+          "casefold": false,
+          "explanation": "step=-1 нь дарааллыг урвуулна."
+        },
+        {
+          "kind": "output",
+          "prompt": "\"level\" == \"level\"[::-1] ямар утгатай вэ?",
+          "choices": [
+            "True",
+            "False",
+            "None"
+          ],
+          "correct": 0,
+          "explanation": "level урвуугаар ижил."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "\"abca\" нь урвуу мөртэйгээ ижил.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Урвуу нь acba."
         }
       ],
       "final": {
@@ -1370,6 +2632,36 @@
             "4"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "freq[x]=freq.___(x,0)+1 кодод анхны утга өгөх method-ийг нөх.",
+          "accepted": [
+            "get"
+          ],
+          "casefold": false,
+          "explanation": "get байхгүй түлхүүрт default өгнө."
+        },
+        {
+          "kind": "output",
+          "prompt": "[2,1,2,2] дараалалд 2 хэдэн удаа гарах вэ?",
+          "choices": [
+            "3",
+            "2",
+            "4"
+          ],
+          "correct": 0,
+          "explanation": "2 нь гурван байрлалд байна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Давтамжийн dict-д түлхүүр нь элемент, утга нь тоо байж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Элемент бүрийн тоог тусад нь хадгална."
         }
       ],
       "final": {
@@ -1402,6 +2694,36 @@
             "[4,4,1]"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a=[5,1,5]; ___(a) кодод элементийн тоо олох функцийг нөх.",
+          "accepted": [
+            "len"
+          ],
+          "casefold": false,
+          "explanation": "len нийт элементийн тоог өгнө."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Давхардалтай list-д бүх давтамж хадгалахад аль бүтэц хэрэгтэй вэ?",
+          "choices": [
+            "dict ашиглан тоолох",
+            "Зөвхөн set болгох",
+            "Зөвхөн эхний элементийг авах"
+          ],
+          "correct": 0,
+          "explanation": "set давтамжийг алдана, dict тоолно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хоосон мөрийн эхний тэмдэгтийг s[0] гэж авахад үргэлж хоосон тэмдэгт буцна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "IndexError гарна."
         }
       ],
       "final": {
@@ -1436,6 +2758,36 @@
             "Эхний ба сүүлийн индекс"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a=[2,4,9]; sum(a)/___(a) кодод дундаж олох дутуу функцийг нөх.",
+          "accepted": [
+            "len"
+          ],
+          "casefold": false,
+          "explanation": "Нийлбэрийг элементийн тоонд хуваана."
+        },
+        {
+          "kind": "output",
+          "prompt": "[3,6,9] тоонуудын дундаж хэд вэ?",
+          "choices": [
+            "6",
+            "9",
+            "18"
+          ],
+          "correct": 0,
+          "explanation": "18/3=6."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Оролт, гаралт, хязгаарлалтыг код бичихээс өмнө тодорхойлж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Энэ нь дэд бодлогуудыг тодруулна."
         }
       ],
       "final": {
@@ -1468,6 +2820,36 @@
             "8"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "for i in range(n): print(i) кодын Big O-г O(___) хэлбэрт нөх.",
+          "accepted": [
+            "n"
+          ],
+          "casefold": false,
+          "explanation": "Давталт n удаа ажиллана."
+        },
+        {
+          "kind": "output",
+          "prompt": "n=100 үед n² ба n алхмын тооны харьцаа хэд вэ?",
+          "choices": [
+            "100",
+            "10",
+            "10000"
+          ],
+          "correct": 0,
+          "explanation": "10000/100=100."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хоёр дараалсан n алхамтай давталт O(n²) хугацаатай.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "n+n=2n тул O(n)."
         }
       ],
       "final": {
@@ -1500,6 +2882,36 @@
             "O(n²)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Зөвхөн хоёр тогтмол хувьсагч ашиглах нэмэлт санах ойн Big O-г O(___) хэлбэрээр нөх.",
+          "accepted": [
+            "1"
+          ],
+          "casefold": false,
+          "explanation": "Оролтын хэмжээтэй хамт зай өсөхгүй."
+        },
+        {
+          "kind": "choice",
+          "prompt": "n урттай list-ийг бүтнээр хуулбал нэмэлт зай?",
+          "choices": [
+            "O(n)",
+            "O(1)",
+            "O(log n)"
+          ],
+          "correct": 0,
+          "explanation": "n элементийн зай шаардана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "In-place алгоритм бүр оролтыг бүтнээр хуулж ажилладаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "In-place арга оролтын бүтцийг шууд өөрчилдөг."
         }
       ],
       "final": {
@@ -1532,6 +2944,36 @@
             "Бүх утгыг эрэмбэлнэ"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "a=[8,9,10]; a[___] кодод гурав дахь элементийг эерэг индексээр ав.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "0,1,2 гэсэн индексүүдтэй."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Python list-ийн эхэнд байнга элемент оруулахад яагаад O(n) вэ?",
+          "choices": [
+            "Дараагийн элементүүд шилжинэ",
+            "Бүх утга заавал эрэмбэлэгдэнэ",
+            "Hash дахин бодно"
+          ],
+          "correct": 0,
+          "explanation": "Эхний байрлал гаргахын тулд шилжилт хийнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Массивын мэдэгдэж буй индексээр хандах нь O(1).",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Индексээр байрлалыг шууд олно."
         }
       ],
       "final": {
@@ -1564,6 +3006,36 @@
             "1"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "a=[7,2,9]; x=5 үед олдоогүйг илэрхийлэх ердийн индексийг бич.",
+          "accepted": [
+            "-1"
+          ],
+          "casefold": false,
+          "explanation": "-1-ийг хайлтын sentinel болгон ашиглаж болно."
+        },
+        {
+          "kind": "output",
+          "prompt": "[5,2,5] дотор 5-ыг эхнээс хайж эхний индексийг буцаавал?",
+          "choices": [
+            "0",
+            "1",
+            "2"
+          ],
+          "correct": 0,
+          "explanation": "Эхний байрлал 0."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Шугаман хайлт хийхийн тулд list заавал эрэмбэлэгдсэн байх ёстой.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Бүх элементийг дарааллаар шалгаж болно."
         }
       ],
       "final": {
@@ -1596,6 +3068,36 @@
             "None"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "b = ___(a) кодод анхны list-ийг өөрчлөхгүй эрэмбэлэх функцийг нөх.",
+          "accepted": [
+            "sorted"
+          ],
+          "casefold": false,
+          "explanation": "sorted() шинэ list буцаана."
+        },
+        {
+          "kind": "output",
+          "prompt": "a=[3,1,2]; a.sort(); a ямар утгатай вэ?",
+          "choices": [
+            "[1, 2, 3]",
+            "[3, 1, 2]",
+            "[3, 2, 1]"
+          ],
+          "correct": 0,
+          "explanation": "sort анхны list-ийг өсөхөөр эрэмбэлнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "list.sort() шинэ эрэмбэлсэн list буцаана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "sort нь тухайн list-ийг өөрчилж None буцаана."
         }
       ],
       "final": {
@@ -1628,6 +3130,36 @@
             "10"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Recursion-д дахин дуудахгүйгээр шууд хариу буцаах нөхцөлийг ___ case гэдэг. English үгийг нөх.",
+          "accepted": [
+            "base"
+          ],
+          "casefold": true,
+          "explanation": "Base case дахин дуудахыг зогсооно."
+        },
+        {
+          "kind": "output",
+          "prompt": "f(0)=1, f(n)=n*f(n-1) бол f(4) хэд вэ?",
+          "choices": [
+            "24",
+            "10",
+            "16"
+          ],
+          "correct": 0,
+          "explanation": "4*3*2*1=24."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Зогсох нөхцөлгүй recursion нь RecursionError үүсгэж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Дуудлагын гүн хэтэрч болно."
         }
       ],
       "final": {
@@ -1660,6 +3192,36 @@
             "Тийм, 4+4"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "n элементээс бүх дэд олонлогийг brute force-оор шалгахад 2 ** ___ боломж бий. Нөх.",
+          "accepted": [
+            "n"
+          ],
+          "casefold": false,
+          "explanation": "Элемент бүрийг авах эсвэл авахгүй хоёр сонголттой."
+        },
+        {
+          "kind": "output",
+          "prompt": "3 элементээс хэдэн дэд олонлог үүсэх вэ (хоосныг оруулна)?",
+          "choices": [
+            "8",
+            "6",
+            "3"
+          ],
+          "correct": 0,
+          "explanation": "2³=8."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Brute force бүх оролтын хэмжээнд хугацааны хувьд тохиромжтой.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Боломжийн тоо асар хурдан өсөж болно."
         }
       ],
       "final": {
@@ -1692,6 +3254,36 @@
             "Нийлбэр"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "best = ___(best,x) кодод одоогийн хамгийн ихийг хадгалах функцийг нөх.",
+          "accepted": [
+            "max"
+          ],
+          "casefold": false,
+          "explanation": "max өмнөх ба шинэ утгын ихийг хадгална."
+        },
+        {
+          "kind": "output",
+          "prompt": "best=2, дараагийн утгууд 7,4,9 бол best эцэст хэд вэ?",
+          "choices": [
+            "9",
+            "4",
+            "7"
+          ],
+          "correct": 0,
+          "explanation": "Алхам бүр боловсруулсан хэсгийн ихийг хадгална."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Invariant нь давталтын зөв байдлыг үндэслэхэд ашиглагдана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Алхам бүр хадгалагдах шинжийг тогтооно."
         }
       ],
       "final": {
@@ -1724,6 +3316,36 @@
             "Бүх тестийг устгах"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "n=100000 үед n*n үйлдлийн тоог таслалгүй цифрээр бич.",
+          "accepted": [
+            "10000000000"
+          ],
+          "casefold": false,
+          "explanation": "100000² нь 10 тэрбум."
+        },
+        {
+          "kind": "choice",
+          "prompt": "100000 элементэд аль өсөлтийн эрэмбэ ерөнхийдөө илүү тохиромжтой вэ?",
+          "choices": [
+            "O(n log n)",
+            "O(n²)",
+            "O(2ⁿ)"
+          ],
+          "correct": 0,
+          "explanation": "n log n нь том n-д хамаагүй бага өснө."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хурдан шийдлийг жижиг оролтод brute force-той тулгаж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр аргын гаралтыг харьцуулж алдаа илрүүлнэ."
         }
       ],
       "final": {
@@ -1758,6 +3380,36 @@
             "0"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Хайлт амжилтгүй бол -1, амжилттай бол i буцаах ___ i түлхүүр үгийг нөх.",
+          "accepted": [
+            "return"
+          ],
+          "casefold": false,
+          "explanation": "return нь индексийг дуудагчид өгнө."
+        },
+        {
+          "kind": "output",
+          "prompt": "[8,3,4,7] дотор 4-ийг эхнээс хайвал хэдэн элемент шалгах вэ?",
+          "choices": [
+            "3",
+            "2",
+            "4"
+          ],
+          "correct": 0,
+          "explanation": "8,3,4 гэсэн гурван элемент."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Шугаман хайлтын хамгийн муу хугацаа O(1).",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Олдохгүй үед n элементийг шалгана."
         }
       ],
       "final": {
@@ -1790,6 +3442,36 @@
             "O(n)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "mid=(l+r) ___ 2 кодод бүхэл дундаж авах Python операторыг нөх.",
+          "accepted": [
+            "//"
+          ],
+          "casefold": false,
+          "explanation": "// бүхэл доош тоймлосон ноогдвор өгнө."
+        },
+        {
+          "kind": "bug",
+          "prompt": "Binary search хийхдээ эрэмбэлээгүй list ашигласнаас алдаа гарлаа. Энгийн аргын шаардлагыг хэрхэн хангах вэ?",
+          "choices": [
+            "Эхлээд эрэмбэлэх",
+            "Эхний элементийг устгах",
+            "mid-ийг үргэлж 0 болгох"
+          ],
+          "correct": 0,
+          "explanation": "Эрэмбэ нь хасах мужийг зөв тодорхойлно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Эрэмбэлээгүй массив дээр ердийн binary search зөв ажиллана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Хайлтын мужийг хасах үндэслэлд эрэмбэ шаардлагатай."
         }
       ],
       "final": {
@@ -1822,6 +3504,36 @@
             "4"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "from bisect import ___ кодод x-ээс багагүй эхний индекс өгөх функцийг нөх.",
+          "accepted": [
+            "bisect_left"
+          ],
+          "casefold": false,
+          "explanation": "bisect_left нь lower bound."
+        },
+        {
+          "kind": "output",
+          "prompt": "[1,2,2,2,5] дотор 2-ын bisect_right индекс?",
+          "choices": [
+            "4",
+            "1",
+            "3"
+          ],
+          "correct": 0,
+          "explanation": "2-оос их эхний утга 5 индекс 4."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "bisect_right(a,x)-bisect_left(a,x) нь эрэмбэлсэн a дахь x-ийн давтамж.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр хязгаарын хооронд тэнцүү элементүүд байна."
         }
       ],
       "final": {
@@ -1854,6 +3566,36 @@
             "[3,1,2]"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Өсөхөөр bubble sort хийх if a[j] ___ a[j+1]: кодын харьцуулалтыг нөх.",
+          "accepted": [
+            ">"
+          ],
+          "casefold": false,
+          "explanation": "Зүүн утга их үед хөршийг солино."
+        },
+        {
+          "kind": "output",
+          "prompt": "[3,2,1] дээр зүүнээс баруун нэг бүтэн bubble pass хийвэл?",
+          "choices": [
+            "[2, 1, 3]",
+            "[1, 2, 3]",
+            "[3, 1, 2]"
+          ],
+          "correct": 0,
+          "explanation": "3 хоёр солилцоогоор төгсгөлд очно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Ердийн bubble sort-ийн хамгийн муу хугацаа O(n²).",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хөршүүдийг олон удаа шалгана."
         }
       ],
       "final": {
@@ -1886,6 +3628,36 @@
             "[1,4,6,3]"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Insertion sort-д key-аас их өмнөх элементүүдийг шилжүүлэх while j>=0 and a[j] ___ key нөхцөлийг нөх.",
+          "accepted": [
+            ">"
+          ],
+          "casefold": false,
+          "explanation": "Их утгуудыг баруун тийш шилжүүлнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "Эрэмбэлсэн [2,5] хэсэгт 3 оруулбал?",
+          "choices": [
+            "[2, 3, 5]",
+            "[3, 2, 5]",
+            "[2, 5, 3]"
+          ],
+          "correct": 0,
+          "explanation": "3 нь 2 ба 5-ын хооронд байрлана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Insertion sort бараг эрэмбэлсэн list-д ч заавал n² солилцоо хийдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Илүү цөөн шилжилт хийх боломжтой."
         }
       ],
       "final": {
@@ -1918,6 +3690,36 @@
             "[4,1,3,2]"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Selection sort-д үлдсэн хэсгийн хамгийн багыг авах Python функцийг бич.",
+          "accepted": [
+            "min"
+          ],
+          "casefold": false,
+          "explanation": "min хамгийн бага утгыг олно."
+        },
+        {
+          "kind": "output",
+          "prompt": "[4,3,1,2] дээр selection sort-ийн эхний солилцооны дараах list?",
+          "choices": [
+            "[1, 3, 4, 2]",
+            "[3, 4, 1, 2]",
+            "[1, 2, 3, 4]"
+          ],
+          "correct": 0,
+          "explanation": "1-ийг 4-тэй солино."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Ердийн selection sort тогтвортой эрэмбэ заавал хадгалдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Алсын солилцоо тэнцүү түлхүүрийн дарааллыг өөрчилж болно."
         }
       ],
       "final": {
@@ -1950,6 +3752,36 @@
             "[5,4,2,1]"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Merge sort-ийн хугацааг O(n ___ n) хэлбэрээр нөх.",
+          "accepted": [
+            "log"
+          ],
+          "casefold": false,
+          "explanation": "Хуваалтын log n түвшин бүрд O(n) нэгтгэл хийнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "[1,4] ба [2,3] эрэмбэлсэн хэсгийг merge хийвэл?",
+          "choices": [
+            "[1, 2, 3, 4]",
+            "[1, 4, 2, 3]",
+            "[2, 3, 1, 4]"
+          ],
+          "correct": 0,
+          "explanation": "Хэсгүүдийн эхний бага утгыг ээлжлэн авна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Стандарт массивын merge sort O(n) нэмэлт зай ашигладаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Нэгтгэхэд туслах массив хэрэгтэй."
         }
       ],
       "final": {
@@ -1982,6 +3814,36 @@
             "O(log n)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Quick sort-д хэсгүүдэд хуваах тулгуур элементийг English-ээр бич.",
+          "accepted": [
+            "pivot"
+          ],
+          "casefold": true,
+          "explanation": "Pivot-той харьцуулж хэсгүүд үүсгэнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "Pivot=4 үед [6,1,4,3] дотор түүнээс бага утгууд аль вэ?",
+          "choices": [
+            "1, 3",
+            "4, 6",
+            "1, 4"
+          ],
+          "correct": 0,
+          "explanation": "1 ба 3 нь 4-өөс бага."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Quick sort хамгийн муу үед ч O(n log n) байдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Тэнцвэргүй хуваалт O(n²) хүрч болно."
         }
       ],
       "final": {
@@ -2014,6 +3876,36 @@
             "A,B,C"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "sorted(words, ___=len) кодод уртаар эрэмбэлэх параметрийг нөх.",
+          "accepted": [
+            "key"
+          ],
+          "casefold": false,
+          "explanation": "key нь харьцуулах утгыг тодорхойлно."
+        },
+        {
+          "kind": "output",
+          "prompt": "sorted([\"bb\",\"a\",\"cc\"], key=len) ямар үр дүнтэй вэ?",
+          "choices": [
+            "['a', 'bb', 'cc']",
+            "['a', 'cc', 'bb']",
+            "['bb', 'cc', 'a']"
+          ],
+          "correct": 0,
+          "explanation": "Ижил урттай bb, cc анхны дарааллаараа үлдэнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Python-ийн sort тэнцүү key-тэй элементүүдийн дарааллыг хадгална.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Тогтвортой эрэмбэлэлт учраас."
         }
       ],
       "final": {
@@ -2046,6 +3938,36 @@
             "6"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "x*x>=20 болох хамгийн бага сөрөг биш бүхэл x-ийг бич.",
+          "accepted": [
+            "5"
+          ],
+          "casefold": false,
+          "explanation": "4²=16, 5²=25."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Хариун дээр binary search хийхэд шалгах predicate ямар шинжтэй байх ёстой вэ?",
+          "choices": [
+            "Нэг чиглэлд өөрчлөгдөх",
+            "Санамсаргүй солигдох",
+            "Бүх утгад өөр давтамжтай"
+          ],
+          "correct": 0,
+          "explanation": "Monotonic predicate нь боломжгүй мужийг хасах боломж өгнө."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хариун дээр binary search хийхэд predicate дурын байдлаар солигдож болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Нэг чиглэлтэй өөрчлөлт шаардлагатай."
         }
       ],
       "final": {
@@ -2080,6 +4002,36 @@
             "5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "stack=[1,2]; stack.___() кодод сүүлийн элементийг авах method-ийг нөх.",
+          "accepted": [
+            "pop"
+          ],
+          "casefold": false,
+          "explanation": "pop төгсгөлийн элементийг буцааж устгана."
+        },
+        {
+          "kind": "output",
+          "prompt": "Stack-д 3,7,9 дарааллаар нэмээд хоёр pop хийвэл хоёр дахь нь?",
+          "choices": [
+            "7",
+            "3",
+            "9"
+          ],
+          "correct": 0,
+          "explanation": "9 эхэлж, 7 дараа гарна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Stack нь LIFO зарчмаар ажилладаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Сүүлд орсон нь эхэлж гарна."
         }
       ],
       "final": {
@@ -2112,6 +4064,36 @@
             "7"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "q нь collections.deque бол q.___() кодод эхний элементийг авах method-ийг нөх.",
+          "accepted": [
+            "popleft"
+          ],
+          "casefold": false,
+          "explanation": "popleft зүүн талаас O(1) үйлдлээр авна."
+        },
+        {
+          "kind": "output",
+          "prompt": "Queue-д 8,4,6 нэмээд хоёр dequeue хийвэл хоёр дахь нь?",
+          "choices": [
+            "4",
+            "6",
+            "8"
+          ],
+          "correct": 0,
+          "explanation": "8 эхэлж, 4 дараа гарна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "list.pop(0) нь том list-д үргэлж O(1).",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Бусад элемент шилжих тул O(n)."
         }
       ],
       "final": {
@@ -2144,6 +4126,36 @@
             "O(n)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Singly linked list-ийн сүүлийн node-ийн next холбоос байхгүйг Python-д ямар утгаар илэрхийлэх вэ?",
+          "accepted": [
+            "None"
+          ],
+          "casefold": false,
+          "explanation": "None нь дараагийн node байхгүйг илэрхийлнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Өгөгдсөн node-ийн дараа шинэ node нэмэхэд юу өөрчлөх вэ?",
+          "choices": [
+            "Холбоосууд",
+            "Бүх индексийн утга",
+            "Бүх node-ийн өгөгдөл"
+          ],
+          "correct": 0,
+          "explanation": "Зөвхөн холбоосын өөрчлөлт хангалттай."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Singly linked list-ийн дурын i-р node-д массиваас адил O(1)-ээр хүрнэ.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Эхнээс холбоос дагаж явна."
         }
       ],
       "final": {
@@ -2176,6 +4188,36 @@
             "1"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "d={\"x\":3}; d.___(\"y\",0) кодод байхгүй түлхүүрийн default авах method-ийг нөх.",
+          "accepted": [
+            "get"
+          ],
+          "casefold": false,
+          "explanation": "get default утга өгнө."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Аль нь Python dict-ийн түлхүүр байж чадахгүй вэ?",
+          "choices": [
+            "[1, 2]",
+            "(1, 2)",
+            "\"ab\""
+          ],
+          "correct": 0,
+          "explanation": "list нь hashable биш."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "dict-ийн хайлт дундаж O(1) байдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Hash ашиглан байрлалыг олдог."
         }
       ],
       "final": {
@@ -2208,6 +4250,36 @@
             "{1,2,3,4}"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "set([1,1,3]) доторх ялгаатай элементийн тоог бич.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "1,3 гэсэн хоёр элемент."
+        },
+        {
+          "kind": "output",
+          "prompt": "{1,2,3} & {2,4} үр дүн?",
+          "choices": [
+            "{2}",
+            "{1,2,3,4}",
+            "{4}"
+          ],
+          "correct": 0,
+          "explanation": "& огтлолцол олно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "set нь ижил элементийг олон удаа тусад нь хадгална.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Давхардлыг хадгалдаггүй."
         }
       ],
       "final": {
@@ -2240,6 +4312,36 @@
             "3"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Холбоотой циклгүй 7 оройтой модны ирмэгийн тоог бич.",
+          "accepted": [
+            "6"
+          ],
+          "casefold": false,
+          "explanation": "Модны ирмэг V-1."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Үндэсний гүн 0 бол түүний хүүхдийн гүн хэд вэ?",
+          "choices": [
+            "1",
+            "0",
+            "2"
+          ],
+          "correct": 0,
+          "explanation": "Нэг ирмэгээр хүрнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Модонд дурын хоёр оройн хооронд цорын ганц энгийн зам байдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Холбоотой ба циклгүй учраас."
         }
       ],
       "final": {
@@ -2272,6 +4374,36 @@
             "O(log n)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "BST-д root.key=8, хайх утга 3 бол node.___ холбоос руу явна. English нэрийг нөх.",
+          "accepted": [
+            "left"
+          ],
+          "casefold": false,
+          "explanation": "Бага түлхүүр зүүн талд байрлана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Тэнцвэргүй, n node бүхий BST-ийн хамгийн муу хайлт?",
+          "choices": [
+            "O(n)",
+            "O(1)",
+            "O(log log n)"
+          ],
+          "correct": 0,
+          "explanation": "Өндөр n хүрч болно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "BST бүр автоматаар тэнцвэртэй байдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Ердийн BST тэнцвэржүүлэлтгүй байж болно."
         }
       ],
       "final": {
@@ -2304,6 +4436,36 @@
             "7"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "import heapq; heapq.___(h) кодод хамгийн бага утгыг авах функцийг нөх.",
+          "accepted": [
+            "heappop"
+          ],
+          "casefold": false,
+          "explanation": "heappop хамгийн бага элементийг авч устгана."
+        },
+        {
+          "kind": "output",
+          "prompt": "Min-heap-д 8,2,5 байвал эхний pop-ийн үр дүн?",
+          "choices": [
+            "2",
+            "8",
+            "5"
+          ],
+          "correct": 0,
+          "explanation": "Хамгийн бага нь 2."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "heapify() n элементийг O(n) хугацаанд heap болгоно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Bottom-up heap үүсгэлт ашигладаг."
         }
       ],
       "final": {
@@ -2336,6 +4498,36 @@
             "Хоёуланг устгана"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Чиглэлгүй графт g[u].append(v) хийсний дараа g[v].append(___) хэсгийг нөх.",
+          "accepted": [
+            "u"
+          ],
+          "casefold": false,
+          "explanation": "Хоёр чиглэлд хөрш хадгална."
+        },
+        {
+          "kind": "choice",
+          "prompt": "V орой E ирмэгтэй графын adjacency list-ийн зай?",
+          "choices": [
+            "O(V+E)",
+            "O(V²) заавал",
+            "O(1)"
+          ],
+          "correct": 0,
+          "explanation": "Орой бүрийн жагсаалт ба ирмэгүүд хадгалагдана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Чиглэлтэй графын u→v ирмэг заавал v→u ирмэгийг илэрхийлдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Чиглэлүүд тусдаа."
         }
       ],
       "final": {
@@ -2368,6 +4560,36 @@
             "Stack"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Undo үйлдлийн түүхэнд тохирох LIFO бүтцийг English-ээр бич.",
+          "accepted": [
+            "stack"
+          ],
+          "casefold": true,
+          "explanation": "Сүүлчийн үйлдлийг эхэлж буцаана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Хүлээлгийн дарааллаар үйлчлүүлэгчдэд үйлчлэхэд ямар бүтэц тохирох вэ?",
+          "choices": [
+            "Queue",
+            "Stack",
+            "Min-heap"
+          ],
+          "correct": 0,
+          "explanation": "Эхэлж ирсэн нь эхэлж үйлчлүүлнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Өгөгдлийн бүтэц сонгохдоо давамгайлах үйлдлийн өртгийг харгалзана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хэрэглээнээс хамаарч тохирох бүтэц өөр."
         }
       ],
       "final": {
@@ -2402,6 +4624,36 @@
             "7"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "35 ___ 7 == 0 кодод хуваагдах эсэхийг шалгах операторыг нөх.",
+          "accepted": [
+            "%"
+          ],
+          "casefold": false,
+          "explanation": "Үлдэгдэл 0 бол хуваагдана."
+        },
+        {
+          "kind": "output",
+          "prompt": "Python-д -1 % 5 хэд вэ?",
+          "choices": [
+            "4",
+            "-1",
+            "0"
+          ],
+          "correct": 0,
+          "explanation": "Эерэг модультай үлдэгдэл 0–4 байна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Эерэг m-д a%m нь m-тэй тэнцүү байж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Үлдэгдэл m-ээс бага."
         }
       ],
       "final": {
@@ -2434,6 +4686,36 @@
             "72"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "gcd(a,b)=gcd(b,a ___ b) кодын операторыг нөх.",
+          "accepted": [
+            "%"
+          ],
+          "casefold": false,
+          "explanation": "Евклидийн алгоритм үлдэгдэл ашиглана."
+        },
+        {
+          "kind": "output",
+          "prompt": "gcd(18,12) хэд вэ?",
+          "choices": [
+            "6",
+            "3",
+            "12"
+          ],
+          "correct": 0,
+          "explanation": "18%12=6,12%6=0."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "gcd(a,0)=a нь a сөрөг биш үед үнэн.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Алгоритмын зогсох нөхцөл."
         }
       ],
       "final": {
@@ -2466,6 +4748,36 @@
             "2"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "lcm(6,8) утгыг бүхэл тоогоор бич.",
+          "accepted": [
+            "24"
+          ],
+          "casefold": false,
+          "explanation": "6*8/gcd(6,8)=24."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Эерэг a,b-д ХБЕХ олох зөв илэрхийлэл аль вэ?",
+          "choices": [
+            "a // gcd(a,b) * b",
+            "a + b",
+            "a * gcd(a,b)"
+          ],
+          "correct": 0,
+          "explanation": "ХИЕХ-ээр хувааж нийтлэг үржигдэхүүнийг нэг удаа авна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хоёр эерэг тооны ХБЕХ нь заавал үржвэртэй нь тэнцүү.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "ХИЕХ 1 биш бол үржвэрээс бага."
         }
       ],
       "final": {
@@ -2498,6 +4810,36 @@
             "11"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "n=29-д шалгах бүхэл хуваагчийн дээд хязгаар floor(sqrt(n))-ийг бич.",
+          "accepted": [
+            "5"
+          ],
+          "casefold": false,
+          "explanation": "5²≤29<6²."
+        },
+        {
+          "kind": "output",
+          "prompt": "49 анхны тоо бишийг ямар хуваагч нотлох вэ?",
+          "choices": [
+            "7",
+            "5",
+            "11"
+          ],
+          "correct": 0,
+          "explanation": "7*7=49."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "1 нь анхны тоо.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Анхны тоо яг хоёр эерэг хуваагчтай."
         }
       ],
       "final": {
@@ -2530,6 +4872,36 @@
             "2,4,6,8,10"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Шигшүүрт p=5 үед үржвэрийг хасаж эхлэх p*p утгыг бич.",
+          "accepted": [
+            "25"
+          ],
+          "casefold": false,
+          "explanation": "Бага үржвэрүүд өмнөх анхны тоогоор хасагдсан."
+        },
+        {
+          "kind": "output",
+          "prompt": "2–10 хүртэл анхны тоонууд аль вэ?",
+          "choices": [
+            "2, 3, 5, 7",
+            "1, 2, 3, 5",
+            "2, 3, 7, 9"
+          ],
+          "correct": 0,
+          "explanation": "4,6,8,9,10 нийлмэл."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Шигшүүрт 0 ба 1-ийг анхны тоо гэж тэмдэглэхгүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр эерэг хуваагчтай биш."
         }
       ],
       "final": {
@@ -2562,6 +4934,36 @@
             "3,4"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "18-ыг 2 ба 3 анхны үржигдэхүүнээр задлахад 3-ын зэрэг хэд вэ?",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "18=2*3²."
+        },
+        {
+          "kind": "output",
+          "prompt": "20-ийн анхны үржигдэхүүний жагсаалт?",
+          "choices": [
+            "2, 2, 5",
+            "2, 10",
+            "4, 5"
+          ],
+          "correct": 0,
+          "explanation": "20=2*2*5."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Нийлмэл үржигдэхүүнийг анхны үржигдэхүүн гэж тооцож болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Анхны үржигдэхүүн бүр анхны тоо байх ёстой."
         }
       ],
       "final": {
@@ -2594,6 +4996,36 @@
             "4"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "(7+9) % 5-ийн утгыг бич.",
+          "accepted": [
+            "1"
+          ],
+          "casefold": false,
+          "explanation": "16=3*5+1."
+        },
+        {
+          "kind": "output",
+          "prompt": "(8*7)%6 хэд вэ?",
+          "choices": [
+            "2",
+            "5",
+            "4"
+          ],
+          "correct": 0,
+          "explanation": "56=9*6+2."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Modular арифметикт хуваалтыг ердийн //-аар үргэлж орлуулж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Modular inverse хэрэгтэй байж болох ба үргэлж оршин байхгүй."
         }
       ],
       "final": {
@@ -2626,6 +5058,36 @@
             "5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "pow(3,4,5) утгыг бич.",
+          "accepted": [
+            "1"
+          ],
+          "casefold": false,
+          "explanation": "81%5=1."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Binary exponentiation яагаад O(log k) вэ?",
+          "choices": [
+            "Зэргийг алхам бүр хоёр дахин багасгана",
+            "Зэргийг нэгээр багасгана",
+            "Бүх боломжийг шалгана"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр дахин багасах алхмын тоо логарифм."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Python pow(a,k,m) нь a**k-г бүтнээр байгуулахгүй модультай зэрэг бодож чадна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Завсрын үржвэрүүдийг модуль авч багасгана."
         }
       ],
       "final": {
@@ -2658,6 +5120,36 @@
             "25"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "4 хүнээс дараалал хамаарахгүй 2-ыг сонгох тоог бич.",
+          "accepted": [
+            "6"
+          ],
+          "casefold": false,
+          "explanation": "4*3/2=6."
+        },
+        {
+          "kind": "output",
+          "prompt": "3 өөр номыг дарааллаар байрлуулах боломж хэд вэ?",
+          "choices": [
+            "6",
+            "3",
+            "9"
+          ],
+          "correct": 0,
+          "explanation": "3!=6."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Combination-д сонголтын дараалал чухал.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Дараалал permutation-д чухал."
         }
       ],
       "final": {
@@ -2690,6 +5182,36 @@
             "9"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "A нь 5, B нь 4, огтлолцол 2 элементтэй бол нэгдлийн тоог бич.",
+          "accepted": [
+            "7"
+          ],
+          "casefold": false,
+          "explanation": "5+4-2=7."
+        },
+        {
+          "kind": "output",
+          "prompt": "{1,2} ба {2,3} нэгдэл аль вэ?",
+          "choices": [
+            "{1,2,3}",
+            "{2}",
+            "{1,3}"
+          ],
+          "correct": 0,
+          "explanation": "Аль нэг олонлогт буй бүх элемент орно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Огтлолцол нь хоёр олонлогт зэрэг байгаа элементүүдийг агуулна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Нийтлэг гишүүдийг авна."
         }
       ],
       "final": {
@@ -2724,6 +5246,36 @@
             "2V"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "6 оройтой графын adjacency matrix хэдэн нүдтэй вэ? Тоогоор бич.",
+          "accepted": [
+            "36"
+          ],
+          "casefold": false,
+          "explanation": "6*6 нүд хэрэгтэй."
+        },
+        {
+          "kind": "choice",
+          "prompt": "1000 оройтой, цөөн ирмэгтэй графт аль дүрслэл зай хэмнэх вэ?",
+          "choices": [
+            "Adjacency list",
+            "Adjacency matrix",
+            "Бүх оройн хосын хүснэгт"
+          ],
+          "correct": 0,
+          "explanation": "List зөвхөн байгаа хөршүүдийг хадгална."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "0-ээс дугаарласан n оройн сүүлийн дугаар n-1.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Индексийн хязгаар 0–n-1."
         }
       ],
       "final": {
@@ -2756,6 +5308,36 @@
             "3"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "from collections import ___ кодод BFS queue хийх бүтцийг нөх.",
+          "accepted": [
+            "deque"
+          ],
+          "casefold": false,
+          "explanation": "deque нь хоёр үзүүрт үр ашигтай ажиллана."
+        },
+        {
+          "kind": "output",
+          "prompt": "Жингүй графын ирмэгүүд 0–1, 1–2, 0–3, 3–2 бол 0-ээс 2 хүртэлх зай хэд вэ?",
+          "choices": [
+            "2",
+            "1",
+            "3"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр ирмэгтэй замууд бий, шууд ирмэг алга."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Ердийн BFS дурын жинтэй графын хамгийн бага нийт жинтэй замыг олно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "BFS нь ирмэгийн тоогоор хэмжих жингүй графт тохирно."
         }
       ],
       "final": {
@@ -2788,6 +5370,36 @@
             "Индексийг устгах"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "DFS recursion-д үзсэн оройг хадгалах Python set-ийн нэр visited бол visited.___(u) хэсгийг нөх.",
+          "accepted": [
+            "add"
+          ],
+          "casefold": false,
+          "explanation": "set.add() оройг тэмдэглэнэ."
+        },
+        {
+          "kind": "bug",
+          "prompt": "DFS хоёр талын ирмэгтэй графт дахин дахин ижил орой руу орж байна. Аль засвар зөв вэ?",
+          "choices": [
+            "Үзсэн оройг тэмдэглэж дахин орохгүй байх",
+            "Recursion хязгаарыг л өсгөх",
+            "Бүх хөршийг хоёр удаа нэмэх"
+          ],
+          "correct": 0,
+          "explanation": "Visited шалгалт циклийг дахин дагахаас сэргийлнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Циклтэй графт visited огт шаардлагагүй бөгөөд recursion заавал дуусна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Дахин дахин орой руу орж болно."
         }
       ],
       "final": {
@@ -2820,6 +5432,36 @@
             "4"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Чиглэлгүй графт 0–1, 2–3 гэсэн хоёр ирмэг, тусгаар 4 орой байвал бүрэлдэхүүний тоог бич.",
+          "accepted": [
+            "3"
+          ],
+          "casefold": false,
+          "explanation": "{0,1}, {2,3}, {4}."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Нэг BFS эхэлж дууссаны дараа холбоост бүрэлдэхүүнийг үргэлжлүүлэн тоолоход юу хийх вэ?",
+          "choices": [
+            "Үзээгүй оройгоос дахин эхлэх",
+            "Өмнөх оройг дахин сонгох",
+            "Бүх ирмэгийг устгах"
+          ],
+          "correct": 0,
+          "explanation": "Шинэ үзээгүй орой өөр бүрэлдэхүүнд байна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Тусгаар орой өөрөө нэг холбоост бүрэлдэхүүн болдог.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Ганц орой холбоотой гэж үзнэ."
         }
       ],
       "final": {
@@ -2852,6 +5494,36 @@
             "B,A,C"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Kahn алгоритмд анхны queue-д хийх оройн indegree хэд байх вэ?",
+          "accepted": [
+            "0"
+          ],
+          "casefold": false,
+          "explanation": "Өмнө гүйцэтгэх хамааралгүй оройг сонгоно."
+        },
+        {
+          "kind": "output",
+          "prompt": "A→B, B→C графын хүчинтэй топологийн дараалал?",
+          "choices": [
+            "A B C",
+            "C B A",
+            "B A C"
+          ],
+          "correct": 0,
+          "explanation": "Ирмэг бүрийн эх нь төгсгөлөөс өмнө."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Циклтэй чиглэлтэй графт бүх оройн топологийн эрэмбэ үргэлж бий.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Циклийн хамаарлыг нэг дараалалд хангахгүй."
         }
       ],
       "final": {
@@ -2884,6 +5556,36 @@
             "Граф заавал жингүй"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Kahn алгоритмд V=6, боловсруулсан орой 4 бол үлдсэн оройн тоог бич.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "6-4=2. Kahn алгоритм бүрэн дууссан үед үлдсэн орой нь графт цикл байгааг илтгэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Чиглэлтэй DFS-д аль ирмэг цикл байгааг нотлох вэ?",
+          "choices": [
+            "Одоогийн идэвхтэй recursion замын орой руу",
+            "Өмнө дууссан дурын орой руу",
+            "Шинэ орой руу"
+          ],
+          "correct": 0,
+          "explanation": "Идэвхтэй зам руу буцвал цикл хаагдана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Чиглэлтэй DFS-д өмнө бүрэн боловсруулсан орой руу очих ирмэг бүр цикл нотолно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Зөвхөн идэвхтэй замын орой руу буцах нь шууд нотолгоо."
         }
       ],
       "final": {
@@ -2916,6 +5618,39 @@
             "2"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Dijkstra-д d[v] > d[u]+w үед d[v] = ___ кодын баруун талыг d, u, w ашиглан бич.",
+          "accepted": [
+            "d[u]+w",
+            "d[u] + w",
+            "d[u]+ w",
+            "d[u] +w"
+          ],
+          "casefold": false,
+          "explanation": "Шинэ зам богино үед зай шинэчилнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "0→1 жин 5, 0→2 жин 2, 2→1 жин 1 бол 0-ээс 1 хүртэл зай?",
+          "choices": [
+            "3",
+            "5",
+            "2"
+          ],
+          "correct": 0,
+          "explanation": "0→2→1 замын жин 2+1."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Стандарт Dijkstra бүх сөрөг жинтэй графт баталгаатай зөв.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Сөрөг ирмэг баталгааг эвддэг."
         }
       ],
       "final": {
@@ -2948,6 +5683,36 @@
             "1"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "V=8 оройтой графт Bellman–Ford-ийн үндсэн сулруулалтын бүтэн давталт хэд вэ?",
+          "accepted": [
+            "7"
+          ],
+          "casefold": false,
+          "explanation": "V-1 удаа сулруулна."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Эхлэлээс хүрэх сөрөг циклийг ямар шинж илрүүлэх вэ?",
+          "choices": [
+            "V-1 бүтэн давталтын дараа дахин зай багасах",
+            "Бүх жин эерэг байх",
+            "Эх оройн зай 0 байх"
+          ],
+          "correct": 0,
+          "explanation": "Нэмэлт сайжрал нь хүрэх сөрөг цикл байгааг илтгэнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Bellman–Ford сөрөг жинтэй ирмэгийг зөвшөөрдөг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Сөрөг циклгүй хүрэх замын зайг олно."
         }
       ],
       "final": {
@@ -2980,6 +5745,36 @@
             "14"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "d[i][j]=___(d[i][j],d[i][k]+d[k][j]) кодын функцийг нөх.",
+          "accepted": [
+            "min"
+          ],
+          "casefold": false,
+          "explanation": "Шууд зай ба k-ээр дайрах зайн бага утгыг сонгоно."
+        },
+        {
+          "kind": "output",
+          "prompt": "d[A][B]=9, d[A][C]=3, d[C][B]=4 бол C-ээр шинэчилсэн A→B зай?",
+          "choices": [
+            "7",
+            "9",
+            "12"
+          ],
+          "correct": 0,
+          "explanation": "min(9,3+4)=7."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Floyd–Warshall бүх хосын зайг O(V²) хугацаанд олдог ердийн алгоритм.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Гурван үүрлэсэн давталт O(V³)."
         }
       ],
       "final": {
@@ -3012,6 +5807,36 @@
             "Заавал тусгаарлагдсан"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "DSU-д бүлгийн үндсийг олдог стандарт үйлдлийг English-ээр бич.",
+          "accepted": [
+            "find"
+          ],
+          "casefold": true,
+          "explanation": "find нь representative буюу үндсийг олно."
+        },
+        {
+          "kind": "output",
+          "prompt": "Эхэнд 4 тусдаа бүлэгтэй. union(0,1), union(2,3) хийвэл хэдэн бүлэг үлдэх вэ?",
+          "choices": [
+            "2",
+            "3",
+            "1"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр амжилттай нэгтгэл бүлгийн тоог хоёр бууруулна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Path compression нь find явцад үндэс рүү хүрэх холбоосыг богиносгоно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Дараагийн хайлтыг хурдасгана."
         }
       ],
       "final": {
@@ -3044,6 +5869,36 @@
             "8"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "5 оройтой холбоотой графын spanning tree хэдэн ирмэгтэй вэ?",
+          "accepted": [
+            "4"
+          ],
+          "casefold": false,
+          "explanation": "Мод V-1 ирмэгтэй."
+        },
+        {
+          "kind": "output",
+          "prompt": "Гурвалжин графын ирмэгийн жин 1,2,5 бол MST-ийн нийт жин?",
+          "choices": [
+            "3",
+            "6",
+            "8"
+          ],
+          "correct": 0,
+          "explanation": "Хамгийн бага 1 ба 2 ирмэг бүх оройг холбоно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Kruskal нь цикл үүсгэх ирмэгийг ч заавал MST-д нэмдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "DSU-аар цикл үүсгэх ирмэгийг алгасна."
         }
       ],
       "final": {
@@ -3076,6 +5931,36 @@
             "0,3,2"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "v орой u-ээр дамжин хүрсэн бол parent[v] = ___ кодыг нөх.",
+          "accepted": [
+            "u"
+          ],
+          "casefold": false,
+          "explanation": "Эцэг оройг хадгалж зам сэргээнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "parent[3]=2, parent[2]=0 бөгөөд эхлэл 0 бол сэргээсэн зам?",
+          "choices": [
+            "0 → 2 → 3",
+            "3 → 2 → 0",
+            "0 → 3"
+          ],
+          "correct": 0,
+          "explanation": "Төгсгөлөөс parent дагаж олсныг урвуулна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Эхлэлээс хүрэх боломжгүй оройд зам сэргээхээс өмнө хүрсэн эсэхийг шалгана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хүрээгүй оройд хүчинтэй parent байхгүй."
         }
       ],
       "final": {
@@ -3110,6 +5995,36 @@
             "5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "dp[0]=0, dp[i]=dp[i-1]+2 бол dp[3]-ыг бич.",
+          "accepted": [
+            "6"
+          ],
+          "casefold": false,
+          "explanation": "0→2→4→6."
+        },
+        {
+          "kind": "choice",
+          "prompt": "DP төлөв тодорхойлоход хамгийн түрүүнд юу шаардлагатай вэ?",
+          "choices": [
+            "Төлөв ямар дэд бодлогын хариу болох",
+            "Хувьсагчийн нэрийг урт болгох",
+            "Бүх оролтыг эрэмбэлэх"
+          ],
+          "correct": 0,
+          "explanation": "Төлөвийн утга шилжилт ба эхлэлийг тодорхойлно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "DP-д эхний нөхцөл шаардлагагүй, бүх төлөв автоматаар зөв гарна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Base case буруу бол дараагийн төлөв ч буруу."
         }
       ],
       "final": {
@@ -3142,6 +6057,36 @@
             "0 буцаах"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "from functools import ___ кодод өмнөх үр дүн хадгалах lru cache decorator-ийн нэрийг нөх.",
+          "accepted": [
+            "lru_cache"
+          ],
+          "casefold": false,
+          "explanation": "lru_cache ижил аргументын үр дүнг дахин ашиглана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Memoization ямар үед ажлыг хэмнэх вэ?",
+          "choices": [
+            "Ижил дэд төлөв дахин тооцогдох үед",
+            "Төлөв бүр нэг л удаа үүсэх үед",
+            "Оролтыг хэвлэх үед"
+          ],
+          "correct": 0,
+          "explanation": "Cache давтагдсан тооцоог арилгана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Memoization-д cache нэмэлт санах ой хэрэглэдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Өмнөх төлөвийн утгуудыг хадгалдаг."
         }
       ],
       "final": {
@@ -3174,6 +6119,36 @@
             "O(log n)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Fibonacci-д dp[0]=0, dp[1]=1, dp[i]=dp[i-1]+dp[i-2] бол dp[5]-ыг бич.",
+          "accepted": [
+            "5"
+          ],
+          "casefold": false,
+          "explanation": "0,1,1,2,3,5."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Зөвхөн өмнөх хоёр төлөв хэрэгтэй Fibonacci tabulation-д нэмэлт зайг хэд болгож бууруулах вэ?",
+          "choices": [
+            "O(1)",
+            "O(n²)",
+            "O(2ⁿ)"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр хувьсагчаар өмнөх утгуудыг хадгална."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Bottom-up DP нь заавал recursion ашигладаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Давталтаар жижиг төлөвөөс эхэлнэ."
         }
       ],
       "final": {
@@ -3206,6 +6181,38 @@
             "14"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Хүрэхгүй төлөвийг илэрхийлэх float(\"___\") кодын хашилт доторх 3 үсгийг нөх.",
+          "accepted": [
+            "inf",
+            "INF",
+            "Inf"
+          ],
+          "casefold": false,
+          "explanation": "Infinity нь боломжгүй төлөвийг ялгана."
+        },
+        {
+          "kind": "output",
+          "prompt": "Өмнөх хоёр төлөвийн өртөг 7,4; одоогийн нүдний өртөг 3 бол хамгийн бага шинэ өртөг?",
+          "choices": [
+            "7",
+            "10",
+            "14"
+          ],
+          "correct": 0,
+          "explanation": "min(7,4)+3=7."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хамгийн бага өртгийн DP-д хүрэхгүй төлөвийг infinity-аар эхлүүлж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Minimum авах үед хүрэхгүй зам сонгогдохгүй."
         }
       ],
       "final": {
@@ -3238,6 +6245,36 @@
             "10"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "0/1 knapsack-д жин 3, үнэ 7 эд зүйл, багтаамж 6 байхад зөвхөн энэ нэг эд зүйлээс авах дээд үнийг бич.",
+          "accepted": [
+            "7"
+          ],
+          "casefold": false,
+          "explanation": "Нэг эд зүйлийг нэг удаа л сонгоно."
+        },
+        {
+          "kind": "bug",
+          "prompt": "0/1 knapsack-д багтаамжийг багаас их рүү шинэчилж, нэг эд зүйл дахин сонгогдлоо. Зөв засвар?",
+          "choices": [
+            "Индексийг ихээс бага руу шинэчлэх",
+            "Бүх dp-г алхам бүр 0 болгох",
+            "Эд зүйлийг хоёр удаа оруулах"
+          ],
+          "correct": 0,
+          "explanation": "Буурах индекс өмнөх алхмын төлөвийг ашиглана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "0/1 knapsack-д нэг эд зүйлийг хязгааргүй олон удаа авч болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Энэ нь unbounded knapsack биш."
         }
       ],
       "final": {
@@ -3270,6 +6307,36 @@
             "6"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Зоос 1,3,4; дүн 6 бол хамгийн цөөн зоосны тоог бич.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "3+3=6."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Зоос 2,4 байхад дүн 3 хүрэхгүй бол dp[3] ямар төлөвтэй үлдэх вэ?",
+          "choices": [
+            "Infinity",
+            "0",
+            "1"
+          ],
+          "correct": 0,
+          "explanation": "Сондгой дүнг эдгээр зоосоор бүрдүүлэхгүй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Хамгийн цөөн зоосны DP-д dp[0]=0.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Тэг дүнд зоос хэрэггүй."
         }
       ],
       "final": {
@@ -3302,6 +6369,36 @@
             "2"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "[3,1,2,5] дарааллын LIS уртыг бич.",
+          "accepted": [
+            "3"
+          ],
+          "casefold": false,
+          "explanation": "1,2,5 нь өсөх гурван элемент."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Strict LIS шилжилтэд j<i болон ямар нөхцөл хэрэгтэй вэ?",
+          "choices": [
+            "a[j] < a[i]",
+            "a[j] == a[i]",
+            "a[j] > a[i]"
+          ],
+          "correct": 0,
+          "explanation": "Өмнөх утга хатуу бага байна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "LIS нь заавал залгаа индексүүдээс бүрддэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Дэд дараалалд индекс алгасаж болно."
         }
       ],
       "final": {
@@ -3334,6 +6431,36 @@
             "1"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "\"abc\" ба \"ac\" мөрийн LCS уртыг бич.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "a,c гэсэн нийтлэг дараалал."
+        },
+        {
+          "kind": "choice",
+          "prompt": "LCS-д тэмдэгт тэнцэх үед ямар шилжилт хэрэглэх вэ?",
+          "choices": [
+            "Диагональ төлөв +1",
+            "Дээрх төлөв +2",
+            "Бүх төлөвийг 0 болгох"
+          ],
+          "correct": 0,
+          "explanation": "Нэг ижил тэмдэгтийг нийтлэг дараалалд нэмнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "LCS нь заавал залгаа substring байх ёстой.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Subsequence нь тэмдэгт алгасаж болно."
         }
       ],
       "final": {
@@ -3366,6 +6493,36 @@
             "1"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Саадгүй 2x2 торны зүүн дээдээс баруун доод руу зөвхөн баруун, доош явах замын тоог бич.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "Баруун-доош, доош-баруун."
+        },
+        {
+          "kind": "output",
+          "prompt": "Саадтай нүдэнд замын тоо хэд байх ёстой вэ?",
+          "choices": [
+            "0",
+            "1",
+            "Хөршүүдийн үржвэр"
+          ],
+          "correct": 0,
+          "explanation": "Саадтай нүдээр дамжин явахгүй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Саадгүй нүдний замын тоог дээр ба зүүн хөршийн нийлбэрээр олж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Зөвшөөрсөн хоёр чиглэлээс л ирнэ."
         }
       ],
       "final": {
@@ -3398,6 +6555,36 @@
             "Өртгийг хоёр дахин нэмэх"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "DP-ийн сонгосон өмнөх төлөвийг parent массивд хадгалсан. parent[5]=2 бол 5-аас буцаж сэргээх эхний индексийг бич.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "parent[5] өмнөх сонгосон төлөв 2-ыг заана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Хамгийн сайн утга ижил хоёр шилжилт байвал юуг сонгох вэ?",
+          "choices": [
+            "Нэг тогтвортой tie-break дүрэм",
+            "Хоёуланг нь заавал устгах",
+            "Бүх DP-г 0 болгох"
+          ],
+          "correct": 0,
+          "explanation": "Тодорхой дүрэм давтагдах үр дүн өгнө."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Зөвхөн эцсийн optimum утгаас бүх сонголтыг нэмэлт мэдээлэлгүй үргэлж сэргээж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Өмнөх төлөв эсвэл DP хүснэгт хэрэгтэй байж болно."
         }
       ],
       "final": {
@@ -3432,6 +6619,36 @@
             "18"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "p[0]=0; p[i+1]=p[i]+a[i] бол [l,r) нийлбэр p[r]-p[___]. Нөх.",
+          "accepted": [
+            "l"
+          ],
+          "casefold": false,
+          "explanation": "Эхний l элементийн нийлбэрийг хасна."
+        },
+        {
+          "kind": "output",
+          "prompt": "a=[3,5,2,7] бол [1,3) мужийн нийлбэр?",
+          "choices": [
+            "7",
+            "10",
+            "14"
+          ],
+          "correct": 0,
+          "explanation": "5+2=7."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Prefix sum-ийн урьдчилсан тооцоо O(n), нэг мужийн нийлбэр O(1).",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр хадгалсан утгыг хасна."
         }
       ],
       "final": {
@@ -3464,6 +6681,36 @@
             "5 ба 7"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Эрэмбэлсэн массивын хоёр үзүүрийн нийлбэр target-оос бага бол l += ___ кодын алхмыг нөх.",
+          "accepted": [
+            "1"
+          ],
+          "casefold": false,
+          "explanation": "Бага утгыг өсгөж нийлбэрийг нэмэгдүүлнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "[1,3,5,8] массивт нийлбэр 9 болох хос?",
+          "choices": [
+            "1 ба 8",
+            "3 ба 5",
+            "5 ба 8"
+          ],
+          "correct": 0,
+          "explanation": "1+8=9."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Two pointers-ийн нийлбэр хайх энэ арга эрэмбэлээгүй массивт баталгаатай зөв.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Индекс шилжүүлэхэд эрэмбэний шинж ашигладаг."
         }
       ],
       "final": {
@@ -3496,6 +6743,36 @@
             "3"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Window sum-д хуучин эхний утга old, шинэ сүүлийн утга new бол s=s-old+___ хэсгийг нөх.",
+          "accepted": [
+            "new"
+          ],
+          "casefold": false,
+          "explanation": "Цонхноос гарсныг хасаад орсныг нэмнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "[2,1,6,3], k=2 үед хамгийн их цонхны нийлбэр?",
+          "choices": [
+            "9",
+            "7",
+            "6"
+          ],
+          "correct": 0,
+          "explanation": "6+3=9 хамгийн их."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Тогтмол урттай sliding window-д цонх бүрийн нийлбэрийг шинээр бүтнээр бодох шаардлагагүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Өмнөх нийлбэрийг шинэчилнэ."
         }
       ],
       "final": {
@@ -3528,6 +6805,36 @@
             "8"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Fenwick tree-ийн lowbit i & -i томьёонд i=12 бол үр дүнг бич.",
+          "accepted": [
+            "4"
+          ],
+          "casefold": false,
+          "explanation": "12=1100₂, хамгийн бага асаалттай бит 4."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Fenwick tree-ийн point update ямар хугацаатай вэ?",
+          "choices": [
+            "O(log n)",
+            "O(n²)",
+            "O(1) үргэлж"
+          ],
+          "correct": 0,
+          "explanation": "Lowbit-аар дараагийн хариуцсан индекс рүү явна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "1-ээс эхэлсэн Fenwick update-д i=0-ээр эхлэх нь ердийн зөв арга.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "lowbit(0)=0 учир индекс өсөхгүй."
         }
       ],
       "final": {
@@ -3560,6 +6867,36 @@
             "O(n!)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Segment tree-ийн [l,r] мужийн дунд индексийг (l+r) ___ 2 гэж ол. Python операторыг нөх.",
+          "accepted": [
+            "//"
+          ],
+          "casefold": false,
+          "explanation": "Бүхэл дунд индекс авна."
+        },
+        {
+          "kind": "output",
+          "prompt": "[2,8,4,1] массивын sum segment tree-ийн үндэсний утга?",
+          "choices": [
+            "15",
+            "8",
+            "1"
+          ],
+          "correct": 0,
+          "explanation": "Бүх элементийн нийлбэр 15."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Segment tree-ийн node нь хариуцсан мужийн нэгтгэсэн утгыг хадгална.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Sum, min, max зэрэг нэгтгэл байж болно."
         }
       ],
       "final": {
@@ -3592,6 +6929,36 @@
             "1"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "\"abab\" мөрийн бүтэн хэсгийн хамгийн урт жинхэнэ prefix=suffix-ийн уртыг бич.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "ab нь хоёр захад давхцана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "KMP таарахгүй үед ямар мэдээлэл ашиглах вэ?",
+          "choices": [
+            "Prefix function-ийн өмнөх утга",
+            "Бүх тохирсон тэмдэгтийг үргэлж устгах",
+            "Тэмдэгтүүдийг эрэмбэлэх"
+          ],
+          "correct": 0,
+          "explanation": "Өмнөх таарсан prefix рүү буцаж ажлыг давтахгүй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Prefix function-д мөрийг бүтнээр нь өөрийн жинхэнэ prefix гэж тооцдог.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Proper prefix нь бүтэн мөрөөс богино."
         }
       ],
       "final": {
@@ -3624,6 +6991,36 @@
             "Заавал 5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "mask=5 буюу 101₂ бол 0-ээс дугаарласан 2-р бит асаалттайг шалгах mask & (1 << ___) хэсгийг нөх.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "1<<2 нь 4; mask-д энэ бит байна."
+        },
+        {
+          "kind": "output",
+          "prompt": "4 элементээс bitmask-аар хэдэн дэд олонлог үүсэх вэ?",
+          "choices": [
+            "16",
+            "8",
+            "4"
+          ],
+          "correct": 0,
+          "explanation": "2⁴=16."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "mask-ийн бит бүр нэг элементийг сонгосон эсэхийг илэрхийлж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Асаалттай бит сонгосон төлөв."
         }
       ],
       "final": {
@@ -3656,6 +7053,36 @@
             "10"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Нэмэх замын үлдэгдэл хүчин чадал 5,2,7 бол нэмэгдэх хамгийн их урсгалыг бич.",
+          "accepted": [
+            "2"
+          ],
+          "casefold": false,
+          "explanation": "Замын bottleneck хамгийн бага үлдэгдэл."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Edmonds–Karp residual graph-д нэмэх замыг ямар хайлтаар олдог вэ?",
+          "choices": [
+            "BFS",
+            "Binary search",
+            "Merge sort"
+          ],
+          "correct": 0,
+          "explanation": "BFS нь ирмэгийн тоогоор богино нэмэх зам олно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Residual graph-д буцаах ирмэг хэрэггүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Буцаах ирмэг өмнөх урсгалыг өөрчлөх боломж өгнө."
         }
       ],
       "final": {
@@ -3690,6 +7117,36 @@
             "Оролтыг дахин хэвлэх"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Бодлого 1-ээс дугаарласан n элементтэй бол хамгийн бага индексийг бич.",
+          "accepted": [
+            "1"
+          ],
+          "casefold": false,
+          "explanation": "Нөхцөлд 1-based индекс гэж өгсөн."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Нэг мөрд зөвхөн бүхэл тоо хэвлэх нөхцөлд аль гаралт тохирох вэ?",
+          "choices": [
+            "42",
+            "Хариу: 42",
+            "42 гэсэн хариу"
+          ],
+          "correct": 0,
+          "explanation": "Илүү текст шаардлага зөрчинө."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Бодлогын хязгаарлалт алгоритм сонгоход чухал.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "n-ийн хэмжээ боломжит хугацааг тодорхойлно."
         }
       ],
       "final": {
@@ -3722,6 +7179,36 @@
             "Унших боломжгүй"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "sys.stdin.buffer.read().___() кодод зайгаар token салгах method-ийг нөх.",
+          "accepted": [
+            "split"
+          ],
+          "casefold": false,
+          "explanation": "split оролтын token-уудыг салгана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Олон мөрийн гаралтыг нэгтгэн бичихэд аль method хэрэгтэй вэ?",
+          "choices": [
+            "join()",
+            "pop()",
+            "find()"
+          ],
+          "correct": 0,
+          "explanation": "join тусгаарлагчаар мөрүүдийг нэгтгэнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "read() бүх оролтыг уншихад нэмэлт санах ой огт хэрэглэдэггүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Бүх өгөгдөл санах ойд орно."
         }
       ],
       "final": {
@@ -3754,6 +7241,36 @@
             "Хамгийн орой дуусах"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Интервал сонгох greedy-д finish хугацаа 4,7,9 байвал эхэлж сонгох хамгийн эрт дуусах хугацааг бич.",
+          "accepted": [
+            "4"
+          ],
+          "casefold": false,
+          "explanation": "Эрт дуусах нь дараагийн интервалд зай үлдээнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Greedy зөв гэдгийг ямар аргаар үндэслэж болох вэ?",
+          "choices": [
+            "Exchange argument",
+            "Зөвхөн нэг жишээ",
+            "Хувьсагчийн нэр солих"
+          ],
+          "correct": 0,
+          "explanation": "Оновчтой шийдлийг greedy сонголттой нийцүүлж болдгийг нотлоно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Алхам бүрийн хамгийн ашигтай сонголт бүх бодлогод нийт оновчтой хариу өгдөг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Greedy зөв байх нөхцөлийг тусад нь нотолно."
         }
       ],
       "final": {
@@ -3786,6 +7303,36 @@
             "Хугацааг тэглэх"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Random test-ийг дахин гаргахад хадгалах random-ийн эхлэх утгыг English-ээр бич.",
+          "accepted": [
+            "seed"
+          ],
+          "casefold": true,
+          "explanation": "Seed ижил дарааллыг дахин үүсгэхэд тусална."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Stress test-д хурдан шийдлийн хариуг юутай тулгах вэ?",
+          "choices": [
+            "Жижиг оролтод баталгаатай brute force",
+            "Санамсаргүй дурын хариу",
+            "Зөвхөн runtime"
+          ],
+          "correct": 0,
+          "explanation": "Зөв reference шийдэлтэй гаралтыг тулгана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Stress test олон жижиг санамсаргүй оролт дээр алдаа илрүүлж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Хоёр алгоритмын үр дүн зөрөх тохиолдлыг олно."
         }
       ],
       "final": {
@@ -3818,6 +7365,36 @@
             "Дэлгэцийн нягтрал"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Хугацаа хэтэрсэн verdict-ийн товчлолыг English том үсгээр бич.",
+          "accepted": [
+            "TLE"
+          ],
+          "casefold": false,
+          "explanation": "Time Limit Exceeded."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Wrong Answer гарвал хамгийн түрүүнд юуг шалгах вэ?",
+          "choices": [
+            "Шаардсан гаралт ба логик",
+            "Зөвхөн кодын өнгө",
+            "Зөвхөн RAM-ийн хэмжээ"
+          ],
+          "correct": 0,
+          "explanation": "Буруу үр дүнгийн шалтгааныг шалгана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Accepted нь боломжит бүх оролтод математик баталгаа өгдөг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Шалгасан тестүүдэд зөв гэсэн үг."
         }
       ],
       "final": {
@@ -3850,6 +7427,36 @@
             "O(2^n)"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "n=1000 үед O(n²)-ийн n*n алхмын тоог цифрээр бич.",
+          "accepted": [
+            "1000000"
+          ],
+          "casefold": false,
+          "explanation": "1000²=1000000."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Их оролтод бүх хос шалгадаг шийдэл удаан байвал юу хийх вэ?",
+          "choices": [
+            "Илүү бага өсөлттэй алгоритм хайх",
+            "Зөвхөн хувьсагчийн нэр солих",
+            "Гаралтад тайлбар нэмэх"
+          ],
+          "correct": 0,
+          "explanation": "Төвөгшлийг багасгах нь их нөлөөтэй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Big O ижил алгоритмуудын бодит хугацаа хэл, тогтмол зардлаас хамаарч өөр байж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Өсөлтийн эрэмбэ секундийн яг хэмжилт биш."
         }
       ],
       "final": {
@@ -3882,6 +7489,36 @@
             "Зөвхөн файлын нэр"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Бодлого -100 ≤ x ≤ 100 оролттой бол доод захын тестийн x утгыг бич.",
+          "accepted": [
+            "-100"
+          ],
+          "casefold": false,
+          "explanation": "Хязгаарын хамгийн бага зөвшөөрсөн оролт -100."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Тэмцээнд нэг шийдлээ илгээхээс өмнө аль тестийн багц илүү сайн вэ?",
+          "choices": [
+            "Жишээ, min/max, давхардал, сөрөг утга зөвшөөрвөл сөрөг",
+            "Зөвхөн жишээ",
+            "Зөвхөн хамгийн их утга"
+          ],
+          "correct": 0,
+          "explanation": "Янз бүрийн зөвшөөрөгдсөн захын оролт алдаа илрүүлнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Тэмцээнд хугацаа үлдэх эсэхийг үл харгалзан хамгийн хүнд бодлогоос заавал эхлэх ёстой.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Өөрийн чадвар, оноо, хугацаагаар стратеги сонгоно."
         }
       ],
       "final": {
@@ -3914,6 +7551,36 @@
             "Зөвхөн хурдыг хэмжих"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "90 минутын сорилд 3 бодлогод ижил хугацаа хуваарилбал бодлого бүрт хэдэн минут ногдох вэ?",
+          "accepted": [
+            "30"
+          ],
+          "casefold": false,
+          "explanation": "90/3=30 минут."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Тэмцээний дараах дүн шинжилгээнд юу хамгийн хэрэгтэй вэ?",
+          "choices": [
+            "Буруу шийдлийн шалтгаан, зөв арга",
+            "Зөвхөн байр",
+            "Зөвхөн илгээсэн кодын мөрийн тоо"
+          ],
+          "correct": 0,
+          "explanation": "Алдаанаас дараагийн сорилд суралцана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Дадлагын сорилд өөр өөр сэдвийн бодлого сонгож ур чадвараа шалгаж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Нөхцөл, массив, граф зэрэг сэдвийг хослуулна."
         }
       ],
       "final": {
@@ -3948,6 +7615,36 @@
             "Файлын агуулгыг бүгдийг хэвлэнэ"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "git ___ кодоор шинэ локал repository үүсгэх subcommand-ийг нөх.",
+          "accepted": [
+            "init"
+          ],
+          "casefold": false,
+          "explanation": "git init repository-г эхлүүлнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Git ба GitHub-ийн ялгаа аль вэ?",
+          "choices": [
+            "Git түүх удирддаг, GitHub repository байршуулдаг",
+            "GitHub нь Python interpreter, Git нь database",
+            "Git нь зөвхөн зураг хадгалдаг"
+          ],
+          "correct": 0,
+          "explanation": "Git бол version control, GitHub бол хамтын үйлчилгээ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Git ажиллахын тулд заавал GitHub-д бүртгэлтэй байх ёстой.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Локал repository интернетгүй ажиллана."
         }
       ],
       "final": {
@@ -3980,6 +7677,36 @@
             "Зөвхөн remote хаяг"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "git ___ main.py кодоор файлыг staging area-д нэмэх subcommand-ийг нөх.",
+          "accepted": [
+            "add"
+          ],
+          "casefold": false,
+          "explanation": "git add сонгосон өөрчлөлтийг stage хийнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Commit хийхэд яг юу хадгалагдах вэ?",
+          "choices": [
+            "Staging area-д сонгосон төлөв",
+            "Бүх untracked файл заавал",
+            "Зөвхөн remote-ийн файл"
+          ],
+          "correct": 0,
+          "explanation": "Commit нь staged snapshot."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Файлыг засахад Git автоматаар commit үүсгэдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Stage ба commit үйлдэл шаардлагатай."
         }
       ],
       "final": {
@@ -4012,6 +7739,36 @@
             "Git шаардлагагүй болох"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "git switch ___ feature кодоор шинэ branch үүсгээд шилжих flag-ийг нөх.",
+          "accepted": [
+            "-c"
+          ],
+          "casefold": false,
+          "explanation": "-c шинэ branch үүсгэдэг."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Шинэ feature-ийг main-аас тусгаарлаж хөгжүүлэхэд юу ашиглах вэ?",
+          "choices": [
+            "Тусдаа branch",
+            "Бүх commit устгах",
+            "Repository-г устгах"
+          ],
+          "correct": 0,
+          "explanation": "Branch тусдаа хөгжүүлэлт хийх боломж олгоно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Branch нь commit руу заадаг нэр.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Branch-ийн заагч шинэ commit-оор урагшилж болно."
         }
       ],
       "final": {
@@ -4044,6 +7801,36 @@
             "Remote үүсгэнэ"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "git ___ feature кодоор одоогийн branch-д feature-г нэгтгэх subcommand-ийг нөх.",
+          "accepted": [
+            "merge"
+          ],
+          "casefold": false,
+          "explanation": "git merge өөр branch-ийн түүхийг нэгтгэнэ."
+        },
+        {
+          "kind": "bug",
+          "prompt": "Merge conflict шийдвэрлээгүй байхад файлд <<<<<<< тэмдэглэгээ үлджээ. Яах вэ?",
+          "choices": [
+            "Зөрчлийг шийдэж, тэмдэглэгээг арилган, тестлээд stage хийх",
+            "Тэмдэглэгээг кодын хэсэг хэвээр үлдээх",
+            "Нөгөө branch-ийг устгах"
+          ],
+          "correct": 0,
+          "explanation": "Conflict-ийн агуулгыг зөв нэгтгэж байж commit хийнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Merge conflict нь Git-ийн бүх түүх устсан гэсэн үг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Хоёр өөр өөрчлөлтийн зөрчлийг шийдэх шаардлагатай."
         }
       ],
       "final": {
@@ -4076,6 +7863,36 @@
             "git init"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "git ___ origin кодоор remote-ийн мэдээллийг татах, автоматаар нэгтгэхгүй subcommand-ийг нөх.",
+          "accepted": [
+            "fetch"
+          ],
+          "casefold": false,
+          "explanation": "fetch remote tracking мэдээллийг шинэчилнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Локал main commit-ийг origin руу илгээх команд?",
+          "choices": [
+            "git push origin main",
+            "git fetch origin main",
+            "git status"
+          ],
+          "correct": 0,
+          "explanation": "push локал commit-ийг remote руу илгээнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "git fetch нь ажлын файлыг заавал remote-ийн хувилбараар солино.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "fetch мэдээлэл татах боловч working tree-г автоматаар нэгтгэхгүй."
         }
       ],
       "final": {
@@ -4108,6 +7925,36 @@
             "Зөвхөн commit огноо"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "GitHub дээр нэгтгэх зорилтот branch-ийг ___ branch гэдэг. English нэрийг нөх.",
+          "accepted": [
+            "base"
+          ],
+          "casefold": false,
+          "explanation": "Base нь өөрчлөлт очих branch."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Code review хийхдээ юу шалгах нь зөв вэ?",
+          "choices": [
+            "Diff, шаардлага, тестийн үр дүн",
+            "Зөвхөн contributor-ийн зураг",
+            "Зөвхөн commit-ийн тоо"
+          ],
+          "correct": 0,
+          "explanation": "Өөрчлөлтийн чанар ба зөв ажиллагааг шалгана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Pull request нь branch-ийн өөрчлөлтийг нэгтгэх санал юм.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Merge хийхээс өмнө хэлэлцэж, хянаж болно."
         }
       ],
       "final": {
@@ -4140,6 +7987,36 @@
             "Token-ийг дахин нийтлэх"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Track хийгдээгүй .env файлыг үл тооцох Git тохиргооны файлын нэрийг бич.",
+          "accepted": [
+            ".gitignore"
+          ],
+          "casefold": false,
+          "explanation": "Энэ файл ignore pattern хадгална."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Token аль хэдийн remote-д commit болсон бол хамгийн түрүүнд юу хийх вэ?",
+          "choices": [
+            "Token-ийг хүчингүй болгож солих",
+            "Зөвхөн .gitignore нэмэх",
+            "Commit message солих"
+          ],
+          "correct": 0,
+          "explanation": "Хуучин token түүхээс уншигдсан байж болно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": ".gitignore нэмэхэд өмнө нь commit хийсэн нууц түүхээс автоматаар арилна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Ignore нь өмнө track хийсэн түүхийг өөрчлөхгүй."
         }
       ],
       "final": {
@@ -4172,6 +8049,36 @@
             "Тестийн гаралтыг"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "git ___ HEAD кодоор хамгийн сүүлийн энгийн commit-ийн эсрэг шинэ commit хийх subcommand-ийг нөх.",
+          "accepted": [
+            "revert"
+          ],
+          "casefold": false,
+          "explanation": "revert шинэ буцаалтын commit үүсгэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Commit-ийн түүхийг харах команд?",
+          "choices": [
+            "git log",
+            "git add",
+            "git init"
+          ],
+          "correct": 0,
+          "explanation": "log commit-ийн түүхийг харуулна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "git reset --hard нь хадгалаагүй tracked файлын өөрчлөлтийг заавал хамгаална.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Hard reset хадгалаагүй өөрчлөлтийг устгаж болно."
         }
       ],
       "final": {
@@ -4206,6 +8113,36 @@
             "Өгөгдлийн сангийн нууц үг"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "CREATE TABLE student(id INTEGER PRIMARY ___) кодын түлхүүр үгийг нөх.",
+          "accepted": [
+            "KEY"
+          ],
+          "casefold": true,
+          "explanation": "PRIMARY KEY мөрийг ялгана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Оюутан бүр нэг мөртэй хүснэгтэд name нь бүтцийн ямар хэсэг вэ?",
+          "choices": [
+            "Багана",
+            "Хүснэгт бүр",
+            "Database бүр"
+          ],
+          "correct": 0,
+          "explanation": "Нэр нь мөрийн шинж буюу багана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Primary key-ийн утга мөр бүрийг ялгах ёстой.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Ижил primary key-тэй хоёр мөр байж болохгүй."
         }
       ],
       "final": {
@@ -4238,6 +8175,36 @@
             "Шинэ багана үүсгэнэ"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "___ INTO students(name) VALUES ('Bat') кодын SQL түлхүүр үгийг нөх.",
+          "accepted": [
+            "INSERT"
+          ],
+          "casefold": true,
+          "explanation": "INSERT шинэ мөр нэмнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "students хүснэгтийн зөвхөн name баганыг унших SQL аль вэ?",
+          "choices": [
+            "SELECT name FROM students",
+            "INSERT name FROM students",
+            "SELECT students FROM name"
+          ],
+          "correct": 0,
+          "explanation": "SELECT шаардсан баганыг уншина."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "SELECT нь өгөгдлийг унших бүрдээ шинэ мөр нэмдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "SELECT нь унших query."
         }
       ],
       "final": {
@@ -4270,6 +8237,36 @@
             "Санамсаргүй"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "SELECT * FROM students WHERE score >= 80 ORDER BY score ___ кодод буурахаар эрэмбэлэх түлхүүр үгийг нөх.",
+          "accepted": [
+            "DESC"
+          ],
+          "casefold": true,
+          "explanation": "DESC ихээс бага руу эрэмбэлнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "Оноо 60,80,95 байхад WHERE score >= 80 хэдэн мөр сонгох вэ?",
+          "choices": [
+            "2",
+            "1",
+            "3"
+          ],
+          "correct": 0,
+          "explanation": "80 ба 95 нөхцөл хангана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "LIMIT буцаах мөрийн тоог хязгаарлаж чадна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "ORDER BY-той хамт тодорхой эхний мөрүүдийг авна."
         }
       ],
       "final": {
@@ -4302,6 +8299,36 @@
             "COMMIT заавал"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "UPDATE students SET score=90 ___ id=3 кодод зөвхөн нэг id сонгох түлхүүр үгийг нөх.",
+          "accepted": [
+            "WHERE"
+          ],
+          "casefold": true,
+          "explanation": "WHERE тохирсон мөрүүдийг сонгоно."
+        },
+        {
+          "kind": "bug",
+          "prompt": "UPDATE students SET score=90 бүх мөрийг өөрчилжээ. Зөвхөн id=3 өөрчлөхийн тулд ямар хэсэг нэмэх вэ?",
+          "choices": [
+            "WHERE id=3",
+            "ORDER BY id",
+            "GROUP BY id"
+          ],
+          "correct": 0,
+          "explanation": "WHERE нь өөрчлөх мөрийг сонгоно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "WHERE байхгүй UPDATE үргэлж зөвхөн эхний мөрийг өөрчилнө.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Бүх мөрд үйлчилнэ."
         }
       ],
       "final": {
@@ -4334,6 +8361,36 @@
             "INSERT"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "SELECT class_id, COUNT(*) FROM students GROUP ___ class_id кодын түлхүүр үгийг нөх.",
+          "accepted": [
+            "BY"
+          ],
+          "casefold": true,
+          "explanation": "GROUP BY ижил class_id-тай мөрийг бүлэглэнэ."
+        },
+        {
+          "kind": "output",
+          "prompt": "Оноо 10,20,30 үед AVG(score) хэд вэ?",
+          "choices": [
+            "20",
+            "60",
+            "3"
+          ],
+          "correct": 0,
+          "explanation": "Нийлбэр 60-г 3-т хуваана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "HAVING нь бүлэглэсний дараах нөхцөл тавихад хэрэглэгддэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Aggregate үр дүнг шүүх боломжтой."
         }
       ],
       "final": {
@@ -4366,6 +8423,36 @@
             "HTML өнгө"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "SELECT * FROM students LEFT ___ classes ON students.class_id=classes.id кодын түлхүүр үгийг нөх.",
+          "accepted": [
+            "JOIN"
+          ],
+          "casefold": true,
+          "explanation": "LEFT JOIN зүүн хүснэгтийн мөрийг хадгална."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Ангигүй оюутныг ч үр дүнд хадгалах JOIN аль вэ (students зүүн талд)?",
+          "choices": [
+            "LEFT JOIN",
+            "INNER JOIN",
+            "Зөвхөн CROSS JOIN"
+          ],
+          "correct": 0,
+          "explanation": "LEFT JOIN тохирохгүй баруун талд NULL өгнө."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "INNER JOIN тохирохгүй зүүн талын мөрийг заавал хадгалдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Зөвхөн тохирсон мөрүүдийг авна."
         }
       ],
       "final": {
@@ -4398,6 +8485,36 @@
             "Зөвхөн database нэр"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "WHERE ___ (SELECT 1 FROM classes WHERE id=3) кодод ядаж нэг мөр байгаа эсэх шалгах түлхүүр үгийг нөх.",
+          "accepted": [
+            "EXISTS"
+          ],
+          "casefold": true,
+          "explanation": "EXISTS query мөр буцаах эсэхийг шалгана."
+        },
+        {
+          "kind": "output",
+          "prompt": "Дэд query 0 мөр буцаавал EXISTS ямар утга өгөх вэ?",
+          "choices": [
+            "False",
+            "True",
+            "Мөрийн тоо 1"
+          ],
+          "correct": 0,
+          "explanation": "Ядаж нэг мөр байх шаардлагатай."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Correlated subquery нь гаднах query-ийн мөрийн утгыг ашиглаж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Гаднах мөртэй хамааралтай нөхцөлтэй."
         }
       ],
       "final": {
@@ -4430,6 +8547,36 @@
             "HTML бүтэц"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "CREATE ___ idx_name ON students(name) кодод хайлтын index үүсгэх түлхүүр үгийг нөх.",
+          "accepted": [
+            "INDEX"
+          ],
+          "casefold": true,
+          "explanation": "CREATE INDEX index үүсгэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Index нэмэхийн боломжит сул тал?",
+          "choices": [
+            "Нэмэлт зай, бичих үйлдлийн зардал",
+            "SELECT үргэлж ажиллахгүй болох",
+            "Primary key автоматаар устах"
+          ],
+          "correct": 0,
+          "explanation": "Index-ийг хадгалж шинэчлэх өртөгтэй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Query planner үүсгэсэн index бүрийг query болгонд заавал ашиглана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Planner зардлын үнэлгээгээр сонгодог."
         }
       ],
       "final": {
@@ -4462,6 +8609,36 @@
             "Бүх текстийг"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Transaction-ийн өөрчлөлтийг баталгаажуулах SQL командыг бич.",
+          "accepted": [
+            "COMMIT"
+          ],
+          "casefold": true,
+          "explanation": "COMMIT transaction-ийг хадгална."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Давхардсан email-ийг хориглох constraint аль вэ?",
+          "choices": [
+            "UNIQUE",
+            "NOT NULL дангаараа",
+            "DEFAULT"
+          ],
+          "correct": 0,
+          "explanation": "UNIQUE ижил утгыг хязгаарлана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "ROLLBACK нь дууссан COMMIT-ийн өөрчлөлтийг ердийн transaction дотор автоматаар буцаана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "ROLLBACK нь баталгаажуулаагүй transaction-ийг буцаана."
         }
       ],
       "final": {
@@ -4494,6 +8671,36 @@
             "@"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "SQLite query: SELECT * FROM students WHERE name = ___ хэсэгт нэг parameter placeholder-ийн тэмдгийг нөх.",
+          "accepted": [
+            "?"
+          ],
+          "casefold": false,
+          "explanation": "SQLite ? placeholder-оор утгыг тусад нь дамжуулна."
+        },
+        {
+          "kind": "bug",
+          "prompt": "Хэрэглэгчийн нэрийг SQL мөртэй шууд залгаж хайдаг кодыг хэрхэн засах вэ?",
+          "choices": [
+            "Parameter binding ашиглах",
+            "Хэрэглэгчийн нэрийг том үсгээр болгох",
+            "SELECT-ийн өмнө зай нэмэх"
+          ],
+          "correct": 0,
+          "explanation": "SQL бүтэц ба утгыг тусад нь дамжуулна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Client-side input validation дангаараа SQL injection-оос хамгаална.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Server parameterized query ашиглах ёстой."
         }
       ],
       "final": {
@@ -4528,6 +8735,36 @@
             "CSS-г идэвхгүй болгоно"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "<html ___=\"mn\"> кодод баримтын хэл заах attribute-ийг нөх.",
+          "accepted": [
+            "lang"
+          ],
+          "casefold": false,
+          "explanation": "lang нь баримтын хэлийг заана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Харагдах үндсэн агуулга HTML-ийн аль хэсэгт байна?",
+          "choices": [
+            "body",
+            "head",
+            "title дангаараа"
+          ],
+          "correct": 0,
+          "explanation": "body харагдах агуулгыг агуулна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "head хэсэгт metadata байрлаж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Жишээ нь charset, viewport, title."
         }
       ],
       "final": {
@@ -4560,6 +8797,36 @@
             "meta"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Хуудасны гол агуулгын semantic tag-ийн нэрийг өнцөгт хаалтгүй бич.",
+          "accepted": [
+            "main"
+          ],
+          "casefold": false,
+          "explanation": "main нь үндсэн агуулгыг илэрхийлнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Навигацийн холбоосуудын хэсэгт аль semantic tag тохирох вэ?",
+          "choices": [
+            "nav",
+            "article",
+            "header"
+          ],
+          "correct": 0,
+          "explanation": "nav нь навигацийн хэсгийг заана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Утгатай link text нь хүртээмжид ямар ч нөлөөгүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Холбоосын зорилгыг ойлгоход тусалдаг."
         }
       ],
       "final": {
@@ -4592,6 +8859,36 @@
             "Зөвхөн JavaScript байхгүй үед"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "<label ___=\"email\">Email</label><input id=\"email\"> кодын attribute-ийг нөх.",
+          "accepted": [
+            "for"
+          ],
+          "casefold": false,
+          "explanation": "for нь input id-тай холбогдоно."
+        },
+        {
+          "kind": "bug",
+          "prompt": "label for=\"email\" боловч input id=\"name\" байна. Холбоосыг хэрхэн засах вэ?",
+          "choices": [
+            "input id=\"email\" болгох",
+            "input type=\"email\" л болгох",
+            "label текстийг устгах"
+          ],
+          "correct": 0,
+          "explanation": "for нь input id-тай яг таарах ёстой."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "HTML required байхад сервер оролтыг шалгах шаардлагагүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Client шалгалтыг тойрч хүсэлт илгээж болно."
         }
       ],
       "final": {
@@ -4624,6 +8921,36 @@
             "Бүх HTML"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "CSS-д class=\"card\" элементүүдийг сонгох ___card selector-ийн эхний тэмдгийг нөх.",
+          "accepted": [
+            "."
+          ],
+          "casefold": false,
+          "explanation": "Class selector цэгээр эхэлдэг."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Ижил origin, importance, layer-тэй хоёр дүрмийн specificity ижил бол аль нь ялж үйлчлэх вэ?",
+          "choices": [
+            "Дараа бичсэн дүрэм",
+            "Үргэлж эхний дүрэм",
+            "Property-ийн нэр урт нь"
+          ],
+          "correct": 0,
+          "explanation": "Бусад хүчин зүйл ижил үед source order шийднэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Нэг class-ийг олон HTML элементэд ашиглаж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Дахин ашиглах хэв маягт тохиромжтой."
         }
       ],
       "final": {
@@ -4656,6 +8983,36 @@
             "80px"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "box-sizing: ___; кодод width дотор padding ба border багтаах утгыг нөх.",
+          "accepted": [
+            "border-box"
+          ],
+          "casefold": false,
+          "explanation": "border-box заасан өргөнд padding, border-ийг багтаана."
+        },
+        {
+          "kind": "output",
+          "prompt": "content-box width 100px, хоёр талын padding 10px, border 2px бол margin-гүй нийт өргөн?",
+          "choices": [
+            "124px",
+            "112px",
+            "100px"
+          ],
+          "correct": 0,
+          "explanation": "100+20+4=124px."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Margin нь border-box width-д багтана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Margin нь хайрцгийн гаднах зай."
         }
       ],
       "final": {
@@ -4688,6 +9045,36 @@
             "color"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "display: ___; кодод Flexbox идэвхжүүлэх утгыг нөх.",
+          "accepted": [
+            "flex"
+          ],
+          "casefold": false,
+          "explanation": "display:flex нь flex container үүсгэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "flex-direction:row үед үндсэн тэнхлэг дагуу байрлуулах property?",
+          "choices": [
+            "justify-content",
+            "align-items",
+            "font-size"
+          ],
+          "correct": 0,
+          "explanation": "Row-ийн үндсэн тэнхлэг хэвтээ байна."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "gap нь flex элементүүдийн хооронд зай гаргана.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Элемент бүрд margin өгөхгүйгээр зай тохируулна."
         }
       ],
       "final": {
@@ -4720,6 +9107,36 @@
             "Бүх элементийг устгана"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "display: ___; кодод CSS Grid layout идэвхжүүлэх утгыг нөх.",
+          "accepted": [
+            "grid"
+          ],
+          "casefold": false,
+          "explanation": "display:grid нь grid container үүсгэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Grid-ийн grid-template-columns-д олон баганыг боломжит өргөнөөс хамааруулж үүсгэх зөв утга аль вэ?",
+          "choices": [
+            "repeat(auto-fit, minmax(180px, 1fr))",
+            "width: 180px бүх дэлгэцэд",
+            "position: fixed бүх card-д"
+          ],
+          "correct": 0,
+          "explanation": "auto-fit болон minmax боломжит зайд зохицно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Viewport meta tag нь mobile browser-ийн масштабтай холбоогүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Viewport нь төхөөрөмжийн өргөнд тааруулахад хэрэгтэй."
         }
       ],
       "final": {
@@ -4752,6 +9169,36 @@
             "5"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "___ count = 0; count += 1; кодод дахин оноож болох block-scoped түлхүүр үгийг нөх.",
+          "accepted": [
+            "let"
+          ],
+          "casefold": false,
+          "explanation": "let нэрийг дахин оноож болно."
+        },
+        {
+          "kind": "bug",
+          "prompt": "const count=0; count=1; кодод дахин оноолтын алдаа гарлаа. Хувьсагч өөрчлөгдөх шаардлагатай бол аль засвар зөв вэ?",
+          "choices": [
+            "let count=0",
+            "const count=1; count=2",
+            "count===1"
+          ],
+          "correct": 0,
+          "explanation": "let дахин оноолтыг зөвшөөрнө."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "const нэрд өөр утга дахин оноож болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "const binding дахин оноолтыг хориглоно."
         }
       ],
       "final": {
@@ -4784,6 +9231,36 @@
             "outerHTML"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "button.___(\"click\", handler) кодод event сонсох method-ийн нэрийг нөх.",
+          "accepted": [
+            "addEventListener"
+          ],
+          "casefold": false,
+          "explanation": "addEventListener үйлдэлд handler бүртгэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Хэрэглэгчийн оруулсан текстийг HTML болгож тайлбарлахгүй харуулах property?",
+          "choices": [
+            "textContent",
+            "innerHTML",
+            "outerHTML"
+          ],
+          "correct": 0,
+          "explanation": "textContent нь текст хэлбэрээр онооно."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "DOM нь HTML элементийг объект болгон кодоор удирдах боломж олгодог.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Элементийн төлөв, event-ийг удирдана."
         }
       ],
       "final": {
@@ -4816,6 +9293,36 @@
             "response.length"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "const r = await fetch(url); const data = await r.___(); кодод JSON унших method-ийг нөх.",
+          "accepted": [
+            "json"
+          ],
+          "casefold": false,
+          "explanation": "response.json() body-г parse хийнэ."
+        },
+        {
+          "kind": "bug",
+          "prompt": "fetch() 404 буцаасан ч catch ажиллаагүй. HTTP алдааг хэрхэн илрүүлэх вэ?",
+          "choices": [
+            "response.ok шалгах",
+            "response.url устгах",
+            "JSON үргэлж амжилттай гэж үзэх"
+          ],
+          "correct": 0,
+          "explanation": "HTTP алдаа fetch Promise-ийг заавал reject хийхгүй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "fetch() нь HTTP 404 ирэх бүрд сүлжээний exception шиддэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "HTTP status-ийг response.ok-оор тусад нь шалгана."
         }
       ],
       "final": {
@@ -4850,6 +9357,36 @@
             "Database автоматаар солих"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "python manage.py ___ catalog кодод шинэ Django app үүсгэх subcommand-ийг нөх.",
+          "accepted": [
+            "startapp"
+          ],
+          "casefold": false,
+          "explanation": "startapp app-ийн үндсэн файлуудыг үүсгэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Project-ийн ерөнхий тохиргоо ихэвчлэн аль файлд байна?",
+          "choices": [
+            "settings.py",
+            "models.py",
+            "admin.py"
+          ],
+          "correct": 0,
+          "explanation": "settings.py project-ийн тохиргоог хадгална."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Virtual environment төслийн Python dependency-г тусгаарлахад тусалдаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Бусад төслийн package хувилбартай зөрчилдөхөөс сэргийлнэ."
         }
       ],
       "final": {
@@ -4882,6 +9419,36 @@
             "QuerySet"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "from django.urls import ___ кодод URL pattern үүсгэх энгийн функцийг нөх.",
+          "accepted": [
+            "path"
+          ],
+          "casefold": false,
+          "explanation": "path URL route болон view-г холбоно."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Django view-д дамжих HTTP хүсэлтийн объект аль вэ?",
+          "choices": [
+            "HttpRequest",
+            "JsonResponse",
+            "Migration"
+          ],
+          "correct": 0,
+          "explanation": "View хүсэлтийг авч response буцаана."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "URL pattern нь database хүснэгтийн баганыг тодорхойлдог.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "URL хүсэлтийг view рүү чиглүүлнэ."
         }
       ],
       "final": {
@@ -4914,6 +9481,36 @@
             "HTML form заавал"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "class Student(models.___): кодод Django model-ийн үндсэн class-ийн нэрийг нөх.",
+          "accepted": [
+            "Model"
+          ],
+          "casefold": false,
+          "explanation": "Model-оос удамшсан class ORM хүснэгтийг тодорхойлно."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Нэрийн богино текст баганад тохирох Django field?",
+          "choices": [
+            "CharField",
+            "IntegerField",
+            "BooleanField"
+          ],
+          "correct": 0,
+          "explanation": "CharField тэмдэгт мөр хадгална."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Model field нь өгөгдлийн баганын шинжийг тодорхойлж чадна.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Төрөл, хязгаарлалт зэргийг заана."
         }
       ],
       "final": {
@@ -4946,6 +9543,36 @@
             "python manage.py check"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "python manage.py ___ кодод бэлэн migration-ийг өгөгдлийн санд хэрэгжүүлэх subcommand-ийг нөх.",
+          "accepted": [
+            "migrate"
+          ],
+          "casefold": false,
+          "explanation": "migrate migration-уудыг хэрэгжүүлнэ."
+        },
+        {
+          "kind": "bug",
+          "prompt": "Model зассаны дараа migration файл үүсгэсэн ч database schema хуучин байна. Дараагийн алхам?",
+          "choices": [
+            "python manage.py migrate",
+            "python manage.py startapp",
+            "python manage.py runserver"
+          ],
+          "correct": 0,
+          "explanation": "migrate өөрчлөлтийг database-д хэрэгжүүлнэ."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "makemigrations өөрөө бүх schema өөрчлөлтийг database-д хэрэгжүүлдэг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Migration файл үүсгэнэ; migrate хэрэгжүүлнэ."
         }
       ],
       "final": {
@@ -4978,6 +9605,36 @@
             "URL-ийг нуух"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "admin.site.___(Student) кодод Django Admin-д model бүртгэх method-ийг нөх.",
+          "accepted": [
+            "register"
+          ],
+          "casefold": false,
+          "explanation": "register model-ийг admin-д бүртгэнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Бүх оюутанд Admin superuser эрх өгөх нь яагаад буруу вэ?",
+          "choices": [
+            "Шаардлагагүй өргөн эрх үүсгэнэ",
+            "HTML өнгө өөрчлөгдөнө",
+            "Migration удаашрах нь цорын ганц шалтгаан"
+          ],
+          "correct": 0,
+          "explanation": "Хамгийн бага шаардлагатай эрх олгох ёстой."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Admin интерфейсийн model-д хандах эрхийг хэрэглэгчээр хязгаарлаж болно.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Staff ба model permission ашигладаг."
         }
       ],
       "final": {
@@ -5010,6 +9667,36 @@
             "delete()"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "return ___({\"ok\": True}) кодод Django JSON response class-ийн нэрийг нөх.",
+          "accepted": [
+            "JsonResponse"
+          ],
+          "casefold": false,
+          "explanation": "JsonResponse dict-ийг JSON response болгоно."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Серверээс сургалтын жагсаалт уншихад ердийн HTTP method?",
+          "choices": [
+            "GET",
+            "DELETE",
+            "PATCH"
+          ],
+          "correct": 0,
+          "explanation": "GET өгөгдөл уншихад хэрэглэгддэг."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "JSON API нь зөвхөн HTML хуудсыг буцаах ёстой.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "JSON хэлбэртэй өгөгдөл буцаах боломжтой."
         }
       ],
       "final": {
@@ -5042,6 +9729,36 @@
             "200"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "HTTP Created төлөвийн тоон кодыг бич.",
+          "accepted": [
+            "201"
+          ],
+          "casefold": false,
+          "explanation": "201 Created нь амжилттай үүсгэснийг илэрхийлнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Шаардлагатай input талбар байхгүй хүсэлтэд аль status тохиромжтой вэ?",
+          "choices": [
+            "400",
+            "200",
+            "201"
+          ],
+          "correct": 0,
+          "explanation": "400 Bad Request нь хүчингүй хүсэлт."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Client талд шалгасан input-ийг сервер дахин шалгах шаардлагатай.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Client шалгалтыг тойрч болно."
         }
       ],
       "final": {
@@ -5074,6 +9791,36 @@
             "Нууц үггүй үед"
           ],
           "correct": 0
+        },
+        {
+          "kind": "short",
+          "prompt": "Хэн болохыг баталгаажуулах үйл явцыг English-ээр бич.",
+          "accepted": [
+            "authentication"
+          ],
+          "casefold": true,
+          "explanation": "Authentication хэрэглэгчийн хэн болохыг шалгана."
+        },
+        {
+          "kind": "bug",
+          "prompt": "API зөвхөн login шалгаад бусдын record засахыг зөвшөөрч байна. Ямар шалгалт дутуу вэ?",
+          "choices": [
+            "Record-д хандах authorization",
+            "Зөвхөн email-ийн хэлбэр",
+            "HTML form-ийн өнгө"
+          ],
+          "correct": 0,
+          "explanation": "Эзэмшил болон permission шалгах хэрэгтэй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Нэвтэрсэн бүх хэрэглэгч бусдын record-ийг автоматаар засах эрхтэй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "Authentication нь authorization биш."
         }
       ],
       "final": {
@@ -5106,6 +9853,36 @@
             "Зөвхөн URL урт"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "from django.test import ___ кодод database ашиглах Django test class-ийн нэрийг нөх.",
+          "accepted": [
+            "TestCase"
+          ],
+          "casefold": false,
+          "explanation": "TestCase тестийн сан ба тусгаарлалтыг ашиглана."
+        },
+        {
+          "kind": "choice",
+          "prompt": "JSON endpoint тестлэхдээ status-аас гадна юу шалгах вэ?",
+          "choices": [
+            "JSON агуулга ба шаардлагатай DB өөрчлөлт",
+            "Зөвхөн browser-ийн өнгө",
+            "Зөвхөн файлын хэмжээ"
+          ],
+          "correct": 0,
+          "explanation": "Хариу ба side effect хоёул зөв байх ёстой."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "Django-ийн стандарт test runner тусдаа test database ашигладаг.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 0,
+          "explanation": "Production өгөгдлийг тестийн зорилгоор ашиглахгүй байх ёстой."
         }
       ],
       "final": {
@@ -5138,6 +9915,36 @@
             "Frontend JavaScript"
           ],
           "correct": 0
+        },
+        {
+          "kind": "fill",
+          "prompt": "Production settings-д DEBUG = ___ кодод Python-ийн худал утгыг нөх.",
+          "accepted": [
+            "False"
+          ],
+          "casefold": false,
+          "explanation": "DEBUG=False дэлгэрэнгүй debug мэдээлэл нийтэд гаргахаас сэргийлнэ."
+        },
+        {
+          "kind": "choice",
+          "prompt": "SECRET_KEY-г production-д хаана хадгалах нь зөв вэ?",
+          "choices": [
+            "Нууц environment variable",
+            "Public Git commit",
+            "Frontend JavaScript"
+          ],
+          "correct": 0,
+          "explanation": "Нууц key-г client болон public repo-д ил болгохгүй."
+        },
+        {
+          "kind": "true_false",
+          "prompt": "HTTPS ашиглаж байгаа бол backup, migration төлөвлөх шаардлагагүй.",
+          "choices": [
+            "Үнэн",
+            "Худал"
+          ],
+          "correct": 1,
+          "explanation": "HTTPS дамжуулалтыг хамгаална; өгөгдлийн найдвартай байдал тусдаа."
         }
       ],
       "final": {

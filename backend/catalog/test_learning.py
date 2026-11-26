@@ -25,7 +25,7 @@ class LearningTests(TestCase):
         return self.client.post(path, json.dumps(data), content_type='application/json', **({'HTTP_AUTHORIZATION': 'Bearer ' + who*64} if who else {}))
 
     def path(self, lesson_id):
-        return f'/api/learning/{self.course.pk}/quiz/{lesson_id}/'
+        return f'/api/learning/{self.course.pk}/quiz/{lesson_id}/?format=2'
 
     def correct(self, lesson_id):
         return {q['id']: q['correct'] for q in assessment(self.course, lesson_id)[0]}
@@ -37,15 +37,18 @@ class LearningTests(TestCase):
         for l in Lesson.objects.select_related('course'):
             qs = questions_for(l)
             final = questions_for(l, final=True)
-            self.assertEqual(len(qs), 2)
+            self.assertEqual(len(qs), 5)
             self.assertEqual(len(final), 1)
             self.assertTrue(all(sections(l.content).values()))
             for q in qs + final:
-                self.assertEqual(len(set(q['choices'])), 3)
-                self.assertIn(q['correct'], range(3))
+                if q.get('kind') in ('fill', 'short'):
+                    self.assertTrue(q['accepted'])
+                else:
+                    self.assertEqual(len(set(q['choices'])), len(q['choices']))
+                    self.assertIn(q['correct'], range(len(q['choices'])))
                 self.assertNotIn(q['prompt'], prompts)
                 prompts.add(q['prompt'])
-        self.assertEqual(len(prompts), 480)
+        self.assertEqual(len(prompts), 960)
 
     def test_read_and_auth(self):
         p = f'/api/learning/{self.course.pk}/'
@@ -58,10 +61,13 @@ class LearningTests(TestCase):
         self.assertEqual(self.get(self.path(self.lesson.pk), None).status_code, 401)
         self.assertEqual(self.post(self.path(self.lesson.pk), {'answers': self.correct(self.lesson.pk)}, None).status_code, 401)
         q = self.get(self.path(self.lesson.pk)).json()['questions']
-        self.assertEqual(len(q), 2)
+        self.assertEqual(len(q), 5)
+        self.assertEqual(data['lessons'][0]['question_count'], 5)
+        self.assertEqual(self.get(self.path(self.lesson.pk).split('?')[0]).status_code, 409)
         for item in q:
-            self.assertEqual(set(item), {'id','prompt','options'})
-            self.assertEqual(len(item['options']), 3)
+            self.assertEqual(set(item), {'id','prompt','options','kind'})
+            expected = 0 if item['kind'] in ('fill','short') else 2 if item['kind'] == 'true_false' else 3
+            self.assertEqual(len(item['options']), expected)
             self.assertTrue(all(set(o) == {'id','text'} for o in item['options']))
         self.assertEqual(self.get(self.path(0)).status_code, 403)
 
@@ -133,3 +139,26 @@ class LearningTests(TestCase):
         self.course.published = False
         self.course.save()
         self.assertEqual(self.get(f'/api/learning/{self.course.pk}/').status_code, 404)
+
+    def test_mixed_assessment_validation_and_existing_completion(self):
+        path = self.path(self.lesson.pk)
+        entries = assessment(self.course, self.lesson.pk)[0]
+        typed = next(q for q in entries if q['kind'] in ('fill', 'short'))
+        correct = self.correct(self.lesson.pk)
+        old_only = {q['id']: q['correct'] for q in entries[:2]}
+        self.assertEqual(self.post(path, {'answers': old_only}).status_code, 400)
+        for bad in ('', 'a'*201, ['print'], 'a\nb'):
+            invalid = dict(correct, **{typed['id']: bad})
+            self.assertEqual(self.post(path, {'answers': invalid}).status_code, 400)
+        wrong = dict(correct, **{typed['id']: 'not_a_valid_answer'})
+        result = self.post(path, {'answers': wrong}).json()
+        self.assertEqual(result['score'], 80)
+        self.assertFalse(result['passed'])
+        self.assertFalse(LessonCompletion.objects.exists())
+        prior = LessonCompletion.objects.create(user=self.a, lesson=self.lesson)
+        result = self.post(path, {'answers': correct}).json()
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['total'], 5)
+        self.assertEqual(LessonCompletion.objects.get(user=self.a, lesson=self.lesson).pk, prior.pk)
+        self.assertEqual(LessonCompletion.objects.count(), 1)
+        self.assertEqual(self.get('/api/profile/me/').json()['learning']['lessons'], 1)

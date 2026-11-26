@@ -14,6 +14,7 @@ from django.views.decorators.http import require_GET, require_http_methods
 from .accounts import limited
 from .models import Course, LessonCompletion, CourseCompletion
 from .practice import current_user, payload, response
+from .quiz_rules import is_typed, valid_answer, is_correct, answer_text
 
 rng = SystemRandom()
 
@@ -76,7 +77,7 @@ def course(request, course_id):
     done, passed = completion_sets(user)
     lessons = list(c.lessons.filter(published=True).select_related('course'))
     rows = [dict(id=l.pk, title=l.title, position=l.position, completed=l.pk in done,
-                 has_quiz=bool(questions_for(l)), **sections(l.content)) for l in lessons]
+                 has_quiz=bool(questions_for(l)), question_count=len(questions_for(l)), **sections(l.content)) for l in lessons]
     ready = bool(rows) and all(l['has_quiz'] for l in rows)
     all_done = bool(rows) and all(l['completed'] for l in rows)
     return response({'id': c.pk, 'title': c.title, 'description': c.description, 'tag': c.tag, 'level': c.level,
@@ -95,11 +96,17 @@ def assessment(c, lesson_id):
     for l in lessons:
         for i, q in enumerate(questions_for(l, final=not lesson_id)):
             qid = f'{l.pk}-final' if not lesson_id else f'{l.pk}-{i+1}'
-            choices = [{'id': salted_hmac('learning-choice', f'{qid}:{text}', algorithm='sha256').hexdigest()[:32], 'text': text}
-                       for text in q['choices']]
-            entries.append({'id': qid, 'prompt': q['prompt'], 'options': choices,
-                            'correct': choices[q['correct']]['id'], 'lesson': l.title,
-                            'explanation': sections(l.content)['theory']})
+            kind = q.get('kind', 'choice')
+            entry = {'id': qid, 'prompt': q['prompt'], 'kind': kind, 'lesson': l.title,
+                     'explanation': q.get('explanation') or sections(l.content)['theory']}
+            if is_typed(entry):
+                entry.update(options=[], accepted=q['accepted'], casefold=q.get('casefold', False),
+                             correct=q['accepted'][0])
+            else:
+                choices = [{'id': salted_hmac('learning-choice', f'{qid}:{text}', algorithm='sha256').hexdigest()[:32], 'text': text}
+                           for text in q['choices']]
+                entry.update(options=choices, correct=choices[q['correct']]['id'])
+            entries.append(entry)
     return entries, lessons
 
 
@@ -119,21 +126,23 @@ def quiz(request, course_id, lesson_id):
         return response({'error': 'Эхлээд бүх хичээлийн шалгалтад тэнцэнэ үү.'}, 403)
     threshold = 100 if lesson_id else 80
     if request.method == 'GET':
+        if any(is_typed(q) for q in entries) and request.GET.get('format') != '2':
+            return response({'error': 'Шалгалтын шинэ хувилбар гарсан. Веб хуудсаа шинэчлээд дахин оролдоно уу.'}, 409)
         rows = []
         for q in entries:
             options = q['options'][:]
             rng.shuffle(options)
-            rows.append({'id': q['id'], 'prompt': q['prompt'], 'options': options})
+            rows.append({'id': q['id'], 'prompt': q['prompt'], 'kind': q['kind'], 'options': options})
         rng.shuffle(rows)
         return response({'questions': rows, 'threshold': threshold, 'title': lessons[0].title if lesson_id else c.title + ' — Нэгдсэн шалгалт'})
     data = payload(request)
     answers = data.get('answers') if data else None
     if not isinstance(answers, dict) or set(answers) != {q['id'] for q in entries} or any(
-        not isinstance(answers[q['id']], str) or answers[q['id']] not in {o['id'] for o in q['options']} for q in entries):
-        return response({'error': 'Асуулт бүрд зөвшөөрөгдсөн нэг хариулт сонгоно уу.'}, 400)
+        not valid_answer(q, answers[q['id']]) for q in entries):
+        return response({'error': 'Асуулт бүрд нэг хүчинтэй хариулт сонгох эсвэл бичих шаардлагатай.'}, 400)
     if limited('learning-quiz', str(user.pk), 30, 60):
         return response({'error': 'Хэт олон оролдлого. Нэг минутын дараа дахин оролдоно уу.'}, 429)
-    correct = sum(answers[q['id']] == q['correct'] for q in entries)
+    correct = sum(is_correct(q, answers[q['id']]) for q in entries)
     score = correct * 100 // len(entries)
     passed = correct * 100 >= threshold * len(entries)
     with transaction.atomic():
@@ -145,7 +154,8 @@ def quiz(request, course_id, lesson_id):
                 CourseCompletion.objects.filter(pk=completion.pk, score__lt=score).update(score=score)
     # Feedback is revealed only after submission; retries are intentionally allowed for learning.
     return response({'passed': passed, 'score': score, 'correct': correct, 'total': len(entries), 'threshold': threshold,
-                     'review': [{'prompt': q['prompt'], 'lesson': q['lesson'], 'correct': answers[q['id']] == q['correct'],
-                                 'selected': next(o['text'] for o in q['options'] if o['id'] == answers[q['id']]),
-                                 'answer': next(o['text'] for o in q['options'] if o['id'] == q['correct']),
+                     'review': [{'prompt': q['prompt'], 'lesson': q['lesson'], 'kind': q['kind'],
+                                 'correct': is_correct(q, answers[q['id']]),
+                                 'selected': answer_text(q, answers[q['id']]),
+                                 'answer': answer_text(q, q['correct']),
                                  'explanation': q['explanation']} for q in entries]})

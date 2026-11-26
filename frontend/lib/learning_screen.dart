@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'auth_screen.dart';
 import 'data.dart';
 import 'theme_settings.dart';
+import 'lesson_practice.dart';
 
 Map<String, dynamic> learningMap(Object? value) => value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
 List<Map<String, dynamic>> learningRows(Object? value) => value is List ? value.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList() : [];
@@ -203,7 +204,7 @@ class _LearningLessonScreenState extends State<LearningLessonScreen> {
           if (learningText(l['example']).isNotEmpty) CodeExample(code: learningText(l['example'])), const SizedBox(height: 14),
           if (learningText(l['result']).isNotEmpty) LearningPanel(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Icon(Icons.visibility_outlined, color: p.accentInk), const SizedBox(width: 8), const Expanded(child: Text('Үр дүн ба тайлбар', style: TextStyle(fontWeight: FontWeight.w700)))]), const SizedBox(height: 8), if (reveal) SelectableText(learningText(l['result']), style: const TextStyle(height: 1.55, fontSize: 15)) else OutlinedButton(onPressed: () => setState(() => reveal = true), child: const Text('Үр дүнг харах'))])),
         ] else if (step == 2) ...[
-          LearningPanel(highlight: true, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Icon(Icons.edit_note_rounded, color: p.accentInk, size: 32), const SizedBox(height: 12), const Text('Өөрөө турших', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)), const SizedBox(height: 10), SelectableText(learningText(l['practice']).isEmpty ? 'Өмнөх ойлголтоо өөрийн үгээр тайлбарлаарай.' : learningText(l['practice']), style: const TextStyle(height: 1.6, fontSize: 16)), const SizedBox(height: 10), Text('Жишээний утгыг сольж туршаарай. Энэ дадлагыг өөрийн кодын орчинд хийж болно.', style: TextStyle(color: p.muted, height: 1.45))])),
+          LessonPractice(lesson: l),
         ] else ...[
           LearningPanel(highlight: true, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Icon(Icons.fact_check_outlined, size: 44, color: p.accentInk), const SizedBox(height: 14), const Text('Мэдлэгээ бататгах', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)), const SizedBox(height: 8), const Text('2 асуулт · 100% зөв хариулт', style: TextStyle(fontWeight: FontWeight.w700)), const SizedBox(height: 12), const Text('Асуулт бүрд нэг хариулт сонгоно. Буруу бол тайлбарыг уншаад дахин оролдоорой. Тэнцсэн хичээл таны профайлд автоматаар бүртгэгдэнэ.', style: TextStyle(height: 1.55))])),
         ],

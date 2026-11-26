@@ -213,3 +213,24 @@ class CourseCompletion(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['user', 'course'], name='unique_learning_course')]
+
+
+class ProjectAttempt(models.Model):
+    """A capstone attempt; Python uses a separate unpublished judge transport problem."""
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    project_key = models.CharField(max_length=32)
+    mode = models.CharField(max_length=10, choices=[('python', 'Python judge'), ('review', 'Staff review')])
+    submission = models.OneToOneField(Submission, null=True, blank=True, on_delete=models.CASCADE, related_name='project_attempt')
+    source = models.TextField(blank=True)
+    review_status = models.CharField(max_length=10, default='pending', choices=[('pending', 'Хүлээгдэж буй'), ('approved', 'Тэнцсэн'), ('rejected', 'Засвар шаардлагатай')])
+    feedback = models.TextField(blank=True)
+    reviewed_by = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.SET_NULL, related_name='reviewed_projects')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-id']
+        indexes = [models.Index(fields=['user', 'course', 'project_key'], name='mr_project_user_course_idx')]
+        verbose_name = 'Төслийн илгээлт'
+        verbose_name_plural = 'Төслийн илгээлтүүд'

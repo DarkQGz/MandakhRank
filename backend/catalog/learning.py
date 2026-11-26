@@ -61,7 +61,8 @@ def profile_learning(user):
     courses = CourseCompletion.objects.filter(user=user, course__published=True)
     lesson_rows = [{'title': r.lesson.title, 'course': r.lesson.course.title, 'completed_at': r.completed_at.isoformat()}
                    for r in lessons.select_related('lesson__course').order_by('-completed_at', '-pk')]
-    return {'lessons': len(lesson_rows), 'courses': courses.count(),
+    from .projects import summary
+    return {'projects': summary(user), 'lessons': len(lesson_rows), 'courses': courses.count(),
             'completed_courses': [{'title': r.course.title, 'score': r.score, 'completed_at': r.completed_at.isoformat()}
                                   for r in courses.select_related('course').order_by('-completed_at', '-pk')],
             'recent_lessons': lesson_rows[:6], 'completed_lessons': lesson_rows}
@@ -80,7 +81,8 @@ def course(request, course_id):
                  has_quiz=bool(questions_for(l)), question_count=len(questions_for(l)), **sections(l.content)) for l in lessons]
     ready = bool(rows) and all(l['has_quiz'] for l in rows)
     all_done = bool(rows) and all(l['completed'] for l in rows)
-    return response({'id': c.pk, 'title': c.title, 'description': c.description, 'tag': c.tag, 'level': c.level,
+    from .projects import course_card
+    return response({'project': course_card(user, c), 'id': c.pk, 'title': c.title, 'description': c.description, 'tag': c.tag, 'level': c.level,
                      'lessons': rows, 'completed': sum(l['completed'] for l in rows),
                      'authenticated': user is not None, 'has_final': ready,
                      'final_unlocked': ready and all_done, 'passed': c.pk in passed and all_done})

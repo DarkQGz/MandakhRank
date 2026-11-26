@@ -121,3 +121,6 @@ class ProfileCommentAdmin(admin.ModelAdmin):
     readonly_fields = ('owner', 'author', 'body', 'created_at')
     def has_add_permission(self, request): return False
     def has_change_permission(self, request, obj=None): return False
+
+# Register staff-only capstone review.
+from . import project_admin

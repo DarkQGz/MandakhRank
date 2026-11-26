@@ -5,6 +5,8 @@ import 'data.dart';
 import 'theme_settings.dart';
 import 'lesson_practice.dart';
 
+part 'project_screen.dart';
+
 Map<String, dynamic> learningMap(Object? value) => value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
 List<Map<String, dynamic>> learningRows(Object? value) => value is List ? value.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList() : [];
 int learningInt(Object? value) => value is int ? value : 0;
@@ -158,6 +160,7 @@ class _LearningCourseScreenState extends State<LearningCourseScreen> {
         Text(c['passed'] == true ? 'Сургалтаа амжилттай дуусгасан. Таны профайлд бүртгэгдсэн.' : c['has_final'] != true ? 'Бүх хичээлийн шалгалт бэлэн болсны дараа нээгдэнэ.' : 'Бүх хичээлд тэнцсэний дараа ${rows.length} шинэ асуулттай шалгалт өгнө. 80% ба түүнээс дээш зөв хариулбал сургалт дуусна.', style: TextStyle(color: p.muted, height: 1.5)), const SizedBox(height: 12),
         SizedBox(width: double.infinity, child: FilledButton(onPressed: c['final_unlocked'] == true ? finalExam : null, child: Text(c['passed'] == true ? 'Дахин шалгуулах' : 'Шалгалт эхлүүлэх'))),
       ])),
+      if (c['project'] is Map) ...[const SizedBox(height: 16), CourseProjectCard(courseId: widget.courseId, project: learningMap(c['project']), onReturn: reload)],
     ]));
   }));
 }
@@ -476,7 +479,7 @@ class LearningProfileSection extends StatelessWidget {
       if (lessons.isNotEmpty) ...[const Divider(), const Text('Сүүлд дуусгасан хичээлүүд', style: TextStyle(fontWeight: FontWeight.w700)), for (final l in lessons) Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Row(children: [Icon(Icons.check_circle_outline, color: p.positive), const SizedBox(width: 10), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(learningText(l['title'])), Text(learningText(l['course']), style: TextStyle(color: p.muted, fontSize: 12))]))]))],
       if (learningRows(data['completed_lessons']).length > lessons.length) ...[const SizedBox(height: 8), SizedBox(width: double.infinity, child: OutlinedButton.icon(onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => LearningHistoryScreen(lessons: learningRows(data['completed_lessons'])))), icon: const Icon(Icons.history), label: const Text('Бүх дуусгасан хичээл')))],
       if (lessons.isEmpty && courses.isEmpty) ...[const SizedBox(height: 12), Text('Одоогоор дуусгасан хичээл алга.', style: TextStyle(color: p.muted))],
-    ]))]);
+    ])), if (data['projects'] is Map) ProjectProfileSection(data: learningMap(data['projects']))]);
   }
 }
 

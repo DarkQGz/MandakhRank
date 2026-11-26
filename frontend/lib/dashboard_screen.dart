@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'theme_settings.dart';
 import 'public_profile_screen.dart';
+import 'learning_screen.dart';
 
 
 /// Dashboard is part of the existing app, not a separate site.
@@ -276,6 +277,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     final owner = isOwner;
     final stats = Map<String, dynamic>.from(profile!['statistics'] as Map);
+    final completedCourseCount = learningMap(profile!['learning'])['courses'];
     final recent = (profile!['recent'] as List).cast<Map>();
     final courses = (widget.catalog['courses'] as List?) ?? [];
     return LayoutBuilder(builder: (context, constraints) {
@@ -335,8 +337,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
           SizedBox(width: cell, child: metric('Нийт оноо', '${stats['points'] ?? 0}', Icons.stars_outlined, Color(0xFFFFC66B))),
           SizedBox(width: cell, child: metric('Бодсон бодлого', '${stats['solved'] ?? 0}', Icons.task_alt_rounded, palette.positive)),
           SizedBox(width: cell, child: metric('Илгээлт', '${stats['submissions'] ?? 0}', Icons.terminal_rounded, Color(0xFF8CB3FF))),
-          SizedBox(width: cell, child: metric('Нийт сургалт', '${stats['courses'] ?? 0}', Icons.school_outlined, Color(0xFFBE9BFF))),
+          SizedBox(width: cell, child: metric(completedCourseCount != null ? 'Дуусгасан сургалт' : 'Нийт сургалт', '${completedCourseCount ?? stats['courses'] ?? 0}', Icons.school_outlined, Color(0xFFBE9BFF))),
         ]),
+        if (profile!['learning'] is Map) LearningProfileSection(data: learningMap(profile!['learning'])),
         if (profile!['activity'] is List) ...[
           const SizedBox(height: 20),
           activityChart(profile!['activity'] as List),

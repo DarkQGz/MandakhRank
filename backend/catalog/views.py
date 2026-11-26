@@ -68,12 +68,22 @@ def rows(kind):
 @require_GET
 def collection(request, kind):
     result = rows(kind)
+    if kind == 'courses':
+        from .learning import catalog_progress
+        from .practice import current_user
+        progress = catalog_progress(current_user(request))
+        for row in result:
+            row['learning'] = progress.get(row['id'], {})
     q = request.GET.get('q', '').casefold()
     if q: result = [r for r in result if q in ' '.join(str(v) for v in r.values()).casefold()]
     for field in ('difficulty', 'topic', 'level'):
         value = request.GET.get(field)
         if value: result = [r for r in result if r.get(field) == value]
-    return JsonResponse({'results': result, 'demo': False}, json_dumps_params={'ensure_ascii': False})
+    result_response = JsonResponse({'results': result, 'demo': False}, json_dumps_params={'ensure_ascii': False})
+    if kind == 'courses':
+        result_response['Cache-Control'] = 'private, no-store'
+        result_response['Vary'] = 'Authorization'
+    return result_response
 @require_GET
 def detail(request, kind, pk):
     item = next((r for r in rows(kind) if r['id'] == pk), None)

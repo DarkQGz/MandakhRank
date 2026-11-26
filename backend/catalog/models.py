@@ -195,3 +195,21 @@ class ProfileComment(models.Model):
         indexes = [models.Index(fields=['owner', '-id'], name='profile_wall_owner_idx')]
         verbose_name = 'Профайлын сэтгэгдэл'
         verbose_name_plural = 'Профайлын сэтгэгдлүүд'
+
+class LessonCompletion(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    completed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['user', 'lesson'], name='unique_learning_lesson')]
+
+
+class CourseCompletion(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    score = models.PositiveSmallIntegerField()
+    completed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['user', 'course'], name='unique_learning_course')]

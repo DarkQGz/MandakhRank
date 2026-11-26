@@ -8,6 +8,7 @@ import 'practice_screen.dart';
 import 'dashboard_screen.dart';
 import 'minigames_screen.dart';
 import 'theme_settings.dart';
+import 'learning_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -904,160 +905,22 @@ class _HomeState extends State<Home> {
           ],
         ),
       );
-  Widget courses(Map<String, dynamic> data) {
-    final found = items(data, 'courses')
-        .where(
-          (c) =>
-              '${c['title']} ${c['tag']}'.toLowerCase().contains(query) &&
-              (level == 'Бүгд' || c['level'] == level),
-        )
-        .toList();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        title(
-          'LEARNING PATHS',
-          'Сургалтууд',
-          'Монгол хэлээр ойлгож, өөрийн хурдаар суралц. Чиглэлээ сонгоод эхэлцгээе.',
-        ),
-        searchField('Сургалт хайх'),
-        SizedBox(height: 16),
-        filters(
-          ['Бүгд', 'Анхан шат', 'Дунд шат', 'Ахисан шат'],
-          level,
-          (v) => level = v,
-        ),
-        SizedBox(height: 24),
-        if (found.isEmpty) empty(),
-        LayoutBuilder(
-          builder: (context, c) {
-            final width = c.maxWidth < 650 ? c.maxWidth : (c.maxWidth - 18) / 2;
-            return Wrap(
-              spacing: 18,
-              runSpacing: 18,
-              children: found.map((course) {
-                final colors = {
-                  'blue': blue,
-                  'purple': Color(0xFFB392FF),
-                  'cyan': Color(0xFF58D7EC),
-                  'green': Color(0xFF58D6AE),
-                };
-                final color = palette.readable(colors[course['color']] ?? blue);
-                return SizedBox(
-                  width: width,
-                  child: box(
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 76,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [color.withOpacity(.22), bg],
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: EdgeInsets.all(20),
-                          child: Row(
-                            children: [
-                              Icon(Icons.data_object, size: 44, color: color),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                  child: Text(
-                                course['tag'],
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: palette.readable(color),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 14),
-                        badge(course['level'], color),
-                        SizedBox(height: 12),
-                        Text(
-                          course['title'],
-                          style: TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          course['description'],
-                          style: TextStyle(color: muted, height: 1.6),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          '${(course['lessons'] as List).length} сэдэв • Сургалтын хөтөлбөр',
-                          style: TextStyle(color: muted, fontSize: 12),
-                        ),
-                        SizedBox(height: 18),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton(
-                            onPressed: () => courseDetail(course),
-                            child: Padding(
-                              padding: EdgeInsets.all(12),
-                              child: Text('Хөтөлбөр үзэх'),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            );
-          },
-        ),
-      ],
-    );
-  }
+  Widget courses(Map<String, dynamic> data) => LearningLibrary(
+    courses: items(data, 'courses'),
+    onOpen: courseDetail,
+  );
 
-  void courseDetail(Map<String, dynamic> c) => detail(
-        c['title'],
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              c['description'],
-              style: TextStyle(color: muted, height: 1.6),
-            ),
-            SizedBox(height: 16),
-            ...List.generate(
-              (c['lessons'] as List).length,
-              (i) => ExpansionTile(
-                title: Text(c['lessons'][i]),
-                leading: Text('${i + 1}'),
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: SelectableText(
-                        c['lesson_content'] != null
-                            ? c['lesson_content'][i]['content'] as String
-                            : 'Жишээ хөтөлбөр. Агуулгыг CMS-ээс нэмнэ.',
-                        style: TextStyle(height: 1.7),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if ((c['lessons'] as List).isEmpty)
-              Text('Хичээл хараахан нийтлэгдээгүй.'),
-          ],
-        ),
-      );
+  Future<void> courseDetail(Map<String, dynamic> c) async {
+    final id = int.tryParse('${c['id']}');
+    if (id == null || Repository.base.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Сургалтыг сервертэй холбогдож үзнэ үү.')));
+      return;
+    }
+    await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => LearningCourseScreen(courseId: id, title: '${c['title']}')));
+    if (mounted) {
+      setState(() { liveData = null; future = Repository().load(); });
+    }
+  }
   String contestFilter = 'Бүгд';
   String localTime(String value) {
     final d = DateTime.parse(value).toLocal();

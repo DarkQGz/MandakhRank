@@ -43,7 +43,9 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
     daily = dict(activity.filter(created_at__date__gte=start, created_at__date__lte=today)
                  .annotate(day=TruncDate('created_at')).values('day')
                  .annotate(count=Count('pk')).values_list('day', 'count'))
+    from .learning import profile_learning
     data = {
+        'learning': profile_learning(user),
         'activity': [{'date': (start + timedelta(days=i)).isoformat(),
                       'count': daily.get(start + timedelta(days=i), 0)} for i in range(28)],
         'id': user.pk,

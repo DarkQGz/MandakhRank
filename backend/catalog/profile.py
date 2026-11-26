@@ -44,8 +44,10 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
                  .annotate(day=TruncDate('created_at')).values('day')
                  .annotate(count=Count('pk')).values_list('day', 'count'))
     from .learning import profile_learning
+    from .progression import profile_progression
     data = {
         'learning': profile_learning(user),
+        'progression': profile_progression(user),
         'activity': [{'date': (start + timedelta(days=i)).isoformat(),
                       'count': daily.get(start + timedelta(days=i), 0)} for i in range(28)],
         'id': user.pk,

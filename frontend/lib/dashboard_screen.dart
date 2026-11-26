@@ -5,6 +5,7 @@ import 'data.dart';
 import 'theme_settings.dart';
 import 'public_profile_screen.dart';
 import 'learning_screen.dart';
+import 'progression_screen.dart';
 
 
 /// Dashboard is part of the existing app, not a separate site.
@@ -278,6 +279,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
     final owner = isOwner;
     final stats = Map<String, dynamic>.from(profile!['statistics'] as Map);
     final completedCourseCount = learningMap(profile!['learning'])['courses'];
+    final progression = progressionMap(profile!['progression']);
+    final hasProgression = progression['level'] is num;
+    final totals = progressionMap(progression['totals']);
     final recent = (profile!['recent'] as List).cast<Map>();
     final courses = (widget.catalog['courses'] as List?) ?? [];
     return LayoutBuilder(builder: (context, constraints) {
@@ -310,6 +314,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   Text(owner ? 'САЙН БАЙНА УУ!' : 'СУРАЛЦАГЧ', style: TextStyle(color: _primary, fontSize: 11, letterSpacing: 1.8, fontWeight: FontWeight.w700)),
                   SizedBox(height: 5),
                   Text(profile!['username'].toString(), style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold)),
+                  if (hasProgression) Padding(padding: const EdgeInsets.only(top: 4, bottom: 4), child: Text('${progression['rank']} · Level ${progression['level']}', style: TextStyle(color: _primary, fontSize: 13, fontWeight: FontWeight.w700))),
                   if (owner && profile!['email'] != null) Text(profile!['email'].toString(), style: TextStyle(color: _subdued, fontSize: 11)),
                   Text('Элссэн: ${formatDate(profile!['joined_at'])}', style: TextStyle(color: _subdued, fontSize: 11)),
                 ])),
@@ -332,13 +337,24 @@ class _StudentDashboardState extends State<StudentDashboard> {
         ),
         SizedBox(height: 16),
         if (owner) Text('JPG, PNG, WebP • 2 MB хүртэл • Зураг таны профайлд хадгалагдана.', style: TextStyle(color: _subdued, fontSize: 11)),
+        if (hasProgression) ...[
+          const SizedBox(height: 16),
+          ProgressionOverview(data: progression),
+        ],
         SizedBox(height: 26),
         Wrap(spacing: 14, runSpacing: 14, children: [
           SizedBox(width: cell, child: metric('Нийт оноо', '${stats['points'] ?? 0}', Icons.stars_outlined, Color(0xFFFFC66B))),
-          SizedBox(width: cell, child: metric('Бодсон бодлого', '${stats['solved'] ?? 0}', Icons.task_alt_rounded, palette.positive)),
-          SizedBox(width: cell, child: metric('Илгээлт', '${stats['submissions'] ?? 0}', Icons.terminal_rounded, Color(0xFF8CB3FF))),
-          SizedBox(width: cell, child: metric(completedCourseCount != null ? 'Дуусгасан сургалт' : 'Нийт сургалт', '${completedCourseCount ?? stats['courses'] ?? 0}', Icons.school_outlined, Color(0xFFBE9BFF))),
+          SizedBox(width: cell, child: metric('Бодсон бодлого', hasProgression ? '${progression['solved']} / ${totals['problems']}' : '${stats['solved'] ?? 0}', Icons.task_alt_rounded, palette.positive)),
+          if (hasProgression) SizedBox(width: cell, child: metric('Дуусгасан хичээл', '${progression['lessons']} / ${totals['lessons']}', Icons.menu_book_outlined, Color(0xFF8CB3FF)))
+          else SizedBox(width: cell, child: metric('Илгээлт', '${stats['submissions'] ?? 0}', Icons.terminal_rounded, Color(0xFF8CB3FF))),
+          SizedBox(width: cell, child: metric(completedCourseCount != null ? 'Дуусгасан сургалт' : 'Нийт сургалт', hasProgression ? '${progression['courses']} / ${totals['courses']}' : '${completedCourseCount ?? stats['courses'] ?? 0}', Icons.school_outlined, Color(0xFFBE9BFF))),
         ]),
+        if (hasProgression) ...[
+          const SizedBox(height: 16),
+          ProgressionAchievements(data: progression),
+          const SizedBox(height: 16),
+          ProgressionHeatmap(data: progression),
+        ],
         if (profile!['learning'] is Map) LearningProfileSection(data: learningMap(profile!['learning'])),
         if (profile!['activity'] is List) ...[
           const SizedBox(height: 20),
@@ -357,6 +373,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
         ],
         if (!owner) const SizedBox(height: 30),
         sectionTitle('Сүүлийн илгээлтүүд', owner ? 'Таны хамгийн сүүлд шалгуулсан кодууд.' : 'Нийтлэгдсэн бодлогын сүүлийн илгээлтүүд.'),
+        if (hasProgression) Padding(padding: const EdgeInsets.only(top: 6), child: Text('Нийт ${stats['submissions'] ?? 0} илгээлт', style: TextStyle(color: _subdued, fontSize: 13))),
         SizedBox(height: 14),
         surface(recent.isEmpty
             ? Padding(padding: EdgeInsets.all(14), child: Text(owner ? 'Одоогоор илгээлт алга. Эхний бодлогоо бодоорой!' : 'Одоогоор илгээлт алга.', style: TextStyle(color: _subdued)))

@@ -81,6 +81,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
       final result = await PracticeApi.request(widget.userId == null
           ? 'profile/me/' : 'profile/public/${widget.userId}/');
       if (!mounted || generation != _loadGeneration || requestedToken != PracticeApi.token) return;
+      final receivedProgression = progressionMap(result['progression']);
+      debugPrint('MR_PROFILE_V2 progression=${receivedProgression['level'] is num} levelType=${receivedProgression['level'].runtimeType}');
       setState(() => profile = result);
       if (result['is_owner'] == true && requestedToken != null) {
         PracticeApi.avatarUrl = ProfileApi.imageUrl(result['avatar_url'] as String?);
@@ -340,6 +342,17 @@ class _StudentDashboardState extends State<StudentDashboard> {
         if (hasProgression) ...[
           const SizedBox(height: 16),
           ProgressionOverview(data: progression),
+        ] else ...[
+          const SizedBox(height: 16),
+          Container(
+            key: const ValueKey('progression-unavailable'),
+            child: surface(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('Суралцах ахиц', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 19)),
+              const SizedBox(height: 8),
+              Text('XP, түвшин, амжилтын мэдээллийг ачаалж чадсангүй. Дахин шинэчилнэ үү.', style: TextStyle(color: _subdued)),
+              TextButton.icon(onPressed: loading ? null : load, icon: const Icon(Icons.refresh), label: const Text('Дахин оролдох')),
+            ])),
+          ),
         ],
         SizedBox(height: 26),
         Wrap(spacing: 14, runSpacing: 14, children: [

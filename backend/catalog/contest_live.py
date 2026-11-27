@@ -116,12 +116,13 @@ def live(request, contest_id):
     else:
         tasks = tasks_for(c) if started else []
         rows, pending = standings_for(c, tasks) if started else ([], 0)
+    is_student = student(user)
     return response(dict(id=c.pk, title=c.title, description=c.description, announcement=c.announcement,
         starts_at=c.starts_at.isoformat(), ends_at=c.ends_at.isoformat(), server_time=now.isoformat(),
         status='Удахгүй' if not started else 'Дууссан' if ended else 'Явагдаж байна',
         problems=[task_data(p) for p in tasks], standings=rows, pending=pending,
-        final=ended and not pending, can_submit=active(c, now) and student(user) and engine_ready(),
-        signed_in=user is not None, judge_ready=engine_ready()))
+        final=ended and not pending, can_submit=active(c, now) and is_student and engine_ready(),
+        signed_in=user is not None, viewer_id=user.pk if user else None, viewer_is_student=is_student, judge_ready=engine_ready()))
 
 
 def history(c, p, user):

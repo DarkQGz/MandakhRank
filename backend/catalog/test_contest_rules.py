@@ -46,3 +46,22 @@ class ContestRulesTests(unittest.TestCase):
     def test_at_start_and_same_minute(self):
         rows,_=self.calculate([self.row(2,0,'Accepted'),self.row(1,0,'Wrong Answer')])
         self.assertEqual(rows[0]['penalty'],20)
+
+    def test_presentation_metadata_matches_existing_score_and_penalty(self):
+        rows, pending = self.calculate([
+            self.row(4, 12, 'Wrong Answer'), self.row(1, 1, 'Wrong Answer'),
+            self.row(2, 5, 'Accepted'), self.row(3, 6, 'Running'),
+            self.row(5, 4, 'Compilation Error', task=12),
+        ])
+        own = rows[0]
+        self.assertEqual((own['score'], own['penalty'], own['solved'], pending), (100, 25, 1, 1))
+        self.assertEqual(own['tasks']['11'], dict(solved=True, attempts=4, wrong=1, pending=1,
+            score=100, penalty=25, latest_status='Wrong Answer'))
+        self.assertEqual(own['tasks']['12'], dict(solved=False, attempts=1, wrong=0, pending=0,
+            score=0, penalty=0, latest_status='Compilation Error'))
+
+    def test_presentation_judge_error_does_not_change_scoring(self):
+        rows, _ = self.calculate([self.row(1, 1, 'Judge Error'), self.row(2, 2, 'Running', task=12)])
+        self.assertEqual(rows[0]['tasks']['11']['latest_status'], 'Judge Error')
+        self.assertEqual(rows[0]['tasks']['12']['pending'], 1)
+        self.assertEqual((rows[0]['score'], rows[0]['penalty']), (0, 0))

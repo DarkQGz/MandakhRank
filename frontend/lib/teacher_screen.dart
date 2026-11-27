@@ -59,7 +59,7 @@ String _date(Object? value) {
 Widget _panel(BuildContext context, Widget child) => Container(
   width:double.infinity,padding:const EdgeInsets.all(16),
   decoration:BoxDecoration(color:MandakhPalette.of(context).surface,
-    border:Border.all(color:MandakhPalette.of(context).outline),borderRadius:BorderRadius.circular(14)),child:child);
+    border:Border.all(color:MandakhPalette.of(context).outline),borderRadius:BorderRadius.circular(14)),child:Material(type:MaterialType.transparency,child:child));
 
 class TeacherWorkspaceScreen extends StatefulWidget {
   const TeacherWorkspaceScreen({super.key});
@@ -102,15 +102,16 @@ class _TeacherWorkspaceState extends State<TeacherWorkspaceScreen> {
     const SizedBox(height:6),Text(_text(c['status']),style:TextStyle(color:teacherAccent(context),fontWeight:FontWeight.w700)),
     Text('${_date(c['starts_at'])} — ${_date(c['ends_at'])} (УБ)'),
     Text('${_rows(c['problems']).length} бодлого · ${c['auto_judge']==true?'Автомат шүүлт':'Багшийн баталгаажуулсан дүн'}'),
+    if(c['auto_judge']==true && c['participant_count'] is int) Padding(padding:const EdgeInsets.only(top:6),child:Text('${c['participant_count']} оролцогч · ${c['pending']} шалгах илгээлт')),
     const SizedBox(height:12),Wrap(spacing:8,runSpacing:8,children:[
       if(c['status']=='Удахгүй')FilledButton.icon(onPressed:busy?null:()=>change(c,'start'),icon:const Icon(Icons.play_arrow),label:const Text('Одоо эхлүүлэх')),
       if(c['status']=='Явагдаж байна')OutlinedButton.icon(onPressed:busy?null:()=>change(c,'end'),icon:const Icon(Icons.stop),label:const Text('Дуусгах')),
-      if(c['auto_judge']==true)OutlinedButton.icon(onPressed:busy?null:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>ContestLiveScreen(contestId:_int(c['id']),title:_text(c['title'])))),icon:const Icon(Icons.leaderboard_outlined),label:const Text('Шууд дүн')),
+      if(c['auto_judge']==true)OutlinedButton.icon(onPressed:busy?null:()async{await Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>ContestLiveScreen(contestId:_int(c['id']),title:_text(c['title']))));if(mounted)reload();},icon:const Icon(Icons.leaderboard_outlined),label:const Text('Шууд дүн')),
       if(c['auto_judge']!=true&&c['status']!='Удахгүй')OutlinedButton.icon(onPressed:busy?null:()=>result(c),icon:const Icon(Icons.edit_note),label:const Text('Дүн оруулах')),
     ]),
     ExpansionTile(tilePadding:EdgeInsets.zero,title:const Text('Бодлого ба дүн'),children:[
-      for(final p in _rows(c['problems'])) ListTile(contentPadding:EdgeInsets.zero,title:Text('${p['label']}. ${p['title']}'),subtitle:Text('${p['points']} оноо · ${_rows(p['results']).length} дүн')),
-      for(final p in _rows(c['problems']))for(final r in _rows(p['results'])) ListTile(dense:true,contentPadding:EdgeInsets.zero,title:Text('${p['label']} · ${r['participant']}'),trailing:Text('${r['score']} / ${p['points']} · ${r['penalty']} мин')),
+      for(final p in _rows(c['problems'])) ListTile(contentPadding:EdgeInsets.zero,title:Text('${p['label']}. ${p['title']}'),subtitle:Text(c['auto_judge']==true ? (p['accepted_count'] is int ? '${p['points']} оноо · ${p['accepted_count']}/${p['attempted_count']} оролцогч бодсон · ${p['pending_count']} шалгах илгээлт' : '${p['points']} оноо · Шууд дүнгээс харна уу') : '${p['points']} оноо · ${_rows(p['results']).length} дүн')),
+      for(final p in _rows(c['problems']))for(final r in _rows(p['results'])) ListTile(dense:true,contentPadding:EdgeInsets.zero,title:Text('${p['label']} · ${r['participant']}'),subtitle:c['auto_judge']==true?Text('${r['score']} / ${p['points']} оноо · ${r['penalty']} мин'):null,trailing:c['auto_judge']!=true?Text('${r['score']} / ${p['points']} · ${r['penalty']} мин'):null),
     ]),
   ]));
   @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Багшийн самбар'),actions:[IconButton(onPressed:busy?null:reload,icon:const Icon(Icons.refresh),tooltip:'Шинэчлэх')]),body:FutureBuilder<Map<String,dynamic>>(future:future,builder:(context,snapshot){

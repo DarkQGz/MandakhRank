@@ -25,10 +25,12 @@ def scoreboard(attempts, points, starts_at, ends_at):
         row = by_user[uid]
         wrong = 0
         accepted = False
+        task_penalty = 0
         for at, aid, status, passed, total in sorted(items):
             if status == 'Accepted' and total > 0 and passed == total:
                 penalty = int((at - starts_at).total_seconds() // 60) + wrong * WRONG_PENALTY
                 row['score'] += points[tid]
+                task_penalty = penalty
                 row['penalty'] += penalty
                 row['solved'] += 1
                 accepted = True
@@ -36,7 +38,9 @@ def scoreboard(attempts, points, starts_at, ends_at):
             if status in PENALIZED:
                 wrong += 1
         row['tasks'][str(tid)] = dict(solved=accepted, attempts=len(items), wrong=wrong,
-                                     pending=sum(s in PENDING for _, _, s, _, _ in items))
+                                     pending=sum(s in PENDING for _, _, s, _, _ in items),
+                                     score=points[tid] if accepted else 0, penalty=task_penalty,
+                                     latest_status=max(items)[2])
     rows = sorted(by_user.values(), key=lambda r: (-r['score'], r['penalty'], r['participant'].casefold(), r['user_id']))
     previous = None
     rank = 0

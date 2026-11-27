@@ -123,3 +123,51 @@ class LiveContestTests(TestCase):
         c=Contest.objects.get(pk=r.json()['contest']['id'])
         self.assertFalse(c.auto_judge)
         self.assertEqual(len(rows('contests')[0]['problems']),1)
+
+    def test_teacher_summary_matches_live_results_and_distinct_students(self):
+        c, p, live, url = self.new()
+        self.assertEqual(self.submit(url, p).status_code, 201)
+        self.complete('Wrong Answer')
+        self.assertEqual(self.submit(url, p).status_code, 201)
+        self.complete()
+        self.assertEqual(self.submit(url, p).status_code, 201)
+        self.complete()
+        self.assertEqual(self.submit(url, p, 'other').status_code, 201)
+        board = self.client.get(live, **self.auth('student')).json()
+        self.assertEqual(board['viewer_id'], self.student.pk)
+        self.assertTrue(board['viewer_is_student'])
+        own = next(r for r in board['standings'] if r['user_id'] == self.student.pk)
+        task = own['tasks'][str(p.pk)]
+        card = self.client.get('/api/teacher/workspace/', **self.auth('teacher')).json()['contests'][0]
+        self.assertEqual((card['participant_count'], card['pending']), (2, 1))
+        item = card['problems'][0]
+        self.assertEqual((item['accepted_count'], item['attempted_count'], item['pending_count']), (1, 2, 1))
+        self.assertEqual(item['results'], [dict(participant='student', score=task['score'], penalty=task['penalty'])])
+        self.assertEqual(task['penalty'], own['penalty'])
+        self.assertNotIn('private-input', str(card))
+        self.assertNotIn('private-expected', str(card))
+        self.complete()
+        refreshed = self.client.get('/api/teacher/workspace/', **self.auth('teacher')).json()['contests'][0]
+        self.assertEqual(refreshed['problems'][0]['accepted_count'], 2)
+        self.assertEqual(refreshed['pending'], 0)
+
+    def test_viewer_identity_is_server_scoped(self):
+        c, p, live, url = self.new()
+        anonymous = self.client.get(live + '?viewer_id=' + str(self.student.pk)).json()
+        self.assertIsNone(anonymous['viewer_id'])
+        self.assertFalse(anonymous['viewer_is_student'])
+        owner = self.client.get(live, **self.auth('teacher')).json()
+        self.assertEqual(owner['viewer_id'], self.teacher.pk)
+        self.assertFalse(owner['viewer_is_student'])
+        self.assertFalse(owner['can_submit'])
+
+    def test_teacher_summary_scheduled_and_legacy(self):
+        c, p, live, url = self.new(60)
+        card = self.client.get('/api/teacher/workspace/', **self.auth('teacher')).json()['contests'][0]
+        self.assertEqual(card['problems'][0]['accepted_count'], 0)
+        self.assertEqual(card['participant_count'], 0)
+        self.assertEqual(self.client.get(live).json()['problems'], [])
+        r = self.create(auto_judge=False)
+        manual = r.json()['contest']
+        self.assertFalse(manual['auto_judge'])
+        self.assertNotIn('accepted_count', manual['problems'][0])

@@ -11,7 +11,7 @@ from .classrooms import teacher, text, fail
 from .models import Classroom, ClassroomAssignment, ClassroomMember, Contest, ContestProblem, ContestResult, Problem
 from django.db.models import Prefetch
 from .practice import current_user, payload, response
-from .contest_live import engine_ready, snapshot_tests, create_tasks
+from .contest_live import engine_ready, snapshot_tests, create_tasks, standings_for
 
 
 def integer(value, low, high):
@@ -31,11 +31,34 @@ def audit(user, obj, message, flag=CHANGE):
 
 
 def contest_card(c):
-    return dict(id=c.pk, title=c.title, description=c.description, status=c.status, auto_judge=c.auto_judge,
-                starts_at=c.starts_at.isoformat(), ends_at=c.ends_at.isoformat(),
-                problems=[dict(id=p.pk, label=p.label, title=p.title, points=p.points,
-                               results=[dict(participant=r.participant, score=r.score, penalty=r.penalty)
-                                        for r in p.results.all()]) for p in c.problems.all()])
+    tasks = list(c.problems.all())
+    card = dict(id=c.pk, title=c.title, description=c.description, status=c.status,
+                auto_judge=c.auto_judge, starts_at=c.starts_at.isoformat(),
+                ends_at=c.ends_at.isoformat())
+    if not c.auto_judge:
+        card['problems'] = [dict(id=p.pk, label=p.label, title=p.title, points=p.points,
+            results=[dict(participant=r.participant, score=r.score, penalty=r.penalty)
+                     for r in p.results.all()]) for p in tasks]
+        return card
+    # Use exactly the same verified standings as the public competition screen.
+    # No code, test inputs, test outputs, or claim secrets are serialized.
+    rows, pending = standings_for(c, tasks) if timezone.now() >= c.starts_at else ([], 0)
+    card.update(participant_count=len(rows), pending=pending)
+    summary = {str(p.pk): dict(id=p.pk, label=p.label, title=p.title, points=p.points,
+        accepted_count=0, attempted_count=0, pending_count=0, results=[]) for p in tasks}
+    for row in rows:
+        for key, value in row['tasks'].items():
+            if key not in summary:
+                continue
+            task = summary[key]
+            task['attempted_count'] += 1
+            task['pending_count'] += value['pending']
+            if value['solved']:
+                task['accepted_count'] += 1
+                task['results'].append(dict(participant=row['participant'],
+                    score=value['score'], penalty=value['penalty']))
+    card['problems'] = list(summary.values())
+    return card
 
 
 @csrf_exempt

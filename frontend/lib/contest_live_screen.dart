@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui' show FontFeature;
+import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 import 'data.dart';
@@ -69,6 +69,7 @@ class _ContestLiveState extends State<ContestLiveScreen> {
   Timer? poll, clock;
   final elapsed = Stopwatch();
   final scoreboardScroll = ScrollController();
+  final expandedTasks = <int>{};
   DateTime? serverTime;
   String? loadedToken;
   int ticks = 0;
@@ -219,6 +220,80 @@ class _ContestLiveState extends State<ContestLiveScreen> {
     });
   }
 
+  Future<void> copyExample(String value) async {
+    try {
+      await Clipboard.setData(ClipboardData(text: value));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Хууллаа.')));
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Хуулж чадсангүй.')));
+    }
+  }
+
+  Widget exampleBox(String label, String value, String key, Color cardColor) {
+    final p = MandakhPalette.of(context);
+    final bg = Color.lerp(cardColor, p.background, .55)!;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: p.outline)),
+      child: Material(type: MaterialType.transparency, child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Row(children: [
+            Expanded(child: Text(label, style: TextStyle(color: _ink(p.muted, bg, p), fontWeight: FontWeight.w700, fontSize: 13))),
+            IconButton(onPressed: () => copyExample(value), tooltip: '$label хуулах',
+              icon: Icon(Icons.copy_outlined, color: _ink(p.accent, bg, p), size: 18)),
+          ]),
+          Text(value, key: ValueKey(key), softWrap: true,
+            style: TextStyle(color: _ink(p.text, bg, p), fontFamily: 'monospace', fontSize: 14, height: 1.5)),
+        ],
+      )),
+    );
+  }
+
+  Widget taskDetails(Map<String, dynamic> task, Color fill, Color text) {
+    final p = MandakhPalette.of(context);
+    final id = _int(task['id']);
+    final open = expandedTasks.contains(id);
+    final statement = task['statement']?.toString() ?? '';
+    final input = task['input']?.toString() ?? '';
+    final output = task['output']?.toString() ?? '';
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      const SizedBox(height: 8),
+      Divider(height: 1, color: p.outline),
+      TextButton(
+        key: ValueKey('contest-example-$id'),
+        style: TextButton.styleFrom(foregroundColor: text, padding: const EdgeInsets.symmetric(vertical: 8)),
+        onPressed: () => setState(() {
+          if (open) { expandedTasks.remove(id); } else { expandedTasks.add(id); }
+        }),
+        child: Row(children: [
+          const Expanded(child: Text('Нөхцөл, жишээ', style: TextStyle(fontWeight: FontWeight.w700))),
+          Icon(open ? Icons.expand_less : Icons.expand_more, color: _ink(p.accent, fill, p)),
+        ]),
+      ),
+      if (open) Padding(
+        key: ValueKey('contest-details-$id'),
+        padding: const EdgeInsets.only(top: 4, bottom: 14),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text('Бодлогын нөхцөл', style: TextStyle(color: _ink(p.muted, fill, p), fontWeight: FontWeight.w700, fontSize: 13)),
+          const SizedBox(height: 8),
+          Text(statement, key: ValueKey('contest-statement-$id'), softWrap: true,
+            style: TextStyle(color: text, fontSize: 15, height: 1.6)),
+          const SizedBox(height: 14),
+          LayoutBuilder(builder: (context, bounds) {
+            final a = exampleBox('Жишээ оролт', input, 'contest-input-$id', fill);
+            final b = exampleBox('Жишээ гаралт', output, 'contest-output-$id', fill);
+            if (bounds.maxWidth >= 600) {
+              return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(child: a), const SizedBox(width: 12), Expanded(child: b)]);
+            }
+            return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [a, const SizedBox(height: 10), b]);
+          }),
+        ]),
+      ),
+    ]);
+  }
+
   Widget taskCard(Map<String, dynamic> d, Map<String, dynamic> task, Map<String, dynamic> ownTasks, bool personal) {
     final p = MandakhPalette.of(context);
     final state = contestTaskState(_map(ownTasks['${task['id']}']));
@@ -244,12 +319,7 @@ class _ContestLiveState extends State<ContestLiveScreen> {
           ]),
         ])),
       ]),
-      ExpansionTile(key: PageStorageKey('contest-example-${task['id']}'), tilePadding: EdgeInsets.zero,
-        textColor: text, collapsedTextColor: text, iconColor: _ink(p.accent, fill, p), collapsedIconColor: _ink(p.muted, fill, p),
-        title: const Text('Нөхцөл, жишээ'), children: [
-          Align(alignment: Alignment.centerLeft, child: SelectableText('${task['statement']}', style: TextStyle(color: text))),
-          const SizedBox(height: 10), Align(alignment: Alignment.centerLeft, child: SelectableText('Оролт:\n${task['input']}\n\nГаралт:\n${task['output']}', style: TextStyle(color: text, fontFamily: 'monospace'))),
-        ]),
+      taskDetails(task, fill, text),
       if (identityCurrent) Align(alignment: Alignment.centerRight, child: FilledButton.icon(
         key: ValueKey('contest-task-${task['id']}'), onPressed: () => openTask(task, review: !canSubmit(d)),
         icon: Icon(submitting ? Icons.code : Icons.history), label: Text(submitting ? 'Бодлого бодох' : 'Миний илгээлтүүд'))),

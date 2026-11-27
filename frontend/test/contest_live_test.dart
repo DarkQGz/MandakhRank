@@ -102,6 +102,24 @@ void main() {
       for (final item in <int,String>{41:'Бодсон',42:'Шалгаж байна',43:'Буруу илгээлт',44:'Шүүгчийн алдаа',45:'Бодоогүй'}.entries) {
         expect(tester.widget<Text>(find.byKey(ValueKey('contest-state-${item.key}'))).data,item.value);
       }
+      // Opening the problem details must render real text, not a release ErrorWidget.
+      final disclosure = find.byKey(const ValueKey('contest-example-41'));
+      final details = find.byKey(const ValueKey('contest-details-41'));
+      expect(details, findsNothing);
+      await tester.ensureVisible(disclosure);
+      await tester.tap(disclosure);
+      await tester.pumpAndSettle();
+      expect(details, findsOneWidget);
+      expect(tester.widget<Text>(find.byKey(const ValueKey('contest-statement-41'))).data, 'Add integers');
+      expect(tester.widget<Text>(find.byKey(const ValueKey('contest-input-41'))).data, '1 2');
+      expect(tester.widget<Text>(find.byKey(const ValueKey('contest-output-41'))).data, '3');
+      expect(tester.getSize(details).height, lessThan(400));
+      expect(find.byType(ErrorWidget), findsNothing);
+      expect(tester.takeException(), isNull);
+      await tester.ensureVisible(disclosure);
+      await tester.tap(disclosure);
+      await tester.pumpAndSettle();
+      expect(details, findsNothing);
       final board=find.byKey(const ValueKey('contest-scoreboard'));
       await tester.ensureVisible(board); await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('contest-own-row')),findsOneWidget);

@@ -45,6 +45,7 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
                  .annotate(count=Count('pk')).values_list('day', 'count'))
     from .learning import profile_learning
     from .progression import profile_progression
+    from .teacher_hub import public_role
     data = {
         'learning': profile_learning(user),
         'progression': profile_progression(user),
@@ -56,6 +57,7 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
         'joined_at': user.date_joined.isoformat(),
         'avatar_url': avatar_url(user.pk, avatar_version),
         'is_owner': is_owner,
+        'role': public_role(user),
         'statistics': {
             'solved': solved_problems.count(),
             'points': solved_problems.aggregate(total=Sum('points'))['total'] or 0,

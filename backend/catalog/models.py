@@ -24,6 +24,7 @@ class Lesson(models.Model):
     def __str__(self): return self.title
 
 class Contest(models.Model):
+    organizer = models.ForeignKey('auth.User', blank=True, null=True, on_delete=models.SET_NULL, related_name='organized_contests')
     title = models.CharField('Нэр', max_length=200)
     description = models.TextField('Тайлбар', blank=True)
     announcement = models.TextField('Зарлал', blank=True)

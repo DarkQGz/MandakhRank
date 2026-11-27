@@ -6,6 +6,7 @@ import 'theme_settings.dart';
 import 'public_profile_screen.dart';
 import 'learning_screen.dart';
 import 'progression_screen.dart';
+import 'teacher_screen.dart';
 
 
 /// Dashboard is part of the existing app, not a separate site.
@@ -279,6 +280,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
     }
 
     final owner = isOwner;
+    final isTeacher = profile!['role'] == 'teacher';
     final stats = Map<String, dynamic>.from(profile!['statistics'] as Map);
     final completedCourseCount = learningMap(profile!['learning'])['courses'];
     final progression = progressionMap(profile!['progression']);
@@ -290,7 +292,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       final wide = constraints.maxWidth >= 740;
       final cell = wide ? (constraints.maxWidth - 14 * 3) / 4 : constraints.maxWidth < 250 ? constraints.maxWidth : (constraints.maxWidth - 14) / 2;
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        sectionTitle(owner ? 'Миний самбар' : 'Хэрэглэгчийн самбар', owner ? 'Тавтай морил! Өнөөдөр бас нэг бодлого бодоцгооё.' : 'Суралцах явц, бодолтын түүх, сэтгэгдлүүд.'),
+        sectionTitle(isTeacher ? (owner ? 'Багшийн самбар' : 'Багшийн профайл') : (owner ? 'Миний самбар' : 'Хэрэглэгчийн самбар'), isTeacher ? 'Багш · MandakhRank' : (owner ? 'Тавтай морил! Өнөөдөр бас нэг бодлого бодоцгооё.' : 'Суралцах явц, бодолтын түүх, сэтгэгдлүүд.')),
         Align(alignment: Alignment.centerRight, child: TextButton.icon(onPressed: loading ? null : load, icon: const Icon(Icons.refresh), label: const Text('Шинэчлэх'))),
         if (loading) const LinearProgressIndicator(),
         if (error != null) Text(error!, style: TextStyle(color: palette.muted)),
@@ -300,8 +302,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: _surface,
-            border: Border.all(color: _line),
+            color: isTeacher ? teacherSurface(context) : _surface,
+            border: Border.all(color: isTeacher ? teacherAccent(context) : _line, width: isTeacher ? 2 : 1),
           ),
           child: Wrap(
             alignment: WrapAlignment.spaceBetween,
@@ -310,13 +312,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
             runSpacing: 20,
             children: [
               Row(children: [
-                avatar(),
+                if (isTeacher) Container(key: const ValueKey('teacher-avatar-border'), padding: const EdgeInsets.all(3), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: teacherAccent(context), width: 2)), child: avatar()) else avatar(),
                 SizedBox(width: 18),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(owner ? 'САЙН БАЙНА УУ!' : 'СУРАЛЦАГЧ', style: TextStyle(color: _primary, fontSize: 11, letterSpacing: 1.8, fontWeight: FontWeight.w700)),
+                  if (isTeacher) const TeacherRoleChip() else Text(owner ? 'САЙН БАЙНА УУ!' : 'СУРАЛЦАГЧ', style: TextStyle(color: _primary, fontSize: 11, letterSpacing: 1.8, fontWeight: FontWeight.w700)),
                   SizedBox(height: 5),
                   Text(profile!['username'].toString(), style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold)),
-                  if (hasProgression) Padding(padding: const EdgeInsets.only(top: 4, bottom: 4), child: Text('${progression['rank']} · Level ${progression['level']}', style: TextStyle(color: _primary, fontSize: 13, fontWeight: FontWeight.w700))),
+                  if (hasProgression) Padding(padding: const EdgeInsets.only(top: 4, bottom: 4), child: Text(isTeacher ? 'Level ${progression['level']} · Хувийн ахиц' : '${progression['rank']} · Level ${progression['level']}', style: TextStyle(color: _primary, fontSize: 13, fontWeight: FontWeight.w700))),
                   if (owner && profile!['email'] != null) Text(profile!['email'].toString(), style: TextStyle(color: _subdued, fontSize: 11)),
                   Text('Элссэн: ${formatDate(profile!['joined_at'])}', style: TextStyle(color: _subdued, fontSize: 11)),
                 ])),
@@ -339,6 +341,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
         ),
         SizedBox(height: 16),
         if (owner) Text('JPG, PNG, WebP • 2 MB хүртэл • Зураг таны профайлд хадгалагдана.', style: TextStyle(color: _subdued, fontSize: 11)),
+        if (owner && isTeacher) ...[const SizedBox(height: 16), const TeacherWorkspaceEntry()],
         if (hasProgression) ...[
           const SizedBox(height: 16),
           ProgressionOverview(data: progression),

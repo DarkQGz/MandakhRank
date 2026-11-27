@@ -6,6 +6,7 @@ import 'data.dart';
 import 'auth_screen.dart';
 import 'practice_screen.dart';
 import 'dashboard_screen.dart';
+import 'teacher_screen.dart';
 import 'minigames_screen.dart';
 import 'theme_settings.dart';
 import 'learning_screen.dart';
@@ -530,19 +531,18 @@ class _HomeState extends State<Home> {
       Map<String, dynamic> person, Map<String, dynamic> data, Widget child,
       {required bool featured, Color? color}) {
     final id = int.tryParse('${person['id']}');
+    final isTeacher = person['role'] == 'teacher';
     return Material(
-      color: color ?? panel,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-          side: BorderSide(color: palette.outline)),
+      color: isTeacher ? teacherSurface(context) : (color ?? panel),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: isTeacher ? teacherAccent(context) : palette.outline, width: isTeacher ? 1.5 : 1)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         key: ValueKey('rank-card-${featured ? 'top' : 'row'}-$id'),
         onTap: id == null || id <= 0 || Repository.base.isEmpty
             ? null
             : () => openStudentProfile(id, data),
-        child:
-            Padding(padding: EdgeInsets.all(featured ? 8 : 12), child: child),
+        child: Padding(padding: EdgeInsets.all(featured ? 8 : 12), child: isTeacher ? Column(crossAxisAlignment: featured ? CrossAxisAlignment.center : CrossAxisAlignment.start, children: [child, const SizedBox(height: 6), const TeacherRoleChip()]) : child),
       ),
     );
   }
@@ -1002,8 +1002,8 @@ class _HomeState extends State<Home> {
                             color: blue, size: 42),
                       ])),
                   const SizedBox(height: 14),
-                  badge(c['status'],
-                      c['status'] == 'Явагдаж байна' ? palette.positive : blue),
+                  badge(c['status'], c['status'] == 'Явагдаж байна' ? palette.positive : blue),
+                  if (c['organizer'] != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text('Зохион байгуулагч: ${c['organizer']}', style: TextStyle(color: teacherAccent(context), fontWeight: FontWeight.w600))),
                   const SizedBox(height: 12),
                   Text(
                     c['title'],
@@ -1043,6 +1043,7 @@ class _HomeState extends State<Home> {
           mainAxisSize: MainAxisSize.min,
           children: [
             badge(c['status'], blue),
+            if (c['organizer'] != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text('Зохион байгуулагч: ${c['organizer']}', style: TextStyle(color: teacherAccent(context), fontWeight: FontWeight.w600))),
             SizedBox(height: 16),
             Text(c['announcement']),
             SizedBox(height: 16),

@@ -16,7 +16,9 @@ from catalog import practice, accounts, cms_bridge, profile, admin_overview, min
 from catalog import social, learning
 from catalog import projects
 from catalog import classrooms
+from catalog import teacher_hub
 urlpatterns = [
+    path('api/teacher/workspace/', teacher_hub.workspace),
     path('api/classrooms/', classrooms.classrooms),
     path('api/classrooms/targets/', classrooms.classroom_targets),
     path('api/classrooms/<int:classroom_id>/', classrooms.classroom_detail),

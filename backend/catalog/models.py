@@ -319,3 +319,25 @@ class ClassroomTeacher(models.Model):
 class ProfileAppearance(models.Model):
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='profile_appearance')
     preferences = models.JSONField(default=dict, blank=True)
+
+class Announcement(models.Model):
+    author = models.ForeignKey('auth.User', null=True, on_delete=models.SET_NULL, related_name='mr_announcements')
+    classroom = models.ForeignKey(Classroom, null=True, blank=True, on_delete=models.CASCADE, related_name='announcements')
+    title = models.CharField(max_length=120)
+    body = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    withdrawn = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+        indexes = [models.Index(fields=['author', 'created_at'], name='mr_announce_author_idx')]
+
+
+class NotificationRead(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='mr_notification_reads')
+    event_key = models.CharField(max_length=96)
+    event_at = models.DateTimeField()
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['user', 'event_key'], name='mr_notice_read_unique')]
+        indexes = [models.Index(fields=['user', 'event_at'], name='mr_notice_read_age_idx')]

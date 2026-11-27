@@ -17,8 +17,10 @@ from catalog import social, learning
 from catalog import projects
 from catalog import classrooms
 from catalog import teacher_hub
-from catalog import prestige, solution_showcase, operations, contest_live
+from catalog import prestige, solution_showcase, operations, contest_live, notifications
 urlpatterns = [
+    path('api/notifications/', notifications.inbox),
+    path('api/announcements/', notifications.announcements),
     path('api/contests/<int:contest_id>/live/', contest_live.live),
     path('api/contests/<int:contest_id>/tasks/<int:task_id>/submissions/', contest_live.submissions),
     path('healthz/', operations.health),

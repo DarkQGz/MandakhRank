@@ -8,6 +8,7 @@ import 'practice_screen.dart';
 import 'dashboard_screen.dart';
 import 'teacher_screen.dart';
 import 'contest_live_screen.dart';
+import 'notification_screen.dart';
 import 'prestige_screen.dart';
 import 'minigames_screen.dart';
 import 'theme_settings.dart';
@@ -300,6 +301,8 @@ class _HomeState extends State<Home> {
                                           style: TextStyle(
                                               color: muted, fontSize: 13))
                                       : brand()),
+                              if (PracticeApi.token != null && Repository.base.isNotEmpty)
+                                NotificationBell(token: PracticeApi.token!),
                               IconButton(
                                   tooltip: PracticeApi.token == null
                                       ? 'Нэвтрэх'

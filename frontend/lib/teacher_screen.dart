@@ -3,6 +3,7 @@ import 'data.dart';
 import 'learning_screen.dart';
 import 'theme_settings.dart';
 import 'contest_live_screen.dart';
+import 'notification_screen.dart';
 
 Color teacherAccent(BuildContext context) =>
     MandakhPalette.of(context).readable(const Color(0xFFD6A449));
@@ -130,6 +131,7 @@ class _TeacherWorkspaceState extends State<TeacherWorkspaceScreen> {
       ]);}),const SizedBox(height:18),
       Wrap(spacing:10,runSpacing:10,children:[
         FilledButton.icon(onPressed:busy?null:()async{await Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const ClassroomHomeScreen()));reload();},icon:const Icon(Icons.groups),label:const Text('Анги удирдах')),
+        if (PracticeApi.token != null) OutlinedButton.icon(key:const ValueKey('teacher-announcements'),onPressed:busy?null:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>AnnouncementScreen(token:PracticeApi.token!))),icon:const Icon(Icons.campaign_outlined),label:const Text('Зарлал удирдах')),
         OutlinedButton.icon(key:const ValueKey('teacher-create-contest'),onPressed:busy?null:()=>create(_rows(data['problems'])),icon:const Icon(Icons.add),label:const Text('Тэмцээн үүсгэх')),
       ]),const SizedBox(height:24),const Text('Миний зохион байгуулсан тэмцээн',style:TextStyle(fontSize:21,fontWeight:FontWeight.w800)),const SizedBox(height:8),
       const Text('Тэмцээн нийтэд харагдана. Автомат эсвэл гараар дүгнэх төрлөө сонгоно.'),const SizedBox(height:12),

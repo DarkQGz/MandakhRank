@@ -59,12 +59,14 @@ def rows(kind):
                        **totals.get(u.id, {'score': 0, 'solved': 0}))
                   for u in students]
         result.sort(key=lambda r: (-r['score'], -r['solved'], r['handle'].lower(), r['id']))
+        from .prestige_rules import prestige_rank
         previous = None
         rank = 0
         for i, row in enumerate(result):
             key = (row['score'], row['solved'])
             if key != previous: rank = i + 1
             row['rank'] = rank
+            row['prestige_rank'] = prestige_rank(row)
             previous = key
         return result
     raise Http404('Not found')

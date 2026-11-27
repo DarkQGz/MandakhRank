@@ -290,3 +290,7 @@ class ClassroomTeacher(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class ProfileAppearance(models.Model):
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='profile_appearance')
+    preferences = models.JSONField(default=dict, blank=True)

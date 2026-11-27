@@ -7,6 +7,7 @@ import 'public_profile_screen.dart';
 import 'learning_screen.dart';
 import 'progression_screen.dart';
 import 'teacher_screen.dart';
+import 'prestige_screen.dart';
 
 
 /// Dashboard is part of the existing app, not a separate site.
@@ -96,6 +97,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
     } finally {
       if (mounted && generation == _loadGeneration) setState(() => loading = false);
     }
+  }
+
+  Future<void> customizeAppearance() async {
+    if (!isOwner || loading || profile == null) return;
+    final token = PracticeApi.token;
+    final generation = _identityGeneration;
+    final initial = appearanceMap(profile!['appearance']);
+    if (initial['preferences'] is! Map) return;
+    final saved = await Navigator.of(context).push<Map<String, dynamic>>(MaterialPageRoute(
+      builder: (_) => ProfileCustomizationScreen(appearance: initial, username: '${profile!['username']}')));
+    if (!mounted || !isOwner || token != PracticeApi.token || generation != _identityGeneration || saved == null) return;
+    setState(() => profile = {...profile!, 'appearance': saved});
+    await load();
   }
 
   Future<void> upload() async {
@@ -281,6 +295,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     final owner = isOwner;
     final isTeacher = profile!['role'] == 'teacher';
+    final appearance = appearanceMap(profile!['appearance']);
     final stats = Map<String, dynamic>.from(profile!['statistics'] as Map);
     final completedCourseCount = learningMap(profile!['learning'])['courses'];
     final progression = progressionMap(profile!['progression']);
@@ -297,12 +312,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
         if (loading) const LinearProgressIndicator(),
         if (error != null) Text(error!, style: TextStyle(color: palette.muted)),
         const SizedBox(height: 12),
-        Container(
+        PrestigeFrame(rank: prestigeRank(appearance['rank']), reward: appearanceMap(appearance['frame']), animate: appearance['motion'] != false, child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: isTeacher ? teacherSurface(context) : _surface,
+            gradient: prestigeBanner(context, appearance, isTeacher ? teacherSurface(context) : _surface),
             border: Border.all(color: isTeacher ? teacherAccent(context) : _line, width: isTeacher ? 2 : 1),
           ),
           child: Wrap(
@@ -317,13 +333,15 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   if (isTeacher) const TeacherRoleChip() else Text(owner ? 'САЙН БАЙНА УУ!' : 'СУРАЛЦАГЧ', style: TextStyle(color: _primary, fontSize: 11, letterSpacing: 1.8, fontWeight: FontWeight.w700)),
                   SizedBox(height: 5),
-                  Text(profile!['username'].toString(), style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold)),
+                  Text(profile!['username'].toString(), style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: appearanceMap(appearance['accent']).isEmpty ? null : prestigeInk(context, appearance))),
+                  PrestigeIdentity(appearance: appearance),
                   if (hasProgression) Padding(padding: const EdgeInsets.only(top: 4, bottom: 4), child: Text(isTeacher ? 'Level ${progression['level']} · Хувийн ахиц' : '${progression['rank']} · Level ${progression['level']}', style: TextStyle(color: _primary, fontSize: 13, fontWeight: FontWeight.w700))),
                   if (owner && profile!['email'] != null) Text(profile!['email'].toString(), style: TextStyle(color: _subdued, fontSize: 11)),
                   Text('Элссэн: ${formatDate(profile!['joined_at'])}', style: TextStyle(color: _subdued, fontSize: 11)),
                 ])),
               ]),
               if (owner) Wrap(spacing: 8, runSpacing: 8, children: [
+                if (appearance['preferences'] is Map) OutlinedButton.icon(key: const ValueKey('appearance-open'), onPressed: loading ? null : customizeAppearance, icon: const Icon(Icons.palette_outlined, size: 18), label: const Text('Профайл тохируулах')),
                 OutlinedButton.icon(
                   onPressed: saving ? null : upload,
                   icon: Icon(Icons.add_a_photo_outlined, size: 18),
@@ -338,7 +356,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
               ]),
             ],
           ),
-        ),
+        )),
+        FeaturedAchievements(appearance: appearance),
         SizedBox(height: 16),
         if (owner) Text('JPG, PNG, WebP • 2 MB хүртэл • Зураг таны профайлд хадгалагдана.', style: TextStyle(color: _subdued, fontSize: 11)),
         if (owner && isTeacher) ...[const SizedBox(height: 16), const TeacherWorkspaceEntry()],

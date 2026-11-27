@@ -7,6 +7,7 @@ import 'auth_screen.dart';
 import 'practice_screen.dart';
 import 'dashboard_screen.dart';
 import 'teacher_screen.dart';
+import 'prestige_screen.dart';
 import 'minigames_screen.dart';
 import 'theme_settings.dart';
 import 'learning_screen.dart';
@@ -532,7 +533,7 @@ class _HomeState extends State<Home> {
       {required bool featured, Color? color}) {
     final id = int.tryParse('${person['id']}');
     final isTeacher = person['role'] == 'teacher';
-    return Material(
+    final card = Material(
       color: isTeacher ? teacherSurface(context) : (color ?? panel),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),
         side: BorderSide(color: isTeacher ? teacherAccent(context) : palette.outline, width: isTeacher ? 1.5 : 1)),
@@ -545,6 +546,8 @@ class _HomeState extends State<Home> {
         child: Padding(padding: EdgeInsets.all(featured ? 8 : 12), child: isTeacher ? Column(crossAxisAlignment: featured ? CrossAxisAlignment.center : CrossAxisAlignment.start, children: [child, const SizedBox(height: 6), const TeacherRoleChip()]) : child),
       ),
     );
+    final rank = prestigeRank(person['prestige_rank']);
+    return rank == null ? card : PrestigeFrame(key: ValueKey('rank-prestige-$id'), rank: rank, radius: 14, child: card);
   }
 
   Widget rankings(Map<String, dynamic> data) {

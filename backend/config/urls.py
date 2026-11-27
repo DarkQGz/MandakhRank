@@ -17,7 +17,9 @@ from catalog import social, learning
 from catalog import projects
 from catalog import classrooms
 from catalog import teacher_hub
+from catalog import prestige
 urlpatterns = [
+    path('api/profile/appearance/', prestige.customize),
     path('api/teacher/workspace/', teacher_hub.workspace),
     path('api/classrooms/', classrooms.classrooms),
     path('api/classrooms/targets/', classrooms.classroom_targets),

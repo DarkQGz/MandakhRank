@@ -46,9 +46,12 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
     from .learning import profile_learning
     from .progression import profile_progression
     from .teacher_hub import public_role
+    from .prestige import profile_appearance
+    progression = profile_progression(user)
     data = {
         'learning': profile_learning(user),
-        'progression': profile_progression(user),
+        'progression': progression,
+        'appearance': profile_appearance(user, progression, owner=is_owner),
         'activity': [{'date': (start + timedelta(days=i)).isoformat(),
                       'count': daily.get(start + timedelta(days=i), 0)} for i in range(28)],
         'id': user.pk,

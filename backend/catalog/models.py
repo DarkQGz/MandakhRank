@@ -95,6 +95,7 @@ class Submission(models.Model):
     code=models.TextField()
     language=models.CharField(max_length=12,default='python',choices=[('python','Python 3'),('c','C (C17)'),('cpp','C++ (C++17)'),('java','Java 21'),('javascript','JavaScript (Node.js 22)')])
     status=models.CharField(max_length=40,default='Queued')
+    share_on_profile=models.BooleanField(default=False, editable=False)
     passed=models.PositiveIntegerField(default=0)
     total=models.PositiveIntegerField(default=0)
     created_at=models.DateTimeField(auto_now_add=True)
@@ -104,7 +105,9 @@ class Submission(models.Model):
     cms_claim_key=models.CharField(max_length=64,blank=True,default='')
     cms_submission_id=models.CharField(max_length=128,blank=True,default='')
     cms_attempts=models.PositiveSmallIntegerField(default=0)
-    class Meta: ordering=['-id']
+    class Meta:
+        ordering=['-id']
+        constraints=[models.UniqueConstraint(fields=('user','problem'), condition=models.Q(share_on_profile=True), name='unique_showcase_solution_per_problem')]
 
 class AccessToken(models.Model):
     key=models.CharField(max_length=64,primary_key=True)

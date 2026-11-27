@@ -37,7 +37,7 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
         activity = activity.filter(problem__published=True)
     solved_ids = activity.filter(status='Accepted', problem__published=True).order_by().values_list('problem_id', flat=True).distinct()
     solved_problems = Problem.objects.filter(id__in=solved_ids, published=True)
-    submissions = list(activity.select_related('problem').order_by('-created_at', '-pk')[:6])
+    submissions = list(activity.select_related('problem').order_by('-created_at', '-pk')[:6]) if is_owner else []
     today = timezone.localdate()
     start = today - timedelta(days=27)
     daily = dict(activity.filter(created_at__date__gte=start, created_at__date__lte=today)
@@ -47,11 +47,13 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
     from .progression import profile_progression
     from .teacher_hub import public_role
     from .prestige import profile_appearance
+    from .solution_showcase import public_solutions
     progression = profile_progression(user)
     data = {
         'learning': profile_learning(user),
         'progression': progression,
         'appearance': profile_appearance(user, progression, owner=is_owner),
+        'solutions': public_solutions(user.pk),
         'activity': [{'date': (start + timedelta(days=i)).isoformat(),
                       'count': daily.get(start + timedelta(days=i), 0)} for i in range(28)],
         'id': user.pk,

@@ -8,6 +8,7 @@ import 'learning_screen.dart';
 import 'progression_screen.dart';
 import 'teacher_screen.dart';
 import 'prestige_screen.dart';
+import 'solution_showcase_screen.dart';
 
 
 /// Dashboard is part of the existing app, not a separate site.
@@ -109,6 +110,17 @@ class _StudentDashboardState extends State<StudentDashboard> {
       builder: (_) => ProfileCustomizationScreen(appearance: initial, username: '${profile!['username']}', profileSurface: profile!['role'] == 'teacher' ? teacherSurface(context) : _surface)));
     if (!mounted || !isOwner || token != PracticeApi.token || generation != _identityGeneration || saved == null) return;
     setState(() => profile = {...profile!, 'appearance': saved});
+    await load();
+  }
+
+  Future<void> manageSolutions() async {
+    if (!isOwner || loading || profile == null) return;
+    final token = PracticeApi.token;
+    final generation = _identityGeneration;
+    final saved = await Navigator.of(context).push<List<Map<String, dynamic>>>(MaterialPageRoute(
+      builder: (_) => SolutionPrivacyScreen(userId: profile!['id'] as int)));
+    if (!mounted || !isOwner || token != PracticeApi.token || generation != _identityGeneration || saved == null) return;
+    setState(() => profile = {...profile!, 'solutions': saved});
     await load();
   }
 
@@ -408,7 +420,10 @@ class _StudentDashboardState extends State<StudentDashboard> {
         SizedBox(height: 30),
         ],
         if (!owner) const SizedBox(height: 30),
-        sectionTitle('Сүүлийн илгээлтүүд', owner ? 'Таны хамгийн сүүлд шалгуулсан кодууд.' : 'Нийтлэгдсэн бодлогын сүүлийн илгээлтүүд.'),
+        ProfileSolutionsSection(userId: profile!['id'] as int, rows: solutionRows(profile!['solutions']), owner: owner, onManage: owner && !loading ? manageSolutions : null),
+        if (owner) ...[
+        const SizedBox(height: 24),
+        sectionTitle('Сүүлийн илгээлтүүд', 'Таны хамгийн сүүлд шалгуулсан кодууд.'),
         if (hasProgression) Padding(padding: const EdgeInsets.only(top: 6), child: Text('Нийт ${stats['submissions'] ?? 0} илгээлт', style: TextStyle(color: _subdued, fontSize: 13))),
         SizedBox(height: 14),
         surface(recent.isEmpty
@@ -432,6 +447,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   );
                 }),
               ])),
+        ],
         SizedBox(height: 30),
         ProfileComments(
           key: ValueKey('profile-comments-${profile!['id']}-$_identityGeneration'),

@@ -75,7 +75,8 @@ void main() {
     expect(requestedProfiles, contains(2));
     expect(find.text('writer'), findsOneWidget);
     expect(find.text('7'), findsOneWidget);
-    expect(find.text('Нийлбэр олох'), findsOneWidget);
+    expect(find.text('Нийлбэр олох'), findsNothing);
+    expect(find.text('Нийтэлсэн бодолтууд'), findsOneWidget);
     expect(find.text('Зураг оруулах'), findsNothing);
     expect(find.text('private@example.org'), findsNothing);
     expect(PracticeApi.avatarUrl, isNull);
@@ -99,7 +100,8 @@ void main() {
     await tester.tapAt(tester.getTopLeft(row) + const Offset(8, 8));
     await tester.pumpAndSettle();
     expect(find.text('writer'), findsOneWidget);
-    expect(find.text('Сүүлийн илгээлтүүд'), findsOneWidget);
+    expect(find.text('Сүүлийн илгээлтүүд'), findsNothing);
+    expect(find.text('Нийтэлсэн бодолтууд'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });

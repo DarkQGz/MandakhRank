@@ -40,7 +40,7 @@ class PracticeAdmin(admin.ModelAdmin):
     inlines=[TestInline]
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display=['id','user','problem','status','passed','total','created_at']
+    list_display=['id','user','problem','language','status','passed','total','created_at']
     list_filter=['status','problem']
     readonly_fields=['user','problem','code','status','passed','total','created_at','updated_at','test_snapshot']
     def has_add_permission(self,request):return False

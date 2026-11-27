@@ -21,7 +21,7 @@ class Command(BaseCommand):
                 Submission.objects.filter(status='Running', updated_at__lt=timezone.now()-timedelta(minutes=5)).update(status='Judge Error', updated_at=timezone.now())
                 AccessToken.objects.filter(created_at__lt=timezone.now()-timedelta(days=7)).delete()
                 AuthThrottle.objects.filter(started_at__lt=timezone.now()-timedelta(days=2)).delete()
-                s = Submission.objects.filter(status='Queued').order_by('id').first() if settings.JUDGE0_URL else None
+                s = Submission.objects.filter(status='Queued', language='python').order_by('id').first() if settings.JUDGE0_URL else None
                 if s and Submission.objects.filter(pk=s.pk, status='Queued').update(status='Running', updated_at=timezone.now()):
                     evaluate(s)
                 if opts['once']: break

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'theme_settings.dart';
 import 'auth_screen.dart';
+import 'judge_languages.dart';
 
 class PracticeScreen extends StatefulWidget {
   final Map<String, dynamic> problem;
@@ -17,6 +18,16 @@ class _PracticeState extends State<PracticeScreen> {
   final code = _PythonController(
     text: '# Python 3\n# input() ашиглан оролтоо уншина уу.\n',
   );
+  String language = 'python';
+  List<String> languages = ['python'];
+  final drafts = <String, String>{};
+  void switchLanguage(String next) {
+    if (next == language || !languages.contains(next)) return;
+    drafts[language] = code.text;
+    language = next;
+    code.language = next;
+    code.text = drafts[next] ?? judgeTemplates[next]!;
+  }
   final name = TextEditingController(), password = TextEditingController();
   List<dynamic> history = [];
   bool busy = false, register = false, polling = false;
@@ -44,11 +55,11 @@ class _PracticeState extends State<PracticeScreen> {
     try {
       final r = await PracticeApi.request('submissions/');
       if (mounted)
-        setState(
-          () => history = (r['results'] as List)
-              .where((s) => s['problem_id'] == widget.problem['id'])
-              .toList(),
-        );
+        setState(() {
+          history = (r['results'] as List).where((s) => s['problem_id'] == widget.problem['id']).toList();
+          languages = judgeLanguages(r['languages']);
+          if (!languages.contains(language)) switchLanguage('python');
+        });
     } catch (e) {
       if (mounted) setState(() => message = e.toString());
     } finally {
@@ -111,9 +122,9 @@ class _PracticeState extends State<PracticeScreen> {
       }),
     ]));
     final editor = _panel(Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Row(children: [Icon(Icons.code_rounded, color: palette.accentInk, size: 20), const SizedBox(width: 8), const Expanded(child: Text('Кодын талбар', style: TextStyle(fontWeight: FontWeight.w700))), Text('Python 3', style: TextStyle(color: palette.muted, fontSize: 12))]),
+      Row(children: [Icon(Icons.code_rounded, color: palette.accentInk, size: 20), const SizedBox(width: 8), const Expanded(child: Text('Кодын талбар', style: TextStyle(fontWeight: FontWeight.w700))), Text(judgeLabel(language), style: TextStyle(color: palette.muted, fontSize: 12))]),
       const SizedBox(height: 8),
-      Text('2 секунд / тест · 128 MB', style: TextStyle(color: palette.muted, fontSize: 12)),
+      Text(language == 'python' ? '8 секунд хүртэл / тест · 128 MB' : '8 секунд хүртэл / тест · 384 MB (хөрвүүлэлт 20 секунд хүртэл)', style: TextStyle(color: palette.muted, fontSize: 12)),
       const SizedBox(height: 16),
       if (PracticeApi.token == null)
         FilledButton(onPressed: () async {
@@ -122,6 +133,13 @@ class _PracticeState extends State<PracticeScreen> {
           if (mounted) setState(() {});
         }, child: const Text('Нэвтрэх / Бүртгүүлэх'))
       else ...[
+        DropdownButtonFormField<String>(
+          key: ValueKey('judge-language-$language'), initialValue: language, isExpanded: true,
+          decoration: const InputDecoration(labelText: 'Програмчлалын хэл'),
+          items: [for (final id in languages) DropdownMenuItem(value: id, child: Text(judgeLabel(id)))],
+          onChanged: busy ? null : (v) { if (v != null) setState(() => switchLanguage(v)); },
+        ),
+        const SizedBox(height: 10),
         Row(children: [Expanded(child: Text('Нэвтэрсэн: ${PracticeApi.username ?? ''}', overflow: TextOverflow.ellipsis, style: TextStyle(color: palette.muted, fontSize: 12))), TextButton(onPressed: busy ? null : () => action(() async {
           await PracticeApi.request('auth/logout/', body: {});
           await PracticeApi.signOut();
@@ -129,13 +147,13 @@ class _PracticeState extends State<PracticeScreen> {
           if (mounted) setState(() => history = []);
         }), child: const Text('Гарах'))]),
         Container(decoration: BoxDecoration(color: palette.background, borderRadius: BorderRadius.circular(10), border: Border.all(color: palette.outline)), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), child: Row(children: [Icon(Icons.description_outlined, size: 16, color: palette.muted), const SizedBox(width: 6), const Expanded(child: Text('solution.py', style: TextStyle(fontSize: 12, fontFamily: 'monospace'))), ValueListenableBuilder<TextEditingValue>(valueListenable: code, builder: (_, v, __) => Text('${v.text.split('\n').length} мөр', style: TextStyle(color: palette.muted, fontSize: 12)))])),
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), child: Row(children: [Icon(Icons.description_outlined, size: 16, color: palette.muted), const SizedBox(width: 6), Expanded(child: Text(judgeFiles[language]!, style: const TextStyle(fontSize: 12, fontFamily: 'monospace'))), ValueListenableBuilder<TextEditingValue>(valueListenable: code, builder: (_, v, __) => Text('${v.text.split('\n').length} мөр', style: TextStyle(color: palette.muted, fontSize: 12)))])),
           Divider(height: 1, color: palette.outline),
           TextField(controller: code, minLines: 12, maxLines: 24, keyboardType: TextInputType.multiline, autocorrect: false, enableSuggestions: false, style: TextStyle(fontFamily: 'monospace', fontSize: 14, height: 1.5, color: palette.text), decoration: InputDecoration(hintText: 'Кодоо бичнэ үү', fillColor: palette.background, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none, contentPadding: const EdgeInsets.all(12))),
         ])),
         const SizedBox(height: 16),
         FilledButton.icon(onPressed: busy ? null : () => action(() async {
-          await PracticeApi.request('submissions/', body: {'problem_id': p['id'], 'code': code.text});
+          await PracticeApi.request('submissions/', body: {'problem_id': p['id'], 'code': code.text, 'language': language});
           await refresh();
         }), icon: const Icon(Icons.send_rounded), label: const Text('Илгээж шалгуулах')),
       ],
@@ -150,7 +168,7 @@ class _PracticeState extends State<PracticeScreen> {
       if (history.isEmpty) Padding(padding: const EdgeInsets.symmetric(vertical: 16), child: Text('Илгээлт хараахан алга.', style: TextStyle(color: palette.muted))),
       for (var i = 0; i < history.length; i++) ...[
         if (i > 0) const Divider(),
-        ListTile(contentPadding: EdgeInsets.zero, leading: Icon(history[i]['status'] == 'Accepted' ? Icons.check_circle_outline : Icons.code, color: history[i]['status'] == 'Accepted' ? palette.positive : history[i]['status'] == 'Wrong Answer' ? palette.negative : palette.accentInk), title: Text('#${history[i]['id']} · ${_verdict(history[i]['status'])}'), subtitle: Text('${history[i]['passed']}/${history[i]['total']} тест · ${history[i]['created_at']}')),
+        ListTile(contentPadding: EdgeInsets.zero, leading: Icon(history[i]['status'] == 'Accepted' ? Icons.check_circle_outline : Icons.code, color: history[i]['status'] == 'Accepted' ? palette.positive : history[i]['status'] == 'Wrong Answer' ? palette.negative : palette.accentInk), title: Text('#${history[i]['id']} · ${_verdict(history[i]['status'])}'), subtitle: Text('${judgeLabel(history[i]['language'])} · ${history[i]['passed']}/${history[i]['total']} тест · ${history[i]['created_at']}')),
       ],
     ]));
     return Scaffold(appBar: AppBar(title: Text('${p['title']}', maxLines: 1, overflow: TextOverflow.ellipsis)), body: SafeArea(child: LayoutBuilder(builder: (context, c) {
@@ -166,9 +184,11 @@ class _PracticeState extends State<PracticeScreen> {
 // Lightweight lexical highlighting; code is still submitted verbatim.
 class _PythonController extends TextEditingController {
   _PythonController({super.text});
+  String language = 'python';
   static final _tokens = RegExp(r'''#[^\n]*|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|\b(?:False|True|None|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield|print|input|range|len|map|int|str)\b|\b\d+(?:\.\d+)?\b''');
   @override
   TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
+    if (language != 'python') return super.buildTextSpan(context: context, style: style, withComposing: withComposing);
     if (withComposing && value.isComposingRangeValid && !value.composing.isCollapsed) return super.buildTextSpan(context: context, style: style, withComposing: withComposing);
     final p = MandakhPalette.of(context);
     final spans = <TextSpan>[];

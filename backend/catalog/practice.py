@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .models import Problem,Submission,AccessToken
+from .judge_languages import LANGUAGES, available_languages
 
 def response(data,status=200):
     result=JsonResponse(data,status=status,json_dumps_params={'ensure_ascii':False})
@@ -70,7 +71,7 @@ def submissions(request):
     if not user:return response({'error':'Эхлээд нэвтэрнэ үү.'},401)
     if request.method=='GET':
         rows=Submission.objects.filter(user=user, project_attempt__isnull=True).select_related('problem')[:100]
-        return response({'results':[dict(id=s.id,problem_id=s.problem_id,title=s.problem.title,status=s.status,passed=s.passed,total=s.total,created_at=s.created_at.isoformat()) for s in rows]})
+        return response({'results':[dict(id=s.id,problem_id=s.problem_id,title=s.problem.title,status=s.status,passed=s.passed,total=s.total,created_at=s.created_at.isoformat(),language=s.language) for s in rows], 'languages':available_languages()})
     if settings.JUDGE_ENGINE in ('cms_pull', 'docker_pull'):
         if not settings.JUDGE_WORKER_TOKEN:
             return response({'error':'Шалгах worker тохируулагдаагүй байна.'},503)
@@ -79,7 +80,14 @@ def submissions(request):
     data=payload(request)
     if data is None:return response({'error':'JSON өгөгдөл буруу.'},400)
     code=data.get('code','');pid=data.get('problem_id')
-    if not isinstance(code,str) or not code.strip() or len(code.encode())>20000:return response({'error':'Код хоосон эсвэл 20KB-аас их байна.'},400)
+    language=data.get('language','python')
+    if not isinstance(language,str) or language not in LANGUAGES:return response({'error':'Програмчлалын хэл буруу.'},400)
+    if language not in available_languages():return response({'error':'Энэ хэл одоогоор идэвхгүй байна.'},409)
+    try:
+        valid_code=isinstance(code,str) and bool(code.strip()) and '\x00' not in code and len(code.encode('utf-8'))<=20000
+    except UnicodeEncodeError:
+        valid_code=False
+    if not valid_code:return response({'error':'Код хоосон, буруу тэмдэгттэй эсвэл 20KB-аас их байна.'},400)
     if not isinstance(pid,int):return response({'error':'Бодлогын дугаар буруу.'},400)
     p=Problem.objects.filter(pk=pid,published=True).first()
     if not p:return response({'error':'Бодлого олдсонгүй.'},404)
@@ -94,5 +102,5 @@ def submissions(request):
             return response({'error':'Өмнөх илгээлтээ шалгуулж дуустал хүлээнэ үү.'},429)
         if Submission.objects.filter(user=user,created_at__gt=timezone.now()-timedelta(hours=1)).count()>=30:
             return response({'error':'Нэг цагт 30 удаа илгээх боломжтой. Түр хүлээнэ үү.'},429)
-        s=Submission.objects.create(user=user,problem=p,code=code,test_snapshot=tests,total=len(tests))
+        s=Submission.objects.create(user=user,problem=p,code=code,language=language,test_snapshot=tests,total=len(tests))
     return response({'id':s.id,'status':s.status},201)

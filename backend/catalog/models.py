@@ -93,6 +93,7 @@ class Submission(models.Model):
     user=models.ForeignKey('auth.User',on_delete=models.CASCADE)
     problem=models.ForeignKey(Problem,on_delete=models.PROTECT)
     code=models.TextField()
+    language=models.CharField(max_length=12,default='python',choices=[('python','Python 3'),('c','C (C17)'),('cpp','C++ (C++17)'),('java','Java 21'),('javascript','JavaScript (Node.js 22)')])
     status=models.CharField(max_length=40,default='Queued')
     passed=models.PositiveIntegerField(default=0)
     total=models.PositiveIntegerField(default=0)

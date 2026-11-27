@@ -54,5 +54,6 @@ WHITENOISE_ROOT = BASE_DIR / 'webapp'
 
 # Pull-based CMS worker: only Django is public.
 JUDGE_ENGINE = os.environ.get('JUDGE_ENGINE', 'judge0')
+JUDGE_MULTILANGUAGE_ENABLED = os.environ.get('JUDGE_MULTILANGUAGE_ENABLED', '').strip().lower() in ('1', 'true', 'yes')
 JUDGE_WORKER_TOKEN = os.environ.get('JUDGE_WORKER_TOKEN', '')
 CMS_LEASE_SECONDS = int(os.environ.get('CMS_LEASE_SECONDS', '600'))

@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .models import Submission
+from .judge_languages import claim_languages
 
 FINAL_STATUSES = {
     'Accepted', 'Wrong Answer', 'Compilation Error', 'Runtime Error',
@@ -55,6 +56,10 @@ def endpoint(request, action):
                       'protocol': 'docker-tests-v1' if settings.JUDGE_ENGINE == 'docker_pull' else 'cms-v1'})
 
     if action == 'claim':
+        try:
+            languages = claim_languages(data, settings.JUDGE_ENGINE)
+        except ValueError:
+            return reply({'error': 'Invalid worker languages'}, 400)
         # A single worker is the intended initial deployment. Row locking also
         # allows a future multi-worker deployment under PostgreSQL.
         with transaction.atomic():
@@ -63,7 +68,7 @@ def endpoint(request, action):
                 status='Judge Error', cms_claim_key='', updated_at=timezone.now())
             Submission.objects.filter(status='Running', updated_at__lt=cutoff, cms_attempts__lt=3).update(
                 status='Queued', cms_claim_key='', updated_at=timezone.now())
-            qs = Submission.objects.select_related('problem').filter(status='Queued').order_by('id')
+            qs = Submission.objects.select_related('problem').filter(status='Queued', language__in=languages).order_by('id')
             if connection.features.has_select_for_update_skip_locked:
                 qs = qs.select_for_update(skip_locked=True)
             elif connection.features.has_select_for_update:
@@ -99,6 +104,7 @@ def endpoint(request, action):
                 # Tests are only sent to the authenticated private worker.
                 # Never include them in the browser's /api/submissions/ response.
                 job['tests'] = s.test_snapshot
+                job['language'] = s.language
             return reply({'job': job})
 
     if action not in ('heartbeat', 'complete', 'release'):
@@ -142,6 +148,8 @@ def endpoint(request, action):
             return reply({'error': 'Invalid counts'}, 400)
         if status == 'Accepted' and (total == 0 or passed != total):
             return reply({'error': 'An accepted result must pass all tests'}, 400)
+        if settings.JUDGE_ENGINE == 'docker_pull' and total != s.total:
+            return reply({'error': 'Result test count mismatch'}, 400)
         s.status, s.passed, s.total = status, passed, total
         s.cms_claim_key = ''
         s.updated_at = timezone.now()

@@ -29,29 +29,60 @@ List<Color> _rewardColors(Map<String, dynamic> reward) {
   return colors;
 }
 
-Color prestigeInk(BuildContext context, Map<String, dynamic> appearance) {
+// The same background functions are used by the editor and both profiles.
+// Keep the stored `soft` value compatible with Phase 5.2, but render it as
+// a genuine solid tint rather than a second, nearly invisible gradient.
+List<Color> _bannerColors(BuildContext context, Map<String, dynamic> appearance, Color base) {
   final p = MandakhPalette.of(context);
   final colors = _rewardColors(appearanceMap(appearance['accent']));
-  return colors.isEmpty ? p.accentInk : p.readable(colors.first);
-}
-
-LinearGradient? prestigeBanner(BuildContext context, Map<String, dynamic> appearance, Color base) {
-  final style = appearance['background'];
-  if (style != 'gradient' && style != 'soft') return null;
-  final p = MandakhPalette.of(context);
-  final colors = _rewardColors(appearanceMap(appearance['accent']));
-  final first = colors.isEmpty ? p.accentInk : colors.first;
-  final last = colors.isEmpty ? p.accentInk : colors.last;
+  final fallback = _rewardColors(appearanceMap(appearance['frame']));
+  final chosen = colors.isNotEmpty ? colors : fallback;
+  final first = chosen.isEmpty ? p.accent : chosen.first;
+  final last = chosen.isEmpty ? Color.lerp(p.accent, p.text, .65)! : chosen.last;
   Color safeTint(Color c, double strength) {
-    for (var i = 0; i <= 10; i++) {
-      final candidate = Color.lerp(base, c, strength * (10-i)/10)!;
+    for (var i = 20; i >= 0; i--) {
+      final candidate = Color.lerp(base, c, strength * i / 20)!;
       if (MandakhPalette.contrast(p.text, candidate) >= 4.5) return candidate;
     }
     return base;
   }
+  if (appearance['background'] == 'soft') return [safeTint(first, .38)];
+  if (appearance['background'] == 'gradient') {
+    return [safeTint(first, .50), base, safeTint(last, .35)];
+  }
+  return [base];
+}
+
+Color prestigeBackgroundColor(BuildContext context, Map<String, dynamic> appearance, Color base) =>
+    _bannerColors(context, appearance, base).first;
+
+LinearGradient? prestigeBanner(BuildContext context, Map<String, dynamic> appearance, Color base) {
+  if (appearance['background'] != 'gradient') return null;
   return LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-    colors: style == 'gradient' ? [safeTint(first, .12), base, safeTint(last, .08)]
-      : [safeTint(first, .07), safeTint(first, .035)]);
+    colors: _bannerColors(context, appearance, base));
+}
+
+Color prestigeBannerInk(BuildContext context, Map<String, dynamic> appearance, Color base, Color candidate) {
+  final p = MandakhPalette.of(context);
+  final colors = _bannerColors(context, appearance, base);
+  final samples = <Color>[...colors];
+  for (var i = 1; i < colors.length; i++) {
+    for (var step = 1; step < 5; step++) {
+      samples.add(Color.lerp(colors[i-1], colors[i], step / 5)!);
+    }
+  }
+  for (var i = 0; i <= 20; i++) {
+    final ink = Color.lerp(candidate, p.text, i / 20)!;
+    if (samples.every((c) => MandakhPalette.contrast(ink, c) >= 4.5)) return ink;
+  }
+  return p.text;
+}
+
+Color prestigeInk(BuildContext context, Map<String, dynamic> appearance, {Color? base}) {
+  final p = MandakhPalette.of(context);
+  final colors = _rewardColors(appearanceMap(appearance['accent']));
+  return prestigeBannerInk(context, appearance, base ?? p.surface,
+      colors.isEmpty ? p.accentInk : p.readable(colors.first));
 }
 
 /// Paints within the existing card bounds. One finite entrance sweep, not an
@@ -158,16 +189,17 @@ class _PrestigePainter extends CustomPainter {
 }
 
 class PrestigeIdentity extends StatelessWidget {
-  const PrestigeIdentity({super.key, required this.appearance});
+  const PrestigeIdentity({super.key, required this.appearance, this.base});
   final Map<String,dynamic> appearance;
+  final Color? base;
   @override Widget build(BuildContext context) {
     final rank=prestigeRank(appearance['rank']);
     final title=appearanceMap(appearance['title']);
     if(rank==null&&title.isEmpty)return const SizedBox.shrink();
     final p=MandakhPalette.of(context);
     return Padding(padding:const EdgeInsets.only(top:6),child:Wrap(spacing:6,runSpacing:5,children:[
-      if(rank!=null) _chip(context,rank==1?Icons.emoji_events_outlined:Icons.military_tech_outlined,'Шилдэг #$rank',p.readable(_rankColors[rank-1].first)),
-      if(title.isNotEmpty) _chip(context,Icons.star_outline,'${title['title']}',prestigeInk(context,appearance)),
+      if(rank!=null) _chip(context,rank==1?Icons.emoji_events_outlined:Icons.military_tech_outlined,'Шилдэг #$rank',prestigeBannerInk(context,appearance,base ?? p.surface,p.readable(_rankColors[rank-1].first))),
+      if(title.isNotEmpty) _chip(context,Icons.star_outline,'${title['title']}',prestigeInk(context,appearance,base:base)),
     ]));
   }
 }
@@ -197,40 +229,65 @@ class FeaturedAchievements extends StatelessWidget {
 }
 
 class ProfileCustomizationScreen extends StatefulWidget {
-  const ProfileCustomizationScreen({super.key,required this.appearance, required this.username});
+  const ProfileCustomizationScreen({super.key, required this.appearance,
+    required this.username, this.profileSurface});
   final Map<String,dynamic> appearance;
   final String username;
-  @override State<ProfileCustomizationScreen> createState()=>_ProfileCustomizationState();
+  final Color? profileSurface;
+  @override State<ProfileCustomizationScreen> createState() => _ProfileCustomizationState();
 }
+
 class _ProfileCustomizationState extends State<ProfileCustomizationScreen> {
   late final String? token;
   late Map<String,dynamic> prefs;
   late List<Map<String,dynamic>> rewards;
-  String tab='frame';
-  bool unlockedOnly=false,busy=false;
+  bool unlockedOnly = true, busy = false;
   String? error;
-  static const tabs={'frame':'Хүрээ','accent':'Өнгө','title':'Цол','featured':'Онцлох'};
-  static const backgrounds={'plain':'Энгийн','gradient':'Өнгөний шилжилт','soft':'Зөөлөн өнгө'};
-  @override void initState(){super.initState();token=PracticeApi.token;final raw=appearanceMap(widget.appearance['preferences']);
-    prefs={'frame':raw['frame']??'','accent':raw['accent']??'','title':raw['title']??'',
-      'background':raw['background']??'plain','motion':raw['motion']??true,
+  static const backgrounds = {'plain':'Энгийн', 'soft':'Нэг өнгө', 'gradient':'Gradient'};
+
+  @override void initState() {
+    super.initState();
+    token = PracticeApi.token;
+    final raw = appearanceMap(widget.appearance['preferences']);
+    rewards = appearanceRows(widget.appearance['rewards']);
+    prefs = {'frame':raw['frame']??'', 'accent':raw['accent']??'', 'title':raw['title']??'',
+      'background': backgrounds.containsKey(raw['background']) ? raw['background'] : 'plain',
+      'motion':raw['motion']!=false,
       'featured':(raw['featured'] is List ? (raw['featured'] as List).whereType<String>().toList():<String>[])};
-    rewards=appearanceRows(widget.appearance['rewards']);
   }
   List<String> get featured => (prefs['featured'] as List).cast<String>();
-  Map<String,dynamic> rewardFor(Object? id)=>rewards.firstWhere((r)=>r['id']==id&&r['unlocked']==true,orElse:()=>{});
-  Map<String,dynamic> get preview=>{'rank':widget.appearance['rank'],'frame':rewardFor(prefs['frame']),
-    'accent':rewardFor(prefs['accent']),'title':rewardFor(prefs['title']),'background':prefs['background'],'motion':prefs['motion']};
-  bool selected(Map<String,dynamic> r)=>tab=='featured'?featured.contains(r['id']):prefs[tab]==r['id'];
-  void select(Map<String,dynamic> r){if(busy||r['unlocked']!=true||r['id'] is! String)return;final id=r['id'] as String;
-    setState((){error=null;if(tab=='featured'){
-      final next=[...featured];if(next.contains(id)){next.remove(id);}else if(next.length<3){next.add(id);}else{error='3 хүртэлх амжилт сонгоно уу.';return;}prefs['featured']=next;
-    }else{prefs[tab]=selected(r)?'':id;}});
+  List<Map<String,dynamic>> get unlocked => rewards.where((r) => r['unlocked']==true && r['id'] is String).toList();
+  Map<String,dynamic> rewardFor(Object? id) => unlocked.firstWhere((r)=>r['id']==id,orElse:()=>{});
+  Map<String,dynamic> get preview => {'rank':widget.appearance['rank'], 'frame':rewardFor(prefs['frame']),
+    'accent':rewardFor(prefs['accent']), 'title':rewardFor(prefs['title']), 'background':prefs['background'],
+    'motion':prefs['motion'], 'featured':featured.map(rewardFor).where((r)=>r.isNotEmpty).toList()};
+
+  void chooseStyle(String id) {
+    if (busy || (id.isNotEmpty && rewardFor(id).isEmpty)) return;
+    setState(() {
+      error = null;
+      prefs['frame'] = id;
+      prefs['accent'] = id;
+      prefs['title'] = id;
+    });
   }
-  Future<void> save()async{
-    if(busy||token==null||PracticeApi.token!=token){setState(()=>error='Дахин нэвтэрнэ үү.');return;}
-    setState((){busy=true;error=null;});
-    try{
+  void toggleFeatured(String id) {
+    if (busy || rewardFor(id).isEmpty) return;
+    setState(() {
+      error = null;
+      final next = [...featured];
+      if (next.contains(id)) { next.remove(id); }
+      else if (next.length < 3) { next.add(id); }
+      else { error = '3 хүртэлх амжилт сонгоно уу.'; return; }
+      prefs['featured'] = next;
+    });
+  }
+
+  Future<void> save() async {
+    if (busy) return;
+    if (token==null || PracticeApi.token!=token) { setState(()=>error='Дахин нэвтэрнэ үү.'); return; }
+    setState(() {busy=true;error=null;});
+    try {
       final result=await PracticeApi.request('profile/appearance/',body:Map<String,dynamic>.from(prefs));
       if(!mounted)return;
       if(token!=PracticeApi.token){setState(()=>error='Бүртгэл өөрчлөгдсөн. Дахин нэвтэрнэ үү.');return;}
@@ -240,39 +297,123 @@ class _ProfileCustomizationState extends State<ProfileCustomizationScreen> {
     }catch(e){if(mounted){setState(()=>error='$e');ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('$e')));}}
     finally{if(mounted)setState(()=>busy=false);}
   }
-  @override Widget build(BuildContext context){
-    final p=MandakhPalette.of(context);final a=preview;final accent=prestigeInk(context,a);
-    final shown=rewards.where((r)=>!unlockedOnly||r['unlocked']==true).toList();
-    return Scaffold(appBar:AppBar(title:const Text('Профайл тохируулах')),
-      bottomNavigationBar:SafeArea(child:Padding(padding:const EdgeInsets.all(14),child:FilledButton.icon(
-        key:const ValueKey('appearance-save'),onPressed:busy?null:save,icon:Icon(busy?Icons.hourglass_empty:Icons.save_outlined),label:Text(busy?'Хадгалж байна...':'Хадгалах')))),
-      body:ListView(padding:const EdgeInsets.all(16),children:[
-        const Text('Урьдчилан харах',style:TextStyle(fontSize:19,fontWeight:FontWeight.w800)),const SizedBox(height:10),
-        PrestigeFrame(rank:prestigeRank(a['rank']),reward:appearanceMap(a['frame']),animate:a['motion']==true,
-          child:Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(color:p.surface,gradient:prestigeBanner(context,a,p.surface),border:Border.all(color:p.outline),borderRadius:BorderRadius.circular(16)),
-            child:Row(children:[CircleAvatar(backgroundColor:p.tint,child:Icon(Icons.person_outline,color:accent)),const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(widget.username,style:const TextStyle(fontWeight:FontWeight.w800,fontSize:19)),PrestigeIdentity(appearance:a),const SizedBox(height:5),Text('MandakhRank',style:TextStyle(color:accent))]))]))),
-        const SizedBox(height:18),const Text('Дэвсгэр',style:TextStyle(fontWeight:FontWeight.w700)),const SizedBox(height:6),
-        Wrap(spacing:8,runSpacing:6,children:[for(final v in backgrounds.entries) ChoiceChip(label:Text(v.value),selected:prefs['background']==v.key,onSelected:busy?null:(_)=>setState(()=>prefs['background']=v.key))]),
-        SwitchListTile(contentPadding:EdgeInsets.zero,title:const Text('Хөдөлгөөнт эффект'),subtitle:const Text('Профайлын хүрээний гэрэлтэх хөдөлгөөн'),value:prefs['motion']==true,onChanged:busy?null:(v)=>setState(()=>prefs['motion']=v)),
-        const Divider(),const Text('Амжилтаар нээгдэх загварууд',style:TextStyle(fontSize:19,fontWeight:FontWeight.w800)),
-        const SizedBox(height:4),Text('${rewards.where((r)=>r['unlocked']==true).length} / ${rewards.length} нээгдсэн',style:TextStyle(color:p.muted)),const SizedBox(height:10),
-        Wrap(spacing:8,runSpacing:6,children:[for(final e in tabs.entries)ChoiceChip(label:Text(e.value),selected:tab==e.key,onSelected:busy?null:(_)=>setState(()=>tab=e.key))]),
-        Row(children:[Expanded(child:Text(tab=='featured'?'Сонгосон ${featured.length}/3':'Нэг загвар сонгоно уу.')),TextButton(onPressed:busy?null:()=>setState((){prefs[tab]=tab=='featured'?<String>[]:'';error=null;}),child:const Text('Анхны төлөв'))]),
-        SwitchListTile(contentPadding:EdgeInsets.zero,title:const Text('Зөвхөн нээсэн загварууд'),value:unlockedOnly,onChanged:busy?null:(v)=>setState(()=>unlockedOnly=v)),
-        if(error!=null) Padding(padding:const EdgeInsets.only(bottom:8),child:Text(error!,key:const ValueKey('appearance-error'),style:TextStyle(color:p.negative))),
-        if(shown.isEmpty)const Padding(padding:EdgeInsets.all(12),child:Text('Одоогоор нээсэн загвар алга. Амжилт цуглуулаарай.')),
-        for(final r in shown) Padding(padding:const EdgeInsets.only(bottom:9),child:_rewardTile(context,r)),
-      ]));
-  }
-  Widget _rewardTile(BuildContext context,Map<String,dynamic> r){
-    final p=MandakhPalette.of(context);final open=r['unlocked']==true,active=selected(r);
-    final colors=_rewardColors(r);final color=p.readable(colors.isEmpty?p.accent:colors.first);
-    return PrestigeFrame(reward:r,animate:false,radius:12,child:Material(color:p.surface,borderRadius:BorderRadius.circular(12),
-      child:InkWell(key:ValueKey('appearance-reward-${r['id']}'),borderRadius:BorderRadius.circular(12),onTap:busy||!open?null:()=>select(r),
-        child:Padding(padding:const EdgeInsets.all(14),child:Row(children:[
-          Container(width:42,height:42,decoration:BoxDecoration(borderRadius:BorderRadius.circular(9),gradient:LinearGradient(colors: colors.isEmpty ? [p.accent,p.accent] : colors)),child:Icon(open?Icons.workspace_premium_outlined:Icons.lock_outline,color:Colors.black87)),
-          const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text('${r['title']}',style:const TextStyle(fontWeight:FontWeight.w700)),const SizedBox(height:3),Text('${r['description']}',style:TextStyle(color:p.muted,fontSize:12)),const SizedBox(height:3),Text(open?'Нээгдсэн':'${r['progress']} / ${r['target']}',style:TextStyle(fontSize:12,color:open?p.positive:p.muted))])),
-          Icon(active?Icons.check_circle:open?Icons.radio_button_unchecked:Icons.lock_outline,color:active?color:p.muted),
+
+  @override Widget build(BuildContext context) {
+    final p=MandakhPalette.of(context);
+    final a=preview;
+    final base=widget.profileSurface ?? p.surface;
+    final shown=unlockedOnly ? unlocked : [...unlocked, ...rewards.where((r)=>r['unlocked']!=true)];
+    return Scaffold(
+      appBar:AppBar(title:const Text('Профайл тохируулах')),
+      bottomNavigationBar:SafeArea(child:Center(heightFactor:1,child:ConstrainedBox(constraints:const BoxConstraints(maxWidth:760),
+        child:Padding(padding:const EdgeInsets.fromLTRB(16,8,16,12),child:SizedBox(width:double.infinity,child:FilledButton.icon(
+          key:const ValueKey('appearance-save'), onPressed:busy?null:save, icon:Icon(busy?Icons.hourglass_empty:Icons.check),
+          label:Text(busy?'Хадгалж байна...':'Хадгалах'))))))),
+      body:SafeArea(top:false,bottom:false,child:Center(child:ConstrainedBox(constraints:const BoxConstraints(maxWidth:760),
+        child:ListView(padding:const EdgeInsets.fromLTRB(16,12,16,24),children:[
+          _previewCard(context,a,base),
+          const SizedBox(height:20),
+          const Text('Дэвсгэр',style:TextStyle(fontSize:17,fontWeight:FontWeight.w800)),
+          const SizedBox(height:8),
+          Wrap(spacing:8,runSpacing:8,children:[for(final v in backgrounds.entries) _backgroundChip(context,v.key,v.value,a,base)]),
+          const SizedBox(height:12),
+          Wrap(spacing:8,runSpacing:6,children:[FilterChip(key:const ValueKey('appearance-motion'),
+            avatar:const Icon(Icons.auto_awesome_outlined,size:17),label:const Text('Гэрэлтэх эффект'),selected:prefs['motion']==true,
+            onSelected:busy?null:(v)=>setState(()=>prefs['motion']=v))]),
+          const SizedBox(height:20),const Divider(),const SizedBox(height:8),
+          const Text('Загвар сонгох',style:TextStyle(fontSize:20,fontWeight:FontWeight.w800)),
+          const SizedBox(height:4),Text('${unlocked.length}/${rewards.length} загвар нээгдсэн',style:TextStyle(color:p.muted)),
+          const SizedBox(height:10),
+          Wrap(spacing:8,runSpacing:6,children:[
+            ChoiceChip(key:const ValueKey('appearance-filter-unlocked'),label:Text('Нээсэн (${unlocked.length})'),
+              selected:unlockedOnly,onSelected:busy?null:(_)=>setState(()=>unlockedOnly=true)),
+            ChoiceChip(key:const ValueKey('appearance-filter-all'),label:Text('Бүгд (${rewards.length})'),
+              selected:!unlockedOnly,onSelected:busy?null:(_)=>setState(()=>unlockedOnly=false)),
+          ]),
+          const SizedBox(height:10),
+          LayoutBuilder(builder:(context,box){
+            final columns=box.maxWidth>=600?3:box.maxWidth>=320?2:1;
+            final width=(box.maxWidth-(columns-1)*10)/columns;
+            return Wrap(spacing:10,runSpacing:10,children:[
+              SizedBox(width:width,child:_rewardTile(context,const {},isDefault:true)),
+              for(final r in shown) SizedBox(width:width,child:_rewardTile(context,r)),
+            ]);
+          }),
+          if(unlockedOnly&&unlocked.isEmpty)Padding(padding:const EdgeInsets.only(top:10),child:Text('Амжилт нээж шинэ загвар аваарай.',style:TextStyle(color:p.muted))),
+          const SizedBox(height:16),
+          ExpansionTile(key:const ValueKey('appearance-featured'),tilePadding:EdgeInsets.zero,childrenPadding:const EdgeInsets.only(bottom:10),
+            title:const Text('Онцлох амжилт'),subtitle:Text('${featured.length}/3'),children:[
+              Align(alignment:Alignment.centerLeft,child:Wrap(spacing:7,runSpacing:6,children:[
+                for(final r in unlocked) FilterChip(key:ValueKey('appearance-feature-${r['id']}'),label:Text('${r['title']}'),
+                  selected:featured.contains(r['id']),onSelected:busy?null:(_)=>toggleFeatured(r['id'] as String)),
+              ])),
+              if(unlocked.isEmpty)const Text('Нээсэн амжилт алга.'),
+            ]),
+          ExpansionTile(key:const ValueKey('appearance-advanced'),tilePadding:EdgeInsets.zero,childrenPadding:const EdgeInsets.only(bottom:10),
+            title:const Text('Нэмэлт тохиргоо'),subtitle:const Text('Өнгө, цолыг тусад нь сонгох'),children:[
+              _dropdown('accent','Өнгө'),_dropdown('title','Цол'),
+            ]),
+          if(error!=null)Padding(padding:const EdgeInsets.only(top:8),child:Text(error!,key:const ValueKey('appearance-error'),style:TextStyle(color:p.negative))),
         ])))));
+  }
+
+  Widget _previewCard(BuildContext context,Map<String,dynamic> a,Color base) {
+    final p=MandakhPalette.of(context);
+    final accent=prestigeInk(context,a,base:base);
+    return PrestigeFrame(rank:prestigeRank(a['rank']),reward:appearanceMap(a['frame']),animate:a['motion']==true,
+      child:Container(key:const ValueKey('appearance-preview'),width:double.infinity,padding:const EdgeInsets.all(18),
+        decoration:BoxDecoration(color:prestigeBackgroundColor(context,a,base),gradient:prestigeBanner(context,a,base),
+          border:Border.all(color:p.outline),borderRadius:BorderRadius.circular(16)),
+        child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+          Text('УРЬДЧИЛАН ХАРАХ',style:TextStyle(color:prestigeBannerInk(context,a,base,p.muted),fontSize:11,fontWeight:FontWeight.w700,letterSpacing:1.2)),
+          const SizedBox(height:14),
+          Row(children:[Container(padding:const EdgeInsets.all(3),decoration:BoxDecoration(shape:BoxShape.circle,border:Border.all(color:accent,width:2)),
+            child:CircleAvatar(radius:25,backgroundColor:p.surface,child:Icon(Icons.person_outline,color:p.accentInk,size:26))),
+            const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+              Text(widget.username,style:TextStyle(color:accent,fontWeight:FontWeight.w800,fontSize:21),maxLines:2,overflow:TextOverflow.ellipsis),
+              PrestigeIdentity(appearance:a,base:base),
+              const SizedBox(height:5),Text('MandakhRank',style:TextStyle(color:prestigeBannerInk(context,a,base,p.muted))),
+            ]))]),
+          if(appearanceRows(a['featured']).isNotEmpty)...[const SizedBox(height:12),Wrap(spacing:6,runSpacing:5,children:[
+            for(final r in appearanceRows(a['featured'])) _chip(context,Icons.star_outline,'${r['title']}',accent),
+          ])],
+        ])));
+  }
+  Widget _backgroundChip(BuildContext context,String id,String label,Map<String,dynamic> a,Color base) {
+    final option={...a,'background':id};
+    return ChoiceChip(key:ValueKey('appearance-background-$id'),label:Text(label),selected:prefs['background']==id,
+      avatar:Container(width:20,height:20,decoration:BoxDecoration(shape:BoxShape.circle,
+        color:prestigeBackgroundColor(context,option,base),gradient:prestigeBanner(context,option,base),
+        border:Border.all(color:MandakhPalette.of(context).outline))),
+      onSelected:busy?null:(_)=>setState(()=>prefs['background']=id));
+  }
+  Widget _dropdown(String key,String label) {
+    final id=prefs[key];
+    return Padding(padding:const EdgeInsets.only(bottom:8),child:Row(children:[SizedBox(width:65,child:Text(label)),
+      Expanded(child:DropdownButton<String>(key:ValueKey('appearance-$key'),isExpanded:true,
+        value:rewardFor(id).isEmpty?'':id as String,
+        items:[const DropdownMenuItem(value:'',child:Text('Энгийн')),for(final r in unlocked)DropdownMenuItem(value:r['id'] as String,child:Text('${r['title']}',overflow:TextOverflow.ellipsis))],
+        onChanged:busy?null:(value){if(value!=null)setState(()=>prefs[key]=value);}))]));
+  }
+  Widget _rewardTile(BuildContext context,Map<String,dynamic> r,{bool isDefault=false}) {
+    final p=MandakhPalette.of(context);
+    final id=isDefault?'':r['id'] as String;
+    final open=isDefault||r['unlocked']==true;
+    final active=prefs['frame']==id;
+    final colors=_rewardColors(r);
+    final color=p.readable(colors.isEmpty?p.accent:colors.first);
+    return Material(color:p.surface,borderRadius:BorderRadius.circular(14),clipBehavior:Clip.antiAlias,
+      child:InkWell(key:ValueKey(isDefault?'appearance-default':'appearance-reward-$id'),onTap:busy||!open?null:()=>chooseStyle(id),
+        child:Container(decoration:BoxDecoration(borderRadius:BorderRadius.circular(14),border:Border.all(color:active?color:p.outline,width:active?2:1)),
+          padding:const EdgeInsets.all(10),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+            PrestigeFrame(reward:r,animate:false,radius:10,child:Container(height:56,width:double.infinity,
+              decoration:BoxDecoration(borderRadius:BorderRadius.circular(10),gradient:LinearGradient(colors:colors.isEmpty?[p.background,p.tint]:colors.map((c)=>Color.lerp(p.surface,c,.23)!).toList())),
+              child:Icon(isDefault?Icons.person_outline:open?Icons.workspace_premium_outlined:Icons.lock_outline,color:open?color:p.muted,size:26))),
+            const SizedBox(height:8),Text(isDefault?'Энгийн': '${r['title']}',maxLines:2,overflow:TextOverflow.ellipsis,style:const TextStyle(fontWeight:FontWeight.w700,fontSize:13)),
+            const SizedBox(height:4),Row(children:[Expanded(child:Text(active?'Сонгосон':open?'Нээгдсэн':'${r['progress']} / ${r['target']}',
+              maxLines:1,overflow:TextOverflow.ellipsis,style:TextStyle(fontSize:11,color:active?color:open?p.positive:p.muted))),
+              Icon(active?Icons.check_circle:open?Icons.radio_button_unchecked:Icons.lock_outline,color:active?color:p.muted,size:16)]),
+            if(!isDefault&&!open)Padding(padding:const EdgeInsets.only(top:5),child:Text('${r['description']}',maxLines:2,overflow:TextOverflow.ellipsis,style:TextStyle(fontSize:11,color:p.muted))),
+          ]))));
   }
 }

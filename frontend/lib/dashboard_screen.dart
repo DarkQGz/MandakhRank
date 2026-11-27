@@ -106,7 +106,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
     final initial = appearanceMap(profile!['appearance']);
     if (initial['preferences'] is! Map) return;
     final saved = await Navigator.of(context).push<Map<String, dynamic>>(MaterialPageRoute(
-      builder: (_) => ProfileCustomizationScreen(appearance: initial, username: '${profile!['username']}')));
+      builder: (_) => ProfileCustomizationScreen(appearance: initial, username: '${profile!['username']}', profileSurface: profile!['role'] == 'teacher' ? teacherSurface(context) : _surface)));
     if (!mounted || !isOwner || token != PracticeApi.token || generation != _identityGeneration || saved == null) return;
     setState(() => profile = {...profile!, 'appearance': saved});
     await load();
@@ -313,11 +313,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
         if (error != null) Text(error!, style: TextStyle(color: palette.muted)),
         const SizedBox(height: 12),
         PrestigeFrame(rank: prestigeRank(appearance['rank']), reward: appearanceMap(appearance['frame']), animate: appearance['motion'] != false, child: Container(
+          key: const ValueKey('profile-appearance-header'),
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: isTeacher ? teacherSurface(context) : _surface,
+            color: prestigeBackgroundColor(context, appearance, isTeacher ? teacherSurface(context) : _surface),
             gradient: prestigeBanner(context, appearance, isTeacher ? teacherSurface(context) : _surface),
             border: Border.all(color: isTeacher ? teacherAccent(context) : _line, width: isTeacher ? 2 : 1),
           ),
@@ -331,13 +332,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 if (isTeacher) Container(key: const ValueKey('teacher-avatar-border'), padding: const EdgeInsets.all(3), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: teacherAccent(context), width: 2)), child: avatar()) else avatar(),
                 SizedBox(width: 18),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  if (isTeacher) const TeacherRoleChip() else Text(owner ? 'САЙН БАЙНА УУ!' : 'СУРАЛЦАГЧ', style: TextStyle(color: _primary, fontSize: 11, letterSpacing: 1.8, fontWeight: FontWeight.w700)),
+                  if (isTeacher) const TeacherRoleChip() else Text(owner ? 'САЙН БАЙНА УУ!' : 'СУРАЛЦАГЧ', style: TextStyle(color: prestigeBannerInk(context, appearance, isTeacher ? teacherSurface(context) : _surface, _primary), fontSize: 11, letterSpacing: 1.8, fontWeight: FontWeight.w700)),
                   SizedBox(height: 5),
-                  Text(profile!['username'].toString(), style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: appearanceMap(appearance['accent']).isEmpty ? null : prestigeInk(context, appearance))),
-                  PrestigeIdentity(appearance: appearance),
-                  if (hasProgression) Padding(padding: const EdgeInsets.only(top: 4, bottom: 4), child: Text(isTeacher ? 'Level ${progression['level']} · Хувийн ахиц' : '${progression['rank']} · Level ${progression['level']}', style: TextStyle(color: _primary, fontSize: 13, fontWeight: FontWeight.w700))),
-                  if (owner && profile!['email'] != null) Text(profile!['email'].toString(), style: TextStyle(color: _subdued, fontSize: 11)),
-                  Text('Элссэн: ${formatDate(profile!['joined_at'])}', style: TextStyle(color: _subdued, fontSize: 11)),
+                  Text(profile!['username'].toString(), style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: appearanceMap(appearance['accent']).isEmpty ? null : prestigeInk(context, appearance, base: isTeacher ? teacherSurface(context) : _surface))),
+                  PrestigeIdentity(appearance: appearance, base: isTeacher ? teacherSurface(context) : _surface),
+                  if (hasProgression) Padding(padding: const EdgeInsets.only(top: 4, bottom: 4), child: Text(isTeacher ? 'Level ${progression['level']} · Хувийн ахиц' : '${progression['rank']} · Level ${progression['level']}', style: TextStyle(color: prestigeBannerInk(context, appearance, isTeacher ? teacherSurface(context) : _surface, _primary), fontSize: 13, fontWeight: FontWeight.w700))),
+                  if (owner && profile!['email'] != null) Text(profile!['email'].toString(), style: TextStyle(color: prestigeBannerInk(context, appearance, isTeacher ? teacherSurface(context) : _surface, _subdued), fontSize: 11)),
+                  Text('Элссэн: ${formatDate(profile!['joined_at'])}', style: TextStyle(color: prestigeBannerInk(context, appearance, isTeacher ? teacherSurface(context) : _surface, _subdued), fontSize: 11)),
                 ])),
               ]),
               if (owner) Wrap(spacing: 8, runSpacing: 8, children: [

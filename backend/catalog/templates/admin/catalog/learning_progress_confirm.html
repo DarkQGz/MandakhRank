@@ -1,0 +1,21 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div id="content-main">
+  <p><strong>Туршилтын бүртгэл: {{ request.user.get_username }}</strong></p>
+  <p>{{ explanation }}</p>
+  <p>Сонгосон: {{ rows|length }}.</p>
+  <ul>{% for row in rows %}<li>{{ row }}</li>{% endfor %}</ul>
+  <p>XP, Level, амжилт болон streak нь хадгалсан бүртгэлээс дахин тооцоологдоно.</p>
+  <form method="post">
+    {% csrf_token %}
+    {% for row in rows %}<input type="hidden" name="{{ action_checkbox_name }}" value="{{ row.pk }}">{% endfor %}
+    <input type="hidden" name="action" value="{{ action_name }}">
+    <input type="hidden" name="select_across" value="0">
+    <input type="hidden" name="confirm_progress" value="yes">
+    <div class="submit-row">
+      <input type="submit" value="Баталгаажуулах" class="default">
+      <a href="." class="button cancel-link">Буцах</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

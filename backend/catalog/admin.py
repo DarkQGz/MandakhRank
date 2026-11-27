@@ -1,4 +1,5 @@
 from django.contrib import admin
+from .learning_admin import CourseProgressMixin, LessonProgressMixin
 from .models import Course, Lesson, Contest, ContestProblem, ContestResult
 admin.site.site_header='Mandakhrank • Удирдлага'
 admin.site.site_title='Mandakhrank CMS'
@@ -7,7 +8,7 @@ class LessonInline(admin.StackedInline):
     model=Lesson
     extra=0
 @admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
+class CourseAdmin(CourseProgressMixin, admin.ModelAdmin):
     list_display=['title','tag','level','published']
     list_filter=['published','level']
     search_fields=['title','description']
@@ -78,7 +79,7 @@ class StudentAdmin(UserAdmin):
         return obj._has_avatar
 
 @admin.register(Lesson)
-class LessonAdmin(admin.ModelAdmin):
+class LessonAdmin(LessonProgressMixin, admin.ModelAdmin):
     list_display = ('title', 'course', 'position', 'published')
     list_filter = ('published', 'course')
     search_fields = ('title', 'content', 'course__title')

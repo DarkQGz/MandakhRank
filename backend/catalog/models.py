@@ -234,3 +234,58 @@ class ProjectAttempt(models.Model):
         indexes = [models.Index(fields=['user', 'course', 'project_key'], name='mr_project_user_course_idx')]
         verbose_name = 'Төслийн илгээлт'
         verbose_name_plural = 'Төслийн илгээлтүүд'
+
+
+class Classroom(models.Model):
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='owned_classrooms')
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=500, blank=True)
+    join_code = models.CharField(max_length=24, unique=True)
+    archived = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = 'Суралцах анги'
+        verbose_name_plural = 'Суралцах ангиуд'
+
+    def __str__(self):
+        return self.name
+
+
+class ClassroomMember(models.Model):
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name='members')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='classroom_memberships')
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['classroom', 'user'], name='mr_unique_class_member')]
+
+
+class ClassroomAssignment(models.Model):
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name='assignments')
+    title = models.CharField(max_length=120)
+    instructions = models.TextField(blank=True, max_length=2000)
+    kind = models.CharField(max_length=12, choices=[('lesson', 'Хичээл'), ('course', 'Сургалт'), ('problem', 'Бодлого'), ('project', 'Төсөл')])
+    target_id = models.PositiveBigIntegerField()
+    target_title = models.CharField(max_length=300)
+    due_at = models.DateTimeField(null=True, blank=True)
+    archived = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = 'Ангийн даалгавар'
+        verbose_name_plural = 'Ангийн даалгаврууд'
+
+
+class ClassroomTeacher(models.Model):
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='classroom_teacher_role')
+    granted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Багшийн эрх'
+        verbose_name_plural = 'Багшийн эрхүүд'
+
+    def __str__(self):
+        return self.user.username

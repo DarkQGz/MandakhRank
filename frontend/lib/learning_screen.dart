@@ -3,9 +3,12 @@ import 'package:flutter/services.dart';
 import 'auth_screen.dart';
 import 'data.dart';
 import 'theme_settings.dart';
+import 'practice_screen.dart';
+import 'classroom_export_stub.dart' if (dart.library.html) 'classroom_export_web.dart';
 import 'lesson_practice.dart';
 
 part 'project_screen.dart';
+part 'classroom_screen.dart';
 
 Map<String, dynamic> learningMap(Object? value) => value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
 List<Map<String, dynamic>> learningRows(Object? value) => value is List ? value.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList() : [];
@@ -81,6 +84,8 @@ class _LearningLibraryState extends State<LearningLibrary> {
     final inProgress = all.where((c) => done(c) > 0 && !passed(c)).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       learningHeading(context, 'Сургалтууд', 'Бага багаар суралцаж, мэдлэгээ шалгаарай.'),
+      const SizedBox(height: 16),
+      const ClassroomEntry(),
       const SizedBox(height: 16),
       LearningPanel(highlight: true, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [Icon(Icons.school_outlined, color: p.accentInk), const SizedBox(width: 10), const Expanded(child: Text('Таны суралцах ахиц', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)))]),

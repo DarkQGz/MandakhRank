@@ -125,3 +125,6 @@ class ProfileCommentAdmin(admin.ModelAdmin):
 
 # Register staff-only capstone review.
 from . import project_admin
+
+# Phase 5 classroom administration.
+from . import classroom_admin

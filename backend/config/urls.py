@@ -15,7 +15,12 @@ from catalog.views import collection, detail
 from catalog import practice, accounts, cms_bridge, profile, admin_overview, minigames
 from catalog import social, learning
 from catalog import projects
+from catalog import classrooms
 urlpatterns = [
+    path('api/classrooms/', classrooms.classrooms),
+    path('api/classrooms/targets/', classrooms.classroom_targets),
+    path('api/classrooms/<int:classroom_id>/', classrooms.classroom_detail),
+    path('api/classrooms/<int:classroom_id>/report/', classrooms.classroom_report),
     path('api/learning/<int:course_id>/project/', projects.project),
 
     path('api/learning/<int:course_id>/', learning.course),

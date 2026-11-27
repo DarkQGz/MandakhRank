@@ -22,11 +22,23 @@ class ContestAdmin(admin.ModelAdmin):
     list_filter=['published']
     search_fields=['title']
     inlines=[ProblemInline]
+    def has_change_permission(self,request,obj=None):
+        return (obj is None or not obj.auto_judge) and super().has_change_permission(request,obj)
+    def has_delete_permission(self,request,obj=None):
+        return (obj is None or not obj.auto_judge) and super().has_delete_permission(request,obj)
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        actions.pop('delete_selected', None)
+        return actions
 @admin.register(ContestResult)
 class ResultAdmin(admin.ModelAdmin):
     list_display=['participant','problem','score','penalty']
     list_filter=['problem__contest']
     search_fields=['participant']
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'problem':
+            kwargs['queryset'] = ContestProblem.objects.filter(contest__auto_judge=False)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 from .models import Problem,TestCase,Submission
 class TestInline(admin.StackedInline):
@@ -38,6 +50,14 @@ class PracticeAdmin(admin.ModelAdmin):
     list_filter=['published','difficulty']
     search_fields=['title']
     inlines=[TestInline]
+    def has_change_permission(self,request,obj=None):
+        return (obj is None or not obj.is_contest_transport) and super().has_change_permission(request,obj)
+    def has_delete_permission(self,request,obj=None):
+        return (obj is None or not obj.is_contest_transport) and super().has_delete_permission(request,obj)
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        actions.pop('delete_selected', None)
+        return actions
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
     list_display=['id','user','problem','language','status','passed','total','created_at']
@@ -45,6 +65,12 @@ class SubmissionAdmin(admin.ModelAdmin):
     readonly_fields=['user','problem','code','status','passed','total','created_at','updated_at','test_snapshot']
     def has_add_permission(self,request):return False
     def has_change_permission(self,request,obj=None):return False
+    def has_delete_permission(self,request,obj=None):
+        return (obj is None or not obj.problem.is_contest_transport) and super().has_delete_permission(request,obj)
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        actions.pop('delete_selected', None)
+        return actions
 
 # Make the existing Django Users page useful for MandakhRank administrators.
 from django.contrib.auth import get_user_model

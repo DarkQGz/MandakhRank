@@ -70,7 +70,7 @@ def submissions(request):
     user=current_user(request)
     if not user:return response({'error':'Эхлээд нэвтэрнэ үү.'},401)
     if request.method=='GET':
-        rows=Submission.objects.filter(user=user, project_attempt__isnull=True).select_related('problem')[:100]
+        rows=Submission.objects.filter(user=user, project_attempt__isnull=True, problem__is_contest_transport=False).select_related('problem')[:100]
         return response({'results':[dict(id=s.id,problem_id=s.problem_id,title=s.problem.title,status=s.status,passed=s.passed,total=s.total,created_at=s.created_at.isoformat(),language=s.language) for s in rows], 'languages':available_languages()})
     if settings.JUDGE_ENGINE in ('cms_pull', 'docker_pull'):
         if not settings.JUDGE_WORKER_TOKEN:

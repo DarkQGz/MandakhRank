@@ -7,6 +7,7 @@ import 'auth_screen.dart';
 import 'practice_screen.dart';
 import 'dashboard_screen.dart';
 import 'teacher_screen.dart';
+import 'contest_live_screen.dart';
 import 'prestige_screen.dart';
 import 'minigames_screen.dart';
 import 'theme_settings.dart';
@@ -1006,6 +1007,7 @@ class _HomeState extends State<Home> {
                       ])),
                   const SizedBox(height: 14),
                   badge(c['status'], c['status'] == 'Явагдаж байна' ? palette.positive : blue),
+                  if (c['auto_judge'] == true) const Padding(padding: EdgeInsets.only(top: 6), child: Text('Автомат шүүлт · 5 хүртэлх хэл')),
                   if (c['organizer'] != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text('Зохион байгуулагч: ${c['organizer']}', style: TextStyle(color: teacherAccent(context), fontWeight: FontWeight.w600))),
                   const SizedBox(height: 12),
                   Text(
@@ -1039,7 +1041,12 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void contestDetail(Map<String, dynamic> c) => detail(
+  void contestDetail(Map<String, dynamic> c) {
+    if (c['auto_judge'] == true && c['id'] is int) {
+      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => ContestLiveScreen(contestId: c['id'] as int, title: '${c['title']}')));
+      return;
+    }
+    detail(
         c['title'],
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1107,6 +1114,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       );
+  }
   void detail(String heading, Widget content) {
     Navigator.of(context).push(MaterialPageRoute<void>(
         builder: (routeContext) => Scaffold(

@@ -25,7 +25,7 @@ def profile_progression(user):
                                               completed_at__lte=now)
     # The existing contest model stores administrator-entered username strings, not user FKs.
     # Exclude contests that ended before the account existed; match the exact current username.
-    results = ContestResult.objects.filter(problem__contest__published=True,
+    results = ContestResult.objects.filter(problem__contest__published=True, problem__contest__auto_judge=False,
                                           problem__contest__ends_at__lte=now,
                                           problem__contest__ends_at__gte=user.date_joined)
     eligible = results.filter(participant=user.username, score__gt=0).order_by().values_list('problem__contest_id', flat=True)
@@ -33,6 +33,8 @@ def profile_progression(user):
                  .values('problem__contest_id', 'participant')
                  .annotate(total_score=Sum('score'), total_penalty=Sum('penalty'))
                  .values_list('problem__contest_id', 'participant', 'total_score', 'total_penalty'))
+    from .contest_live import progression_rows
+    standings = list(standings) + progression_rows(user, now)
     metrics = dict(solved=len(solved), lessons=lessons.count(), courses=courses.count(),
                    python=int(courses.filter(course__title='Python-ийн үндэс').exists()),
                    medium=counts['medium'], hard=counts['hard'], expert=counts['expert'],

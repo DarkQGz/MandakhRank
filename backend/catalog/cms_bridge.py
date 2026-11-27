@@ -71,6 +71,8 @@ def endpoint(request, action):
             Submission.objects.filter(status='Running', updated_at__lt=cutoff, cms_attempts__lt=3).update(
                 status='Queued', cms_claim_key='', updated_at=timezone.now())
             qs = Submission.objects.select_related('problem').filter(status='Queued', language__in=languages).order_by('id')
+            if settings.JUDGE_ENGINE != 'docker_pull':
+                qs = qs.filter(problem__is_contest_transport=False)
             lock_scope = {'of': ('self',)} if connection.features.has_select_for_update_of else {}
             if connection.features.has_select_for_update_skip_locked:
                 qs = qs.select_for_update(skip_locked=True, **lock_scope)

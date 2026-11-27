@@ -9,7 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .classrooms import teacher, text, fail
 from .models import Classroom, ClassroomAssignment, ClassroomMember, Contest, ContestProblem, ContestResult, Problem
+from django.db.models import Prefetch
 from .practice import current_user, payload, response
+from .contest_live import engine_ready, snapshot_tests, create_tasks
 
 
 def integer(value, low, high):
@@ -29,7 +31,7 @@ def audit(user, obj, message, flag=CHANGE):
 
 
 def contest_card(c):
-    return dict(id=c.pk, title=c.title, description=c.description, status=c.status,
+    return dict(id=c.pk, title=c.title, description=c.description, status=c.status, auto_judge=c.auto_judge,
                 starts_at=c.starts_at.isoformat(), ends_at=c.ends_at.isoformat(),
                 problems=[dict(id=p.pk, label=p.label, title=p.title, points=p.points,
                                results=[dict(participant=r.participant, score=r.score, penalty=r.penalty)
@@ -46,7 +48,7 @@ def workspace(request):
         return fail('Багшийн эрх шаардлагатай.', 403)
     if request.method == 'GET':
         rooms = Classroom.objects.filter(owner=user, archived=False)
-        own = Contest.objects.filter(organizer=user, published=True).prefetch_related('problems__results')
+        own = Contest.objects.filter(organizer=user, published=True).prefetch_related(Prefetch('problems', queryset=ContestProblem.objects.defer('judge_tests').prefetch_related('results')))
         return response(dict(classrooms=rooms.count(),
                              students=ClassroomMember.objects.filter(classroom__in=rooms, user__is_active=True).values('user_id').distinct().count(),
                              assignments=ClassroomAssignment.objects.filter(classroom__in=rooms, archived=False).count(),
@@ -80,12 +82,21 @@ def workspace(request):
                     return fail('Нийтэлсэн бодлого олдсонгүй.', 404)
                 if Contest.objects.filter(organizer=user, ends_at__gt=now).count() >= 20:
                     return fail('Идэвхтэй болон төлөвлөсөн тэмцээн 20 хүртэл байна.', 409)
-                start = now + timedelta(minutes=delay)
+                automatic = data.get('auto_judge', False)
+                if type(automatic) is not bool:
+                    return fail('Тэмцээний төрөл буруу байна.')
+                if automatic and not engine_ready():
+                    return fail('Автомат шүүгч тохируулагдаагүй байна.', 503)
+                snapshots = snapshot_tests(ids) if automatic else None
+                start = timezone.now() + timedelta(minutes=delay)
                 c = Contest.objects.create(organizer=user, title=title, description=description,
-                                           starts_at=start, ends_at=start+timedelta(minutes=duration), published=True)
-                ContestProblem.objects.bulk_create([ContestProblem(contest=c,label=chr(65+i),title=problems[pk].title,
-                    statement=problems[pk].description,sample_input=problems[pk].sample_input,
-                    sample_output=problems[pk].sample_output,points=max(1,problems[pk].points)) for i,pk in enumerate(ids)])
+                                           starts_at=start, ends_at=start+timedelta(minutes=duration), published=True, auto_judge=automatic)
+                if automatic:
+                    create_tasks(c, ids, problems, snapshots)
+                else:
+                    ContestProblem.objects.bulk_create([ContestProblem(contest=c,label=chr(65+i),title=problems[pk].title,
+                        statement=problems[pk].description,sample_input=problems[pk].sample_input,
+                        sample_output=problems[pk].sample_output,points=max(1,problems[pk].points)) for i,pk in enumerate(ids)])
                 audit(user, c, 'Teacher published contest', ADDITION)
                 return response({'contest': contest_card(c)}, 201)
             if action not in ('start', 'end', 'result'):
@@ -94,6 +105,7 @@ def workspace(request):
             c = Contest.objects.select_for_update().filter(pk=pk, organizer=user, published=True).first()
             if c is None:
                 return fail('Тэмцээн олдсонгүй.', 404)
+            now = timezone.now()  # after obtaining the same contest lock as admission
             if action == 'start':
                 if now >= c.starts_at:
                     return fail('Зөвхөн удахгүй эхлэх тэмцээнийг эхлүүлнэ.', 409)
@@ -109,6 +121,8 @@ def workspace(request):
                 c.save(update_fields=['ends_at'])
                 audit(user, c, 'Teacher ended contest early')
             else:
+                if c.auto_judge:
+                    return fail('Автомат тэмцээний дүнг гараар өөрчлөх боломжгүй.', 409)
                 if now < c.starts_at:
                     return fail('Тэмцээн хараахан эхлээгүй.', 409)
                 p = c.problems.filter(pk=integer(data.get('problem_id'),1,9223372036854775807)).first()

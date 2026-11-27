@@ -9,7 +9,9 @@ import 'judge_languages.dart';
 
 class PracticeScreen extends StatefulWidget {
   final Map<String, dynamic> problem;
-  const PracticeScreen({super.key, required this.problem});
+  final int? contestId;
+  final bool contestReview;
+  const PracticeScreen({super.key, required this.problem, this.contestId, this.contestReview = false});
   @override
   State<PracticeScreen> createState() => _PracticeState();
 }
@@ -30,6 +32,8 @@ class _PracticeState extends State<PracticeScreen> {
   }
   final name = TextEditingController(), password = TextEditingController();
   List<dynamic> history = [];
+  bool contestCanSubmit = false;
+  String get submissionEndpoint => widget.contestId == null ? 'submissions/' : 'contests/${widget.contestId}/tasks/${widget.problem['id']}/submissions/';
   bool busy = false, register = false, polling = false;
   String message = '';
   Timer? timer;
@@ -37,7 +41,7 @@ class _PracticeState extends State<PracticeScreen> {
   void initState() {
     super.initState();
     refresh();
-    timer = Timer.periodic(const Duration(seconds: 3), (_) => refresh());
+    timer = Timer.periodic(const Duration(seconds: 3), (_) { if (mounted && ModalRoute.of(context)?.isCurrent == true) refresh(); });
   }
 
   @override
@@ -52,16 +56,18 @@ class _PracticeState extends State<PracticeScreen> {
   Future<void> refresh() async {
     if (PracticeApi.token == null || polling) return;
     polling = true;
+    final token = PracticeApi.token;
     try {
-      final r = await PracticeApi.request('submissions/');
-      if (mounted)
+      final r = await PracticeApi.request(submissionEndpoint);
+      if (mounted && token == PracticeApi.token)
         setState(() {
           history = (r['results'] as List).where((s) => s['problem_id'] == widget.problem['id']).toList();
+          contestCanSubmit = r['can_submit'] == true;
           languages = judgeLanguages(r['languages']);
           if (!languages.contains(language)) switchLanguage('python');
         });
     } catch (e) {
-      if (mounted) setState(() => message = e.toString());
+      if (mounted && token == PracticeApi.token) setState(() { message = e.toString(); contestCanSubmit = false; });
     } finally {
       polling = false;
     }
@@ -152,8 +158,9 @@ class _PracticeState extends State<PracticeScreen> {
           TextField(controller: code, minLines: 12, maxLines: 24, keyboardType: TextInputType.multiline, autocorrect: false, enableSuggestions: false, style: TextStyle(fontFamily: 'monospace', fontSize: 14, height: 1.5, color: palette.text), decoration: InputDecoration(hintText: 'Кодоо бичнэ үү', fillColor: palette.background, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none, contentPadding: const EdgeInsets.all(12))),
         ])),
         const SizedBox(height: 16),
-        FilledButton.icon(onPressed: busy ? null : () => action(() async {
-          await PracticeApi.request('submissions/', body: {'problem_id': p['id'], 'code': code.text, 'language': language});
+        if (widget.contestId != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(widget.contestReview || !contestCanSubmit ? 'Тэмцээний илгээлт хаалттай эсвэл эрхгүй байна.' : 'Тэмцээний илгээлт · Дадлагын оноонд тооцохгүй.', style: TextStyle(color: palette.muted))),
+        FilledButton.icon(onPressed: busy || (widget.contestId != null && (widget.contestReview || !contestCanSubmit)) ? null : () => action(() async {
+          await PracticeApi.request(submissionEndpoint, body: {'problem_id': p['id'], 'code': code.text, 'language': language});
           await refresh();
         }), icon: const Icon(Icons.send_rounded), label: const Text('Илгээж шалгуулах')),
       ],

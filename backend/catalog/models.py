@@ -24,6 +24,7 @@ class Lesson(models.Model):
     def __str__(self): return self.title
 
 class Contest(models.Model):
+    auto_judge = models.BooleanField(default=False, editable=False)
     organizer = models.ForeignKey('auth.User', blank=True, null=True, on_delete=models.SET_NULL, related_name='organized_contests')
     title = models.CharField('Нэр', max_length=200)
     description = models.TextField('Тайлбар', blank=True)
@@ -43,6 +44,8 @@ class Contest(models.Model):
     def __str__(self): return self.title
 
 class ContestProblem(models.Model):
+    judge_problem = models.OneToOneField('Problem', null=True, blank=True, editable=False, on_delete=models.PROTECT, related_name='contest_task')
+    judge_tests = models.JSONField(default=list, blank=True, editable=False)
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE, related_name='problems')
     label = models.CharField('Дугаар (A, B...)', max_length=8)
     title = models.CharField('Нэр', max_length=200)
@@ -69,6 +72,7 @@ class ContestResult(models.Model):
     def __str__(self): return f'{self.participant}: {self.score}'
 
 class Problem(models.Model):
+    is_contest_transport = models.BooleanField(default=False, editable=False)
     title=models.CharField('Нэр',max_length=200,unique=True)
     description=models.TextField('Нөхцөл')
     difficulty=models.CharField('Түвшин',max_length=30,default='Хялбар')
@@ -80,6 +84,7 @@ class Problem(models.Model):
     cms_task_name=models.CharField('CMS task name',max_length=100,blank=True,default='')
     class Meta:
         ordering=['id'];verbose_name='Дасгал бодлого';verbose_name_plural='Дасгал бодлогууд'
+        constraints=[models.CheckConstraint(condition=models.Q(is_contest_transport=False) | models.Q(published=False, points=0), name='mr_contest_transport_private')]
     def __str__(self):return self.title
 
 class TestCase(models.Model):

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'learning_screen.dart';
 import 'theme_settings.dart';
+import 'contest_live_screen.dart';
 
 Color teacherAccent(BuildContext context) =>
     MandakhPalette.of(context).readable(const Color(0xFFD6A449));
@@ -100,11 +101,12 @@ class _TeacherWorkspaceState extends State<TeacherWorkspaceScreen> {
     Row(children:[Icon(Icons.emoji_events_outlined,color:teacherAccent(context)),const SizedBox(width:8),Expanded(child:Text(_text(c['title']),style:const TextStyle(fontSize:18,fontWeight:FontWeight.w800)))]),
     const SizedBox(height:6),Text(_text(c['status']),style:TextStyle(color:teacherAccent(context),fontWeight:FontWeight.w700)),
     Text('${_date(c['starts_at'])} — ${_date(c['ends_at'])} (УБ)'),
-    Text('${_rows(c['problems']).length} бодлого · Багшийн баталгаажуулсан дүн'),
+    Text('${_rows(c['problems']).length} бодлого · ${c['auto_judge']==true?'Автомат шүүлт':'Багшийн баталгаажуулсан дүн'}'),
     const SizedBox(height:12),Wrap(spacing:8,runSpacing:8,children:[
       if(c['status']=='Удахгүй')FilledButton.icon(onPressed:busy?null:()=>change(c,'start'),icon:const Icon(Icons.play_arrow),label:const Text('Одоо эхлүүлэх')),
       if(c['status']=='Явагдаж байна')OutlinedButton.icon(onPressed:busy?null:()=>change(c,'end'),icon:const Icon(Icons.stop),label:const Text('Дуусгах')),
-      if(c['status']!='Удахгүй')OutlinedButton.icon(onPressed:busy?null:()=>result(c),icon:const Icon(Icons.edit_note),label:const Text('Дүн оруулах')),
+      if(c['auto_judge']==true)OutlinedButton.icon(onPressed:busy?null:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>ContestLiveScreen(contestId:_int(c['id']),title:_text(c['title'])))),icon:const Icon(Icons.leaderboard_outlined),label:const Text('Шууд дүн')),
+      if(c['auto_judge']!=true&&c['status']!='Удахгүй')OutlinedButton.icon(onPressed:busy?null:()=>result(c),icon:const Icon(Icons.edit_note),label:const Text('Дүн оруулах')),
     ]),
     ExpansionTile(tilePadding:EdgeInsets.zero,title:const Text('Бодлого ба дүн'),children:[
       for(final p in _rows(c['problems'])) ListTile(contentPadding:EdgeInsets.zero,title:Text('${p['label']}. ${p['title']}'),subtitle:Text('${p['points']} оноо · ${_rows(p['results']).length} дүн')),
@@ -129,7 +131,7 @@ class _TeacherWorkspaceState extends State<TeacherWorkspaceScreen> {
         FilledButton.icon(onPressed:busy?null:()async{await Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const ClassroomHomeScreen()));reload();},icon:const Icon(Icons.groups),label:const Text('Анги удирдах')),
         OutlinedButton.icon(key:const ValueKey('teacher-create-contest'),onPressed:busy?null:()=>create(_rows(data['problems'])),icon:const Icon(Icons.add),label:const Text('Тэмцээн үүсгэх')),
       ]),const SizedBox(height:24),const Text('Миний зохион байгуулсан тэмцээн',style:TextStyle(fontSize:21,fontWeight:FontWeight.w800)),const SizedBox(height:8),
-      const Text('Тэмцээн нийтэд харагдана. Дүнг багш шалгаж бүртгэнэ.'),const SizedBox(height:12),
+      const Text('Тэмцээн нийтэд харагдана. Автомат эсвэл гараар дүгнэх төрлөө сонгоно.'),const SizedBox(height:12),
       if(contests.isEmpty)const Text('Одоогоор тэмцээн байхгүй.'),
       for(final c in contests)...[contest(c),const SizedBox(height:10)],
     ]));
@@ -143,11 +145,12 @@ class _ContestForm extends StatefulWidget {
 class _ContestFormState extends State<_ContestForm> {
   final title=TextEditingController(),description=TextEditingController(),delay=TextEditingController(text:'0'),duration=TextEditingController(text:'90');
   final selected=<int>{};String search='';
+  bool automatic=true;
   @override void dispose(){title.dispose();description.dispose();delay.dispose();duration.dispose();super.dispose();}
   void submit(){
     final a=int.tryParse(delay.text),b=int.tryParse(duration.text);
     if(title.text.trim().isEmpty||a==null||a<0||a>43200||b==null||b<5||b>1440||selected.isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Нэр, хугацаа, 1–12 бодлогоо шалгана уу.')));return;}
-    Navigator.pop(context,{'action':'create','title':title.text.trim(),'description':description.text.trim(),'delay_minutes':a,'duration_minutes':b,'problem_ids':selected.toList()});
+    Navigator.pop(context,{'action':'create','title':title.text.trim(),'description':description.text.trim(),'delay_minutes':a,'duration_minutes':b,'problem_ids':selected.toList(),'auto_judge':automatic});
   }
   @override Widget build(BuildContext context){final filtered=widget.problems.where((p)=>'${p['title']} ${p['difficulty']}'.toLowerCase().contains(search)).toList();return Scaffold(appBar:AppBar(title:const Text('Шинэ тэмцээн')),body:pageBody(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
     const Text('Тэмцээний тохиргоо',style:TextStyle(fontSize:22,fontWeight:FontWeight.w800)),const SizedBox(height:12),
@@ -155,12 +158,13 @@ class _ContestFormState extends State<_ContestForm> {
     TextField(controller:description,maxLength:2000,maxLines:3,decoration:const InputDecoration(labelText:'Тайлбар')),
     TextField(controller:delay,keyboardType:TextInputType.number,decoration:const InputDecoration(labelText:'Хэдэн минутын дараа эхлэх (0 = одоо)')),
     const SizedBox(height:8),TextField(controller:duration,keyboardType:TextInputType.number,decoration:const InputDecoration(labelText:'Үргэлжлэх минут (5–1440)')),
+    const SizedBox(height:12),SwitchListTile(contentPadding:EdgeInsets.zero,title:const Text('Автомат шүүлт'),subtitle:const Text('Одоо байгаа нууц тестүүдийг хуулж, кодыг Docker шүүгчээр шалгана.'),value:automatic,onChanged:(v)=>setState(()=>automatic=v)),
     const SizedBox(height:20),Text('Бодлого сонгох · ${selected.length}/12',style:const TextStyle(fontWeight:FontWeight.w800,fontSize:18)),
     TextField(onChanged:(v)=>setState(()=>search=v.toLowerCase()),decoration:const InputDecoration(prefixIcon:Icon(Icons.search),labelText:'Бодлого хайх')),
     const SizedBox(height:8),
     if(selected.isNotEmpty)Wrap(spacing:6,runSpacing:6,children:[for(final p in widget.problems.where((p)=>selected.contains(p['id']))) InputChip(label:Text(_text(p['title']),overflow:TextOverflow.ellipsis),onDeleted:()=>setState(()=>selected.remove(p['id'])))]),
     SizedBox(height:330,child:ListView.builder(itemCount:filtered.length,itemBuilder:(context,i){final p=filtered[i];final id=_int(p['id']);return CheckboxListTile(value:selected.contains(id),onChanged:selected.length>=12&&!selected.contains(id)?null:(v)=>setState((){if(v==true){selected.add(id);}else{selected.remove(id);}}),title:Text(_text(p['title'])),subtitle:Text('${p['difficulty']} · ${p['points']} оноо'));})),
-    const SizedBox(height:12),const Text('Үүсгэснээр тэмцээн нийтэд харагдана. Дүнг гараар баталгаажуулна.'),const SizedBox(height:10),
+    const SizedBox(height:12),Text(automatic?'Сонгосон бодлогууд дадлагын санд өмнө нь нийтлэгдсэн тул цоо шинэ нууц бодлого биш. Дүн автоматаар гарна.':'Үүсгэснээр тэмцээн нийтэд харагдана. Дүнг гараар баталгаажуулна.'),const SizedBox(height:10),
     SizedBox(width:double.infinity,child:FilledButton(onPressed:submit,child:const Text('Нийтлэх'))),
   ])));}
 }

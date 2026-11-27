@@ -32,7 +32,7 @@ def profile_data(user, *, is_owner=False, avatar_version=None):
     """Shared profile payload; only the authenticated owner gets private data."""
     if avatar_version is None:
         avatar_version = ProfileAvatar.objects.filter(user=user).values_list('updated_at', flat=True).first()
-    activity = Submission.objects.filter(user=user, project_attempt__isnull=True)
+    activity = Submission.objects.filter(user=user, project_attempt__isnull=True, problem__is_contest_transport=False)
     if not is_owner:
         activity = activity.filter(problem__published=True)
     solved_ids = activity.filter(status='Accepted', problem__published=True).order_by().values_list('problem_id', flat=True).distinct()

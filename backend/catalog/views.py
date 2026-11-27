@@ -3,7 +3,7 @@ from pathlib import Path
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_GET
 DATA = json.loads(Path(__file__).with_name('demo.json').read_text(encoding='utf-8'))
-from .models import Course, Contest, Problem, Submission, ProfileAvatar, Lesson
+from .models import Course, Contest, Problem, Submission, ProfileAvatar, Lesson, ContestProblem
 from django.db.models import Prefetch
 from django.contrib.auth import get_user_model
 
@@ -16,7 +16,8 @@ def course_data(c):
 
 def contest_data(c):
     started=c.status != 'Удахгүй'
-    problems=list(c.problems.all()) if started else []
+    # Automatic contests load full details and standings only on their live route.
+    problems=list(c.problems.all()) if started and not c.auto_judge else []
     totals={}
     for p in problems:
         for r in p.results.all():
@@ -28,7 +29,7 @@ def contest_data(c):
         key=(r['score'],r['penalty'])
         if key != last: rank=i+1
         r['rank']=rank;last=key
-    return dict(id=c.id,title=c.title,description=c.description,announcement=c.announcement,
+    return dict(id=c.id,title=c.title,description=c.description,announcement=c.announcement,auto_judge=c.auto_judge,
         organizer=c.organizer.username if c.organizer_id else None,
         starts_at=c.starts_at.isoformat(),ends_at=c.ends_at.isoformat(),status=c.status,
         duration_minutes=int((c.ends_at-c.starts_at).total_seconds()/60),
@@ -39,7 +40,7 @@ def rows(kind):
         from .practice import problem_data
         return [problem_data(p,set()) for p in Problem.objects.filter(published=True)]
     if kind == 'courses': return [course_data(c) for c in Course.objects.filter(published=True).prefetch_related(Prefetch('lessons', queryset=Lesson.objects.filter(published=True), to_attr='public_lessons'))]
-    if kind == 'contests': return [contest_data(c) for c in Contest.objects.filter(published=True).select_related('organizer').prefetch_related('problems__results')]
+    if kind == 'contests': return [contest_data(c) for c in Contest.objects.filter(published=True).select_related('organizer').prefetch_related(Prefetch('problems', queryset=ContestProblem.objects.defer('judge_tests').prefetch_related('results')))]
 
     if kind == 'rankings':
         # Each published problem counts once per person, regardless of retries.

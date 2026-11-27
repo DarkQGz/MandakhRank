@@ -17,8 +17,10 @@ from catalog import social, learning
 from catalog import projects
 from catalog import classrooms
 from catalog import teacher_hub
-from catalog import prestige, solution_showcase
+from catalog import prestige, solution_showcase, operations
 urlpatterns = [
+    path('healthz/', operations.health),
+    path('admin/operations/', operations.dashboard),
     path('api/profile/solutions/', solution_showcase.manage),
     path('api/profile/public/<int:user_id>/solutions/<int:submission_id>/', solution_showcase.detail),
     path('api/profile/appearance/', prestige.customize),

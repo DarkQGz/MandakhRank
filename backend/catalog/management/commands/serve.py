@@ -5,12 +5,15 @@ import subprocess
 import sys
 import time
 from django.core.management.base import BaseCommand, CommandError
+from django.core.management import call_command
 from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Start Gunicorn and the automatic Judge0 queue worker (Linux hosting).'
 
     def handle(self, *args, **options):
+        if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+            call_command('production_check')
         children = []
         stopping = False
         def stop(signum, frame):

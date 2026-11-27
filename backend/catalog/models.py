@@ -108,11 +108,19 @@ class Submission(models.Model):
     class Meta:
         ordering=['-id']
         constraints=[models.UniqueConstraint(fields=('user','problem'), condition=models.Q(share_on_profile=True), name='unique_showcase_solution_per_problem')]
+        indexes=[
+            models.Index(fields=['status','language','id'], name='mr_sub_queue_idx'),
+            models.Index(fields=['status','updated_at'], name='mr_sub_lease_idx'),
+            models.Index(fields=['user','status','problem'], name='mr_sub_user_solved_idx'),
+            models.Index(fields=['user','created_at'], name='mr_sub_user_time_idx'),
+        ]
 
 class AccessToken(models.Model):
     key=models.CharField(max_length=64,primary_key=True)
     user=models.ForeignKey('auth.User',on_delete=models.CASCADE)
     created_at=models.DateTimeField(auto_now_add=True)
+    class Meta:
+        indexes=[models.Index(fields=['created_at'], name='mr_token_expiry_idx')]
 
 class EmailVerification(models.Model):
     user=models.OneToOneField('auth.User',on_delete=models.CASCADE)
@@ -126,6 +134,14 @@ class AuthThrottle(models.Model):
     key=models.CharField(max_length=64,primary_key=True)
     started_at=models.DateTimeField(default=timezone.now)
     count=models.PositiveIntegerField(default=0)
+    class Meta:
+        indexes=[models.Index(fields=['started_at'], name='mr_throttle_expiry_idx')]
+
+
+class JudgeWorkerState(models.Model):
+    engine = models.CharField(max_length=20, primary_key=True)
+    last_seen = models.DateTimeField()
+    languages = models.JSONField(default=list, blank=True)
 
 # Kept for migration compatibility with the optional Firebase release.
 class FirebaseIdentity(models.Model):

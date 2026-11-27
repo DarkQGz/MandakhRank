@@ -7,7 +7,7 @@ from django.core.mail import EmailMessage
 from django.test import SimpleTestCase, override_settings
 from .email_backend import GmailScriptBackend
 
-@override_settings(GMAIL_SCRIPT_URL='https://script.google.com/macros/s/test-id/exec',GMAIL_SCRIPT_SECRET='a'*64)
+@override_settings(EMAIL_BACKEND='catalog.email_backend.GmailScriptBackend', GMAIL_SCRIPT_URL='https://script.google.com/macros/s/test-id/exec',GMAIL_SCRIPT_SECRET='a'*64)
 class GmailBackendTests(SimpleTestCase):
     def test_check_mailer_configuration_no_emails(self):
         out = StringIO()

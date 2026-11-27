@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Системийн төлөв | MandakhRank{% endblock %}
+{% block content %}
+<h1>MandakhRank — Системийн төлөв</h1>
+<p>Зөвхөн супер админд харагдана. <a href="">Шинэчлэх</a> · <a href="/admin/">Удирдлага</a></p>
+<div class="module"><h2>Judge / Өгөгдлийн сан</h2>
+<table><tbody>
+<tr><th>Judge engine</th><td>{{ engine }}</td></tr>
+<tr><th>Database</th><td>{{ database }}</td></tr>
+<tr><th>Олон хэл</th><td>{{ multilanguage|yesno:"Идэвхтэй,Идэвхгүй" }}</td></tr>
+<tr><th>Worker-ийн сүүлийн холболт</th><td>{{ last_seen|default_if_none:"Мэдээлэл алга" }} ({{ contact_age|default_if_none:"—" }} сек)</td></tr>
+<tr><th>Холболтын төлөв</th><td>{{ contact_status }}</td></tr>
+<tr><th>Сүүлийн worker-ийн хэл</th><td>{{ languages|join:", "|default:"—" }}</td></tr>
+<tr><th>Хамгийн удаан хүлээсэн илгээлт (сек)</th><td>{{ oldest_queued_seconds|default_if_none:"—" }}</td></tr>
+<tr><th>Lease хугацаа хэтэрсэн Running</th><td>{{ stale_running }}</td></tr>
+</tbody></table><p>Сүүлийн холболт нь worker одоо ажиллаж байгааг батлахгүй. Docker ажиллуулах туршилт тусдаа хийнэ.</p></div>
+<div class="module"><h2>Илгээлтүүд</h2><table><thead><tr><th>Төлөв</th><th>Тоо</th></tr></thead><tbody>{% for g in groups %}<tr><td>{{ g.status }}</td><td>{{ g.count }}</td></tr>{% empty %}<tr><td colspan="2">Илгээлт алга</td></tr>{% endfor %}</tbody></table></div>
+<div class="module"><h2>Хэл тус бүрийн хүлээлт</h2><table><thead><tr><th>Хэл</th><th>Тоо</th></tr></thead><tbody>{% for g in queued_by_language %}<tr><td>{{ g.language }}</td><td>{{ g.count }}</td></tr>{% empty %}<tr><td colspan="2">Хүлээгдэж буй илгээлт алга</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

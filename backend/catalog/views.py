@@ -3,11 +3,14 @@ from pathlib import Path
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_GET
 DATA = json.loads(Path(__file__).with_name('demo.json').read_text(encoding='utf-8'))
-from .models import Course, Contest, Problem, Submission, ProfileAvatar
+from .models import Course, Contest, Problem, Submission, ProfileAvatar, Lesson
+from django.db.models import Prefetch
 from django.contrib.auth import get_user_model
 
 def course_data(c):
-    lessons=list(c.lessons.filter(published=True))
+    lessons=getattr(c, 'public_lessons', None)
+    if lessons is None:
+        lessons=list(c.lessons.filter(published=True))
     return dict(id=c.id,title=c.title,tag=c.tag,level=c.level,description=c.description,color=c.color,
         lessons=[l.title for l in lessons],lesson_content=[dict(title=l.title,content=l.content) for l in lessons])
 
@@ -35,21 +38,18 @@ def rows(kind):
     if kind == 'problems':
         from .practice import problem_data
         return [problem_data(p,set()) for p in Problem.objects.filter(published=True)]
-    if kind == 'courses': return [course_data(c) for c in Course.objects.filter(published=True).prefetch_related('lessons')]
+    if kind == 'courses': return [course_data(c) for c in Course.objects.filter(published=True).prefetch_related(Prefetch('lessons', queryset=Lesson.objects.filter(published=True), to_attr='public_lessons'))]
     if kind == 'contests': return [contest_data(c) for c in Contest.objects.filter(published=True).select_related('organizer').prefetch_related('problems__results')]
 
     if kind == 'rankings':
         # Each published problem counts once per person, regardless of retries.
         totals = {}
-        for uid, pid, points in Submission.objects.filter(status='Accepted', problem__published=True, user__is_active=True).order_by().values_list('user_id','problem_id','problem__points').distinct():
+        for uid, pid, points in Submission.objects.filter(status='Accepted', problem__published=True, user__is_active=True, user__is_staff=False).order_by().values_list('user_id','problem_id','problem__points').distinct():
             row = totals.setdefault(uid, {'score': 0, 'solved': 0})
             row['score'] += points
             row['solved'] += 1
-        students = list(get_user_model().objects.filter(is_active=True, is_staff=False))
-        avatars = {
-            a.user_id: a.updated_at
-            for a in ProfileAvatar.objects.filter(user_id__in=[u.pk for u in students])
-        }
+        students = list(get_user_model().objects.filter(is_active=True, is_staff=False).only('id','username','is_superuser'))
+        avatars = dict(ProfileAvatar.objects.filter(user_id__in=[u.pk for u in students]).values_list('user_id','updated_at'))
         from .profile import avatar_url
         from .models import ClassroomTeacher
         teacher_ids = set(ClassroomTeacher.objects.filter(user_id__in=[u.pk for u in students]).values_list('user_id', flat=True))

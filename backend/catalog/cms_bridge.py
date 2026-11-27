@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 
 from .models import Submission
 from .judge_languages import claim_languages
+from .operations import record_contact
 
 FINAL_STATUSES = {
     'Accepted', 'Wrong Answer', 'Compilation Error', 'Runtime Error',
@@ -60,6 +61,7 @@ def endpoint(request, action):
             languages = claim_languages(data, settings.JUDGE_ENGINE)
         except ValueError:
             return reply({'error': 'Invalid worker languages'}, 400)
+        record_contact(languages)
         # A single worker is the intended initial deployment. Row locking also
         # allows a future multi-worker deployment under PostgreSQL.
         with transaction.atomic():
@@ -69,10 +71,11 @@ def endpoint(request, action):
             Submission.objects.filter(status='Running', updated_at__lt=cutoff, cms_attempts__lt=3).update(
                 status='Queued', cms_claim_key='', updated_at=timezone.now())
             qs = Submission.objects.select_related('problem').filter(status='Queued', language__in=languages).order_by('id')
+            lock_scope = {'of': ('self',)} if connection.features.has_select_for_update_of else {}
             if connection.features.has_select_for_update_skip_locked:
-                qs = qs.select_for_update(skip_locked=True)
+                qs = qs.select_for_update(skip_locked=True, **lock_scope)
             elif connection.features.has_select_for_update:
-                qs = qs.select_for_update()
+                qs = qs.select_for_update(**lock_scope)
             s = qs.first()
             if s is None:
                 return reply({'job': None})
@@ -128,6 +131,7 @@ def endpoint(request, action):
                 s.cms_submission_id = ref
             s.updated_at = timezone.now()
             s.save(update_fields=['cms_submission_id', 'updated_at'])
+            record_contact()
             return reply({'ok': True})
 
         if action == 'release':

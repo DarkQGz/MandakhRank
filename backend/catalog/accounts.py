@@ -118,7 +118,7 @@ def account(request, action):
     email = data.get('email', '')
     name = data.get('username', '')
     password = data.get('password', '')
-    if not all(isinstance(v, str) for v in (email, name, password)):
+    if not all(isinstance(v, str) and '\x00' not in v and not any(0xD800 <= ord(c) <= 0xDFFF for c in v) for v in (email, name, password)):
         return response({'error': 'Оруулсан мэдээлэл буруу.'}, 400)
     email = email.strip().lower()
     name = name.strip()

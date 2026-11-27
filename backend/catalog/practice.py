@@ -18,7 +18,7 @@ def response(data,status=200):
     return result
 def current_user(request):
     header=request.headers.get('Authorization','')
-    if not header.startswith('Bearer '):return None
+    if not header.startswith('Bearer ') or not 8 <= len(header) <= 71:return None
     token=AccessToken.objects.select_related('user').filter(key=header[7:],created_at__gt=timezone.now()-timedelta(days=7),user__is_active=True).first()
     return token.user if token else None
 
